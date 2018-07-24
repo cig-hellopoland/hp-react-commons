@@ -1,0 +1,18 @@
+stages:
+  - test
+
+variables:
+  NODE_VERSION: "8"
+  ARTIFACT_NAME: "${CI_PROJECT_NAME}.${CI_PIPELINE_ID}.${CI_COMMIT_SHA}"
+
+#
+# test stage tasks
+#
+test_project:
+  stage: test
+  before_script:
+    - . envcfg
+    - npm install
+  script:
+    - npm run lint
+    - npm run test
