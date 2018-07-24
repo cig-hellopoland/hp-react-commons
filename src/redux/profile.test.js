@@ -1,0 +1,387 @@
+import reducer, {
+  actions,
+  name,
+  selectors,
+  types,
+} from './profile';
+
+/*
+ * Initial state
+ */
+
+const initialState = {
+  credentials: null,
+  error: null,
+  isAuthenticated: false,
+  profile: null,
+};
+
+const appState = {
+  config: {},
+  [name]: initialState,
+};
+
+/*
+ * Helper functions
+ */
+
+function generateState(data) {
+  return {
+    ...initialState,
+    ...data,
+  };
+}
+
+function generateAppState(data) {
+  return {
+    ...appState,
+    [name]: {
+      ...generateState(data),
+    },
+  };
+}
+
+/*
+ * Tests
+ */
+
+describe('actions', () => {
+  it('should create an action to handle unauthorized error', () => {
+    const { errorUnauthorized } = actions;
+    const { ERROR_UNAUTHORIZED } = types;
+    const expectedValue = {
+      type: ERROR_UNAUTHORIZED,
+      payload: {},
+    };
+    const data = { a: 1 };
+
+    expect(errorUnauthorized()).toEqual(expectedValue);
+
+    expect(errorUnauthorized({ data })).toEqual({
+      ...expectedValue,
+      payload: {
+        data,
+      },
+    });
+  });
+
+  it('should create an action to make profile request', () => {
+    const { fetchProfile } = actions;
+    const { FETCH_PROFILE } = types;
+    const expectedValue = {
+      type: FETCH_PROFILE,
+      payload: {
+        url: '/users/me',
+        method: 'get',
+      },
+    };
+
+    expect(fetchProfile()).toEqual(expectedValue);
+  });
+
+  it('should create an action to cancel profile request', () => {
+    const { fetchProfileCancel } = actions;
+    const { FETCH_PROFILE_CANCEL } = types;
+    const expectedValue = {
+      type: FETCH_PROFILE_CANCEL,
+    };
+
+    expect(fetchProfileCancel()).toEqual(expectedValue);
+  });
+
+  it('should create an action to fail profile request', () => {
+    const { fetchProfileFailure } = actions;
+    const { FETCH_PROFILE_FAILURE } = types;
+    const expectedValue = {
+      type: FETCH_PROFILE_FAILURE,
+    };
+
+    expect(fetchProfileFailure()).toEqual(expectedValue);
+  });
+
+  it('should create an action to succeed profile request', () => {
+    const { fetchProfileSuccess } = actions;
+    const { FETCH_PROFILE_SUCCESS } = types;
+    const data = {};
+    const expectedValue = {
+      type: FETCH_PROFILE_SUCCESS,
+      data,
+    };
+
+    expect(fetchProfileSuccess(data)).toEqual(expectedValue);
+  });
+
+  it('should create an action to make login request', () => {
+    const { login } = actions;
+    const { LOGIN } = types;
+    const data = {
+      login: 'email@example.com',
+      password: 'password',
+    };
+    const options = {};
+    const expectedValue = {
+      type: LOGIN,
+      payload: {
+        url: '/login',
+        method: 'post',
+        ...options,
+        data,
+      },
+    };
+
+    expect(login(data, options)).toEqual(expectedValue);
+  });
+
+  it('should create an action to fail login request', () => {
+    const { loginFailure } = actions;
+    const { LOGIN_FAILURE } = types;
+    const expectedValue = {
+      type: LOGIN_FAILURE,
+      error: {},
+    };
+
+    expect(loginFailure()).toEqual(expectedValue);
+
+    const error = { a: 1 };
+    expectedValue.error = error;
+
+    expect(loginFailure(error)).toEqual(expectedValue);
+  });
+
+  it('should create an action to succeed login request', () => {
+    const { loginSuccess } = actions;
+    const { LOGIN_SUCCESS } = types;
+    const data = {};
+    const expectedValue = {
+      type: LOGIN_SUCCESS,
+      data,
+    };
+
+    expect(loginSuccess(data)).toEqual(expectedValue);
+  });
+
+  it('should create an action to make logout request', () => {
+    const { logout } = actions;
+    const { LOGOUT } = types;
+    const options = {};
+    const expectedValue = {
+      type: LOGOUT,
+      payload: {
+        url: '/logout',
+        method: 'post',
+        ...options,
+      },
+    };
+
+    expect(logout(options)).toEqual(expectedValue);
+  });
+
+  it('should create an action to succeed logout request', () => {
+    const { logoutSuccess } = actions;
+    const { LOGOUT_SUCCESS } = types;
+    const expectedValue = {
+      type: LOGOUT_SUCCESS,
+    };
+
+    expect(logoutSuccess()).toEqual(expectedValue);
+  });
+
+  it('should create an action to make refresh access token request', () => {
+    const { refreshAccessToken } = actions;
+    const { REFRESH_ACCESS_TOKEN } = types;
+    const options = {};
+    const expectedValue = {
+      type: REFRESH_ACCESS_TOKEN,
+      payload: {
+        url: '/refresh',
+        method: 'post',
+        ...options,
+      },
+    };
+
+    expect(refreshAccessToken(options)).toEqual(expectedValue);
+  });
+
+  it('should create an action to succeed refresh access token request', () => {
+    const { refreshAccessTokenSuccess } = actions;
+    const { REFRESH_ACCESS_TOKEN_SUCCESS } = types;
+    const data = {
+      accessToken: 'abc123',
+      refreshToken: '123abc',
+    };
+    const expectedValue = {
+      type: REFRESH_ACCESS_TOKEN_SUCCESS,
+      data,
+    };
+
+    expect(refreshAccessTokenSuccess(data)).toEqual(expectedValue);
+  });
+});
+
+describe('selectors', () => {
+  describe('using getState', () => {
+    it(`should return ${name} state`, () => {
+      const { getState } = selectors;
+
+      expect(getState(appState)).toEqual(initialState);
+    });
+  });
+
+  describe('using getError', () => {
+    it('should return null if there was no error', () => {
+      const { getError } = selectors;
+
+      expect(getError(appState)).toBeNull();
+    });
+
+    it('should return some error message if there was an error', () => {
+      const { getError } = selectors;
+      const error = 'omg';
+      const state = generateAppState({ error });
+
+      expect(getError(state)).toEqual(error);
+    });
+  });
+
+  describe('using getCredentials', () => {
+    it('should return null if there are no credentials', () => {
+      const { getCredentials } = selectors;
+
+      expect(getCredentials(appState)).toBeNull();
+    });
+
+    it('should return user\'s credentials', () => {
+      const { getCredentials } = selectors;
+      const credentials = {
+        accessToken: 'abc123',
+        refreshToken: '123abc',
+      };
+      const state = generateAppState({ credentials });
+
+      expect(getCredentials(state)).toEqual(credentials);
+    });
+  });
+
+  describe('using getProfile', () => {
+    it('should return null if user is not signed in', () => {
+      const { getProfile } = selectors;
+
+      expect(getProfile(appState)).toBeNull();
+    });
+
+    it('should return user\'s profile', () => {
+      const { getProfile } = selectors;
+      const profile = {
+        name: 'John Rambo',
+        email: 'johnnypro@example.com',
+      };
+      const state = generateAppState({ profile });
+
+      expect(getProfile(state)).toEqual(profile);
+    });
+  });
+
+  describe('using isAuthenticated', () => {
+    it('should indicate if user has signed in', () => {
+      const { isAuthenticated } = selectors;
+
+      expect(isAuthenticated(appState)).toEqual(false);
+      expect(isAuthenticated(generateAppState({ isAuthenticated: true }))).toEqual(true);
+    });
+  });
+});
+
+describe('reducer', () => {
+  it('should return initial state', () => {
+    expect(reducer()(undefined, {})).toEqual(initialState);
+  });
+
+  it('should return current state if action type was not found', () => {
+    expect(reducer()(initialState, { type: 'INVALID_TYPE' })).toEqual(initialState);
+  });
+
+  it('should handle FETCH_PROFILE_SUCCESS', () => {
+    const profile = {
+      name: 'John Rambo',
+      email: 'johnnypro@example.com',
+    };
+    const action = actions.fetchProfileSuccess(profile);
+    const expectedValue = {
+      ...initialState,
+      isAuthenticated: true,
+      profile,
+    };
+
+    expect(reducer()(initialState, action)).toEqual(expectedValue);
+  });
+
+  it('should handle LOGIN', () => {
+    const data = {
+      login: '',
+      password: '',
+    };
+    const action = actions.login(data);
+    const expectedValue = {
+      ...initialState,
+    };
+
+    expect(reducer()(initialState, action)).toEqual(expectedValue);
+  });
+
+  it('should handle LOGIN_FAILURE', () => {
+    const error = {
+      a: 1,
+    };
+    let action = actions.loginFailure();
+    const expectedValue = {
+      ...initialState,
+      error: {},
+    };
+
+    expect(reducer()(initialState, action)).toEqual(expectedValue);
+
+    action = actions.loginFailure(error);
+    expectedValue.error = error;
+
+    expect(reducer()(initialState, action)).toEqual(expectedValue);
+  });
+
+  it('should handle LOGIN_SUCCESS', () => {
+    const credentials = {
+      accessToken: 'abc123',
+      refreshToken: '123abc',
+    };
+    const action = actions.loginSuccess(credentials);
+    const expectedValue = {
+      ...initialState,
+      credentials,
+      isAuthenticated: true,
+    };
+
+    expect(reducer()(initialState, action)).toEqual(expectedValue);
+  });
+
+  it('should handle LOGOUT_SUCCESS', () => {
+    const action = actions.logoutSuccess();
+    const expectedValue = {
+      ...initialState,
+    };
+
+    expect(reducer()(initialState, action)).toEqual(expectedValue);
+  });
+
+  it('should handle REFRESH_ACCESS_TOKEN_SUCCESS', () => {
+    const credentials = {
+      accessToken: 'abc123',
+      refreshToken: '123abc',
+    };
+    const action = actions.refreshAccessTokenSuccess(credentials);
+    const expectedValue = {
+      ...initialState,
+      credentials,
+      isAuthenticated: true,
+    };
+
+    expect(reducer()(initialState, action)).toEqual(expectedValue);
+  });
+});

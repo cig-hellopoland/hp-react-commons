@@ -1,0 +1,40 @@
+{
+  "name": "hellopoland-react-commons",
+  "version": "0.1.0",
+  "description": "",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git@git.fream.pl:hello-poland/hellopoland-react-commons.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "enzyme": "^3.3.0",
+    "enzyme-adapter-react-16": "^1.1.1",
+    "jest": "^23.4.1",
+    "lodash": "^4.17.10",
+    "react": "^16.4.1",
+    "react-dom": "^16.4.1",
+    "redux": "^4.0.0",
+    "redux-logic": "^0.15.0",
+    "rxjs": "^6.2.2"
+  },
+  "devDependencies": {
+    "babel-eslint": "^8.2.6",
+    "babel-jest": "^23.4.0",
+    "babel-preset-env": "^1.7.0",
+    "eslint": "^4.19.1",
+    "eslint-config-airbnb": "^17.0.0",
+    "eslint-plugin-import": "^2.13.0",
+    "eslint-plugin-jsx-a11y": "^6.1.1",
+    "eslint-plugin-react": "^7.10.0"
+  },
+  "scripts": {
+    "lint": "eslint . --ext .js,.jsx --ignore-path .gitignore --cache",
+    "lint-fix": "npm run lint -- --fix",
+    "test": "jest",
+    "test-watch": "npm test -- --watch"
+  }
+}
