@@ -1,3 +1,5 @@
+/* eslint-disable-next-line no-unused-vars */
+import regeneratorRuntime from '@babel/runtime/regenerator';
 import { createLogic } from 'redux-logic';
 import _find from 'lodash/find';
 import { actions as sightEventsActions } from './sightEvents';
@@ -485,10 +487,10 @@ const createSightItemLogic = createLogic({
         dispatch(fetchList());
         dispatch(sightEventsActions.fetchList());
       } else {
-        dispatch(createItemFailure({}));
+        dispatch(createItemFailure());
       }
-    } catch (e) {
-      dispatch(createItemFailure({}));
+    } catch (error) {
+      dispatch(createItemFailure());
     }
 
     done();
@@ -509,10 +511,10 @@ const deleteSightItemLogic = createLogic({
         dispatch(fetchList());
         dispatch(sightEventsActions.fetchList());
       } else {
-        dispatch(deleteItemFailure({}));
+        dispatch(deleteItemFailure());
       }
-    } catch (e) {
-      dispatch(deleteItemFailure({}));
+    } catch (error) {
+      dispatch(deleteItemFailure());
     }
 
     done();
@@ -534,10 +536,10 @@ const fetchSightItemLogic = createLogic({
       if (status === 200 || status === 204) {
         dispatch(fetchItemSuccess(data));
       } else {
-        dispatch(fetchListFailure({}));
+        dispatch(fetchListFailure());
       }
-    } catch (e) {
-      dispatch(fetchListFailure({}));
+    } catch (error) {
+      dispatch(fetchListFailure());
     }
 
     done();
@@ -559,10 +561,10 @@ const fetchSightListLogic = createLogic({
       if (status === 200 || status === 204) {
         dispatch(fetchListSuccess(data));
       } else {
-        dispatch(fetchListFailure({}));
+        dispatch(fetchListFailure());
       }
-    } catch (e) {
-      dispatch(fetchListFailure({}));
+    } catch (error) {
+      dispatch(fetchListFailure());
     }
 
     done();
@@ -584,10 +586,10 @@ const fetchSightSearchResultsLogic = createLogic({
       if (status === 200 || status === 204) {
         dispatch(fetchSearchResultsSuccess(data));
       } else {
-        dispatch(fetchListFailure({}));
+        dispatch(fetchListFailure());
       }
-    } catch (e) {
-      dispatch(fetchListFailure({}));
+    } catch (error) {
+      dispatch(fetchListFailure());
     }
 
     done();
@@ -608,10 +610,10 @@ const updateSightItemLogic = createLogic({
         dispatch(fetchList());
         dispatch(sightEventsActions.fetchList());
       } else {
-        dispatch(updateItemFailure({}));
+        dispatch(updateItemFailure());
       }
-    } catch (e) {
-      dispatch(updateItemFailure({}));
+    } catch (error) {
+      dispatch(updateItemFailure());
     }
 
     done();
