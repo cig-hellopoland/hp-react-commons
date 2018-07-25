@@ -1,6 +1,6 @@
 {
   "name": "@hello-poland/commons",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "main": "lib/redux/index.js",
   "repository": {
     "type": "git",
@@ -33,6 +33,7 @@
     "build": "babel src --out-dir lib --ignore test.js",
     "lint": "eslint . --ext .js,.jsx --ignore-path .gitignore --cache",
     "lint-fix": "npm run lint -- --fix",
+    "prepublishOnly": "npm run build",
     "test": "jest",
     "test-watch": "npm test -- --watch"
   }
