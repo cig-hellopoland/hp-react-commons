@@ -163,17 +163,32 @@ describe('actions', () => {
   it('should create an action to make logout request', () => {
     const { logout } = actions;
     const { LOGOUT } = types;
-    const options = {};
+    const data = {};
+    const options = { a: 1, data: 2 };
     const expectedValue = {
       type: LOGOUT,
       payload: {
         url: '/logout',
         method: 'post',
-        ...options,
       },
     };
 
-    expect(logout(options)).toEqual(expectedValue);
+    expect(logout()).toEqual(expectedValue);
+
+    expectedValue.payload = {
+      ...expectedValue.payload,
+      data,
+    };
+
+    expect(logout(data)).toEqual(expectedValue);
+
+    expectedValue.payload = {
+      ...expectedValue.payload,
+      ...options,
+      data,
+    };
+
+    expect(logout(data, options)).toEqual(expectedValue);
   });
 
   it('should create an action to succeed logout request', () => {
@@ -189,17 +204,26 @@ describe('actions', () => {
   it('should create an action to make refresh access token request', () => {
     const { refreshAccessToken } = actions;
     const { REFRESH_ACCESS_TOKEN } = types;
-    const options = {};
+    const data = {};
+    const options = { a: 1, data: 2 };
     const expectedValue = {
       type: REFRESH_ACCESS_TOKEN,
       payload: {
         url: '/refresh',
         method: 'post',
-        ...options,
+        data,
       },
     };
 
-    expect(refreshAccessToken(options)).toEqual(expectedValue);
+    expect(refreshAccessToken(data)).toEqual(expectedValue);
+
+    expectedValue.payload = {
+      ...expectedValue.payload,
+      ...options,
+      data,
+    };
+
+    expect(refreshAccessToken(data, options)).toEqual(expectedValue);
   });
 
   it('should create an action to succeed refresh access token request', () => {

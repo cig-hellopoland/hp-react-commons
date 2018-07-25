@@ -1,3 +1,5 @@
+/* eslint-disable-next-line no-unused-vars */
+import regeneratorRuntime from '@babel/runtime/regenerator';
 import { createLogic } from 'redux-logic';
 
 export const name = 'profile';
@@ -56,13 +58,15 @@ const errorUnauthorized = (payload = {}) => ({
  * Creates action with profile request details.
  *
  * @method
+ * @param {Object} [options] - request config
  * @return {{type: string, payload: { url: string, method: string}}}
  */
-const fetchProfile = () => ({
+const fetchProfile = options => ({
   type: FETCH_PROFILE,
   payload: {
     url: '/users/me',
     method: 'get',
+    ...options,
   },
 });
 
@@ -148,15 +152,17 @@ const loginSuccess = data => ({
  * Creates action with login request details.
  *
  * @method
+ * @param {Object} [data] - request data
  * @param {Object} [options] - request options
  * @return {{type: string, payload: { url: string, method: string, data: *}}}
  */
-const logout = options => ({
+const logout = (data, options) => ({
   type: LOGOUT,
   payload: {
     url: '/logout',
     method: 'post',
     ...options,
+    data,
   },
 });
 
@@ -174,15 +180,17 @@ const logoutSuccess = () => ({
  * Creates action for JWT token refreshing.
  *
  * @method
- * @param {Object} options - request options
+ * @param {Object} data - request data
+ * @param {Object} [options] - request options
  * @return {{type: string, payload: { url: string, method: string, data: *}}}
  */
-const refreshAccessToken = options => ({
+const refreshAccessToken = (data, options) => ({
   type: REFRESH_ACCESS_TOKEN,
   payload: {
     url: '/refresh',
     method: 'post',
     ...options,
+    data,
   },
 });
 
@@ -228,15 +236,6 @@ export const actions = {
 const getState = state => state[name];
 
 /**
- * Returns user's sign in credentials.
- *
- * @method
- * @param {Object} state
- * @return {*}
- */
-const getCredentials = state => getState(state).credentials;
-
-/**
  * Returns request error.
  *
  * @method
@@ -244,6 +243,15 @@ const getCredentials = state => getState(state).credentials;
  * @return {null}
  */
 const getError = state => getState(state).error;
+
+/**
+ * Returns user's sign in credentials.
+ *
+ * @method
+ * @param {Object} state
+ * @return {*}
+ */
+const getCredentials = state => getState(state).credentials;
 
 /**
  * Returns user's profile.
@@ -294,10 +302,7 @@ const fetchProfileLogic = createLogic({
         dispatch(fetchProfileFailure());
       }
     } catch (error) {
-      // const responseError = createResponseErrorFactory(response);
-      const responseError = 'error';
-
-      dispatch(fetchProfileFailure(responseError));
+      dispatch(fetchProfileFailure());
     }
 
     done();
@@ -330,11 +335,8 @@ const loginLogic = createLogic({
       } else {
         dispatch(loginFailure());
       }
-    } catch ({ response }) {
-      // const responseError = createResponseErrorFactory(response);
-      const responseError = 'error';
-
-      dispatch(loginFailure(responseError));
+    } catch (error) {
+      dispatch(loginFailure());
     }
 
     done();
