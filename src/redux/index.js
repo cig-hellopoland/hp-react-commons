@@ -20,4 +20,4 @@ export {
   logic as sightsLogic,
   selectors as sightsSelectors,
   types as sightsTypes,
-} from './sightEvents';
+} from './sights';
