@@ -634,24 +634,26 @@ export const logic = {
 /*
  * REDUCERS
  */
+// export for test purposes
+export const defaultInitialState = {
+  error: false,
+  item: {},
+  list: [],
+};
 
-const reducer = (initialState = {
-  error: null,
-  item: null,
-  list: null,
-}) => (state = initialState, action) => {
+const reducer = (initialState = defaultInitialState) => (state = initialState, action) => {
   switch (action.type) {
     case CLEAR_SEARCH_RESULTS:
       return {
         ...state,
-        error: null,
-        list: null,
+        error: initialState.error,
+        list: initialState.list,
       };
     case CLEAR_ITEM:
       return {
         ...state,
-        error: null,
-        item: null,
+        error: initialState.error,
+        item: initialState.item,
       };
     case CREATE_ITEM_FAILURE:
     case UPDATE_ITEM_FAILURE:
@@ -663,24 +665,24 @@ const reducer = (initialState = {
     case UPDATE_ITEM_SUCCESS:
       return {
         ...state,
-        error: null,
+        error: initialState.error,
       };
     case FETCH_ITEM_SUCCESS:
       return {
         ...state,
-        error: null,
+        error: initialState.error,
         item: action.data,
       };
     case FETCH_LIST_SUCCESS:
       return {
         ...state,
-        error: null,
+        error: initialState.error,
         list: action.data.items,
       };
     case FETCH_SEARCH_RESULTS_SUCCESS:
       return {
         ...state,
-        error: null,
+        error: initialState.error,
         list: action.data.items,
       };
     default:
