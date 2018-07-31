@@ -3,6 +3,7 @@ import reducer, {
   name,
   selectors,
   types,
+  defaultInitialState,
 } from './sights';
 
 
@@ -491,8 +492,12 @@ describe('selectors', () => {
 });
 
 describe('reducer', () => {
-  it('should return initial state', () => {
-    expect(reducer()(undefined, {})).toEqual(initialState);
+  it('should return default initial state', () => {
+    expect(reducer()(undefined, {})).toEqual(defaultInitialState);
+  });
+
+  it('should return custom initial state', () => {
+    expect(reducer(initialState)(undefined, {})).toEqual(initialState);
   });
 
   it('should return current state if action type was not found', () => {
@@ -502,19 +507,19 @@ describe('reducer', () => {
   it('should handle CLEAR_SEARCH_RESULTS', () => {
     const action = actions.clearSearchResults();
     const expectedValue = {
-      ...initialState,
+      ...defaultInitialState,
     };
 
-    expect(reducer()(initialState, action)).toEqual(expectedValue);
+    expect(reducer()(defaultInitialState, action)).toEqual(expectedValue);
   });
 
   it('should handle CLEAR_ITEM', () => {
     const action = actions.clearItem();
     const expectedValue = {
-      ...initialState,
+      ...defaultInitialState,
     };
 
-    expect(reducer()(initialState, action)).toEqual(expectedValue);
+    expect(reducer()(defaultInitialState, action)).toEqual(expectedValue);
   });
 
   it('should handle CREATE_ITEM_FAILURE', () => {
@@ -523,16 +528,16 @@ describe('reducer', () => {
       a: 1,
     };
     const expectedValue = {
-      ...initialState,
+      ...defaultInitialState,
       error: {},
     };
 
-    expect(reducer()(initialState, action)).toEqual(expectedValue);
+    expect(reducer()(defaultInitialState, action)).toEqual(expectedValue);
 
     action = actions.createItemFailure(error);
     expectedValue.error = error;
 
-    expect(reducer()(initialState, action)).toEqual(expectedValue);
+    expect(reducer()(defaultInitialState, action)).toEqual(expectedValue);
   });
 
   it('should handle UPDATE_ITEM_FAILURE', () => {
@@ -541,47 +546,47 @@ describe('reducer', () => {
       a: 1,
     };
     const expectedValue = {
-      ...initialState,
+      ...defaultInitialState,
       error: {},
     };
 
-    expect(reducer()(initialState, action)).toEqual(expectedValue);
+    expect(reducer()(defaultInitialState, action)).toEqual(expectedValue);
 
     action = actions.updateItemFailure(error);
     expectedValue.error = error;
 
-    expect(reducer()(initialState, action)).toEqual(expectedValue);
+    expect(reducer()(defaultInitialState, action)).toEqual(expectedValue);
   });
 
   it('should handle CREATE_ITEM_SUCCESS', () => {
     const data = { id: 1 };
     const action = actions.createItemSuccess(data);
     const expectedValue = {
-      ...initialState,
+      ...defaultInitialState,
     };
 
-    expect(reducer()(initialState, action)).toEqual(expectedValue);
+    expect(reducer()(defaultInitialState, action)).toEqual(expectedValue);
   });
 
   it('should handle UPDATE_ITEM_SUCCESS', () => {
     const data = { id: 1 };
     const action = actions.updateItemSuccess(data);
     const expectedValue = {
-      ...initialState,
+      ...defaultInitialState,
     };
 
-    expect(reducer()(initialState, action)).toEqual(expectedValue);
+    expect(reducer()(defaultInitialState, action)).toEqual(expectedValue);
   });
 
   it('should handle FETCH_ITEM_SUCCESS', () => {
     const data = { id: 1 };
     const action = actions.fetchItemSuccess(data);
     const expectedValue = {
-      ...initialState,
+      ...defaultInitialState,
       item: data,
     };
 
-    expect(reducer()(initialState, action)).toEqual(expectedValue);
+    expect(reducer()(defaultInitialState, action)).toEqual(expectedValue);
   });
 
   it('should handle FETCH_ITEM_SUCCESS', () => {
@@ -594,11 +599,11 @@ describe('reducer', () => {
     };
     const action = actions.fetchListSuccess(data);
     const expectedValue = {
-      ...initialState,
+      ...defaultInitialState,
       list: data.items,
     };
 
-    expect(reducer()(initialState, action)).toEqual(expectedValue);
+    expect(reducer()(defaultInitialState, action)).toEqual(expectedValue);
   });
 
   it('should handle FETCH_SEARCH_RESULTS_SUCCESS', () => {
@@ -611,10 +616,10 @@ describe('reducer', () => {
     };
     const action = actions.fetchSearchResultsSuccess(data);
     const expectedValue = {
-      ...initialState,
+      ...defaultInitialState,
       list: data.items,
     };
 
-    expect(reducer()(initialState, action)).toEqual(expectedValue);
+    expect(reducer()(defaultInitialState, action)).toEqual(expectedValue);
   });
 });

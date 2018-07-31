@@ -634,8 +634,8 @@ export const logic = {
 /*
  * REDUCERS
  */
-
-const defaultInitialState = {
+// export for test purposes
+export const defaultInitialState = {
   error: false,
   item: {},
   list: [],
