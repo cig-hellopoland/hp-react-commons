@@ -383,25 +383,27 @@ export const logic = {
 /*
  * REDUCERS
  */
-
-const reducer = (initialState = {
+// export for test purposes
+export const defaultInitialState = {
   credentials: null,
   error: null,
   isAuthenticated: false,
   profile: null,
-}) => (state = initialState, action) => {
+};
+
+const reducer = (initialState = defaultInitialState) => (state = initialState, action) => {
   switch (action.type) {
     case FETCH_PROFILE_SUCCESS:
       return {
         ...state,
-        error: null,
+        error: initialState.error,
         isAuthenticated: true,
         profile: action.data,
       };
     case LOGIN:
       return {
         ...state,
-        error: null,
+        error: initialState.error,
       };
     case LOGIN_FAILURE:
       return {
@@ -414,16 +416,16 @@ const reducer = (initialState = {
         credentials: {
           ...action.data,
         },
-        error: null,
+        error: initialState.error,
         isAuthenticated: true,
       };
     case LOGOUT_SUCCESS:
       return {
         ...state,
-        credentials: null,
-        error: null,
+        credentials: initialState.credentials,
+        error: initialState.error,
         isAuthenticated: false,
-        profile: null,
+        profile: initialState.profile,
       };
     case REFRESH_ACCESS_TOKEN_SUCCESS:
       return {
@@ -431,7 +433,7 @@ const reducer = (initialState = {
         credentials: {
           ...action.data,
         },
-        error: null,
+        error: initialState.error,
         isAuthenticated: true,
       };
     default:

@@ -3,6 +3,7 @@ import reducer, {
   name,
   selectors,
   types,
+  defaultInitialState,
 } from './profile';
 
 /*
@@ -316,12 +317,16 @@ describe('selectors', () => {
 });
 
 describe('reducer', () => {
-  it('should return initial state', () => {
-    expect(reducer()(undefined, {})).toEqual(initialState);
+  it('should return default initial state', () => {
+    expect(reducer()(undefined, {})).toEqual(defaultInitialState);
+  });
+
+  it('should return custom initial state', () => {
+    expect(reducer(initialState)(undefined, {})).toEqual(initialState);
   });
 
   it('should return current state if action type was not found', () => {
-    expect(reducer()(initialState, { type: 'INVALID_TYPE' })).toEqual(initialState);
+    expect(reducer()(undefined, { type: 'INVALID_TYPE' })).toEqual(defaultInitialState);
   });
 
   it('should handle FETCH_PROFILE_SUCCESS', () => {
@@ -331,12 +336,12 @@ describe('reducer', () => {
     };
     const action = actions.fetchProfileSuccess(profile);
     const expectedValue = {
-      ...initialState,
+      ...defaultInitialState,
       isAuthenticated: true,
       profile,
     };
 
-    expect(reducer()(initialState, action)).toEqual(expectedValue);
+    expect(reducer()(defaultInitialState, action)).toEqual(expectedValue);
   });
 
   it('should handle LOGIN', () => {
@@ -346,10 +351,10 @@ describe('reducer', () => {
     };
     const action = actions.login(data);
     const expectedValue = {
-      ...initialState,
+      ...defaultInitialState,
     };
 
-    expect(reducer()(initialState, action)).toEqual(expectedValue);
+    expect(reducer()(defaultInitialState, action)).toEqual(expectedValue);
   });
 
   it('should handle LOGIN_FAILURE', () => {
@@ -358,16 +363,16 @@ describe('reducer', () => {
     };
     let action = actions.loginFailure();
     const expectedValue = {
-      ...initialState,
+      ...defaultInitialState,
       error: {},
     };
 
-    expect(reducer()(initialState, action)).toEqual(expectedValue);
+    expect(reducer()(defaultInitialState, action)).toEqual(expectedValue);
 
     action = actions.loginFailure(error);
     expectedValue.error = error;
 
-    expect(reducer()(initialState, action)).toEqual(expectedValue);
+    expect(reducer()(defaultInitialState, action)).toEqual(expectedValue);
   });
 
   it('should handle LOGIN_SUCCESS', () => {
@@ -377,21 +382,21 @@ describe('reducer', () => {
     };
     const action = actions.loginSuccess(credentials);
     const expectedValue = {
-      ...initialState,
+      ...defaultInitialState,
       credentials,
       isAuthenticated: true,
     };
 
-    expect(reducer()(initialState, action)).toEqual(expectedValue);
+    expect(reducer()(defaultInitialState, action)).toEqual(expectedValue);
   });
 
   it('should handle LOGOUT_SUCCESS', () => {
     const action = actions.logoutSuccess();
     const expectedValue = {
-      ...initialState,
+      ...defaultInitialState,
     };
 
-    expect(reducer()(initialState, action)).toEqual(expectedValue);
+    expect(reducer()(defaultInitialState, action)).toEqual(expectedValue);
   });
 
   it('should handle REFRESH_ACCESS_TOKEN_SUCCESS', () => {
@@ -401,11 +406,11 @@ describe('reducer', () => {
     };
     const action = actions.refreshAccessTokenSuccess(credentials);
     const expectedValue = {
-      ...initialState,
+      ...defaultInitialState,
       credentials,
       isAuthenticated: true,
     };
 
-    expect(reducer()(initialState, action)).toEqual(expectedValue);
+    expect(reducer()(defaultInitialState, action)).toEqual(expectedValue);
   });
 });
