@@ -1,7 +1,7 @@
 {
   "name": "@hello-poland/commons",
-  "version": "0.1.3",
-  "main": "lib/redux/index.js",
+  "version": "0.1.4",
+  "main": "redux/index.js",
   "repository": {
     "type": "git",
     "url": "git@git.fream.pl:hello-poland/hellopoland-react-commons.git"
