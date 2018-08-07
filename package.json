@@ -35,8 +35,8 @@
     "redux-logic": "^0.15.0"
   },
   "scripts": {
-    "build": "babel src --out-dir lib --ignore test.js",
-    "clean": "rimraf ./lib",
+    "build": "babel src --out-dir ./ --ignore '**/*.test.js'",
+    "clean": "rimraf ./redux",
     "lint": "eslint . --ext .js,.jsx --ignore-path .gitignore --cache",
     "lint-fix": "npm run lint -- --fix",
     "prepublishOnly": "npm run clean && npm run build",
