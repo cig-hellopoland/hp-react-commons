@@ -11,6 +11,7 @@ npm-debug.log*
 bundles/
 dist/
 lib/
+redux/
 stats.json
 
 # Compiled binary addons (http://nodejs.org/api/addons.html)
