@@ -38,7 +38,7 @@
   },
   "scripts": {
     "build": "babel src --out-dir ./ --ignore '**/*.test.js'",
-    "clean": "rimraf ./redux",
+    "clean": "rimraf ./redux ./utils",
     "lint": "eslint . --ext .js,.jsx --ignore-path .gitignore --cache",
     "lint-fix": "npm run lint -- --fix",
     "prepublishOnly": "npm run clean && npm run build",
