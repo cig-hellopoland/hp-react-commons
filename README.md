@@ -12,5 +12,6 @@ To properly publish package to Nexus repository do the following:
     ```
 3. Publish package
     ```bash
-    $ npm publish --registry=https://packages.fream.pl/repository/npm-fream/
+    $ npm run package
+    $ npm run distribute
     ```

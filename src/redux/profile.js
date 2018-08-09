@@ -87,7 +87,7 @@ const fetchProfileCancel = () => ({
  * @param {Object} [error] - Response error.
  * @return {{ type: string, error: * }}
  */
-const fetchProfileFailure = error => ({
+const fetchProfileFailure = (error = {}) => ({
   type: FETCH_PROFILE_FAILURE,
   error,
 });
@@ -405,6 +405,7 @@ const reducer = (initialState = defaultInitialState) => (state = initialState, a
         ...state,
         error: initialState.error,
       };
+    case FETCH_PROFILE_FAILURE:
     case LOGIN_FAILURE:
       return {
         ...state,

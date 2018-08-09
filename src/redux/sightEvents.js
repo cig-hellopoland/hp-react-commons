@@ -255,7 +255,7 @@ const fetchListCancel = () => ({
  * @return {{type: string, error: *}}
  */
 const fetchListFailure = (error = {}) => ({
-  type: FETCH_LIST_CANCEL,
+  type: FETCH_LIST_FAILURE,
   error,
 });
 
@@ -583,10 +583,10 @@ const fetchSightEventSearchResultsLogic = createLogic({
       if (status === 200 || status === 204) {
         dispatch(fetchSearchResultsSuccess(data));
       } else {
-        dispatch(fetchListFailure({}));
+        dispatch(fetchSearchResultsFailure({}));
       }
     } catch (e) {
-      dispatch(fetchListFailure({}));
+      dispatch(fetchSearchResultsFailure({}));
     }
 
     done();
@@ -633,7 +633,7 @@ export const logic = {
 
 // export for test purposes
 export const defaultInitialState = {
-  error: false,
+  error: null,
   item: {},
   list: [],
 };
@@ -653,6 +653,10 @@ const reducer = (initialState = defaultInitialState) => (state = initialState, a
         item: initialState.item,
       };
     case CREATE_ITEM_FAILURE:
+    case DELETE_ITEM_FAILURE:
+    case FETCH_ITEM_FAILURE:
+    case FETCH_LIST_FAILURE:
+    case FETCH_SEARCH_RESULTS_FAILURE:
     case UPDATE_ITEM_FAILURE:
       return {
         ...state,
