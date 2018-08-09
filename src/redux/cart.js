@@ -79,11 +79,11 @@ const updateSightEntries = (prevSightEntry, nextSightEntry) => ({
  * REDUCERS
  */
 
-const initialState = {
+export const defaultInitialState = {
   sightEntries: emptyArray,
 };
 
-function reducer(state = initialState, action) {
+const reducer = (initialState = defaultInitialState) => (state = initialState, action) => {
   const actions = {
     [CLEAR_SIGHT_ENTRIES]: () => ({
       ...initialState,
@@ -161,7 +161,7 @@ function reducer(state = initialState, action) {
   };
 
   return (actions[action.type] && actions[action.type]()) || state;
-}
+};
 
 
 /*
