@@ -21,3 +21,11 @@ export {
   selectors as sightsSelectors,
   types as sightsTypes,
 } from './sights';
+
+export {
+  default as cart,
+  actions as cartActions,
+  logic as cartLogic,
+  selectors as cartSelectors,
+  types as cartTypes,
+} from './cart';
