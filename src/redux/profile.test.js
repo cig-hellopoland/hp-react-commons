@@ -95,6 +95,7 @@ describe('actions', () => {
     const { FETCH_PROFILE_FAILURE } = types;
     const expectedValue = {
       type: FETCH_PROFILE_FAILURE,
+      error: {},
     };
 
     expect(fetchProfileFailure()).toEqual(expectedValue);
@@ -353,6 +354,24 @@ describe('reducer', () => {
     const expectedValue = {
       ...defaultInitialState,
     };
+
+    expect(reducer()(defaultInitialState, action)).toEqual(expectedValue);
+  });
+
+  it('should handle FETCH_PROFILE_FAILURE', () => {
+    const error = {
+      a: 1,
+    };
+    let action = actions.fetchProfileFailure();
+    const expectedValue = {
+      ...defaultInitialState,
+      error: {},
+    };
+
+    expect(reducer()(defaultInitialState, action)).toEqual(expectedValue);
+
+    action = actions.fetchProfileFailure(error);
+    expectedValue.error = error;
 
     expect(reducer()(defaultInitialState, action)).toEqual(expectedValue);
   });

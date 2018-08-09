@@ -257,9 +257,9 @@ describe('actions', () => {
 
   it('should create an action to fail list request', () => {
     const { fetchListFailure } = actions;
-    const { FETCH_LIST_CANCEL } = types;
+    const { FETCH_LIST_FAILURE } = types;
     const expectedValue = {
-      type: FETCH_LIST_CANCEL,
+      type: FETCH_LIST_FAILURE,
       error: {},
     };
 
@@ -535,6 +535,78 @@ describe('reducer', () => {
     expect(reducer()(defaultInitialState, action)).toEqual(expectedValue);
 
     action = actions.createItemFailure(error);
+    expectedValue.error = error;
+
+    expect(reducer()(defaultInitialState, action)).toEqual(expectedValue);
+  });
+
+  it('should handle DELETE_ITEM_FAILURE', () => {
+    let action = actions.deleteItemFailure();
+    const error = {
+      a: 1,
+    };
+    const expectedValue = {
+      ...defaultInitialState,
+      error: {},
+    };
+
+    expect(reducer()(defaultInitialState, action)).toEqual(expectedValue);
+
+    action = actions.deleteItemFailure(error);
+    expectedValue.error = error;
+
+    expect(reducer()(defaultInitialState, action)).toEqual(expectedValue);
+  });
+
+  it('should handle FETCH_ITEM_FAILURE', () => {
+    let action = actions.fetchItemFailure();
+    const error = {
+      a: 1,
+    };
+    const expectedValue = {
+      ...defaultInitialState,
+      error: {},
+    };
+
+    expect(reducer()(defaultInitialState, action)).toEqual(expectedValue);
+
+    action = actions.fetchItemFailure(error);
+    expectedValue.error = error;
+
+    expect(reducer()(defaultInitialState, action)).toEqual(expectedValue);
+  });
+
+  it('should handle FETCH_LIST_FAILURE', () => {
+    let action = actions.fetchListFailure();
+    const error = {
+      a: 1,
+    };
+    const expectedValue = {
+      ...defaultInitialState,
+      error: {},
+    };
+
+    expect(reducer()(defaultInitialState, action)).toEqual(expectedValue);
+
+    action = actions.fetchListFailure(error);
+    expectedValue.error = error;
+
+    expect(reducer()(defaultInitialState, action)).toEqual(expectedValue);
+  });
+
+  it('should handle FETCH_SEARCH_RESULTS_FAILURE', () => {
+    let action = actions.fetchSearchResultsFailure();
+    const error = {
+      a: 1,
+    };
+    const expectedValue = {
+      ...defaultInitialState,
+      error: {},
+    };
+
+    expect(reducer()(defaultInitialState, action)).toEqual(expectedValue);
+
+    action = actions.fetchSearchResultsFailure(error);
     expectedValue.error = error;
 
     expect(reducer()(defaultInitialState, action)).toEqual(expectedValue);
