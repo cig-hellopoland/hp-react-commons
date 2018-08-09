@@ -1,6 +1,6 @@
 {
   "name": "@hello-poland/commons",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "main": "redux/index.js",
   "repository": {
     "type": "git",
@@ -20,6 +20,7 @@
     "babel-core": "^7.0.0-bridge.0",
     "babel-eslint": "^8.2.6",
     "babel-jest": "^23.4.0",
+    "cpy-cli": "^2.0.0",
     "date-fns": "^1.29.0",
     "eslint": "^4.19.1",
     "eslint-config-airbnb": "^17.0.0",
@@ -37,11 +38,12 @@
     "redux-logic": "^0.15.0"
   },
   "scripts": {
-    "build": "babel src --out-dir ./ --ignore '**/*.test.js'",
-    "clean": "rimraf ./redux ./utils",
+    "build": "babel src --out-dir ./dist --ignore '**/*.test.js'",
+    "clean": "rimraf ./dist",
+    "distribute": "cd dist && npm publish --registry=https://packages.fream.pl/repository/npm-fream/",
     "lint": "eslint . --ext .js,.jsx --ignore-path .gitignore --cache",
     "lint-fix": "npm run lint -- --fix",
-    "prepublishOnly": "npm run clean && npm run build",
+    "package": "npm run clean && npm run build && cpy .npmrc package.json CHANGELOG.md README.md ./dist",
     "test": "jest",
     "test-watch": "npm test -- --watch"
   }
