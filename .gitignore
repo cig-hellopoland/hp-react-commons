@@ -12,6 +12,7 @@ bundles/
 dist/
 lib/
 redux/
+utils/
 stats.json
 
 # Compiled binary addons (http://nodejs.org/api/addons.html)
