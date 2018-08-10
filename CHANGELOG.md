@@ -7,6 +7,7 @@
 * Changed default errors to null
 * Added CHANGELOG
 * Renamed `ticketPoolParcer` to `ticketPoolParser`
+* Added `cart.js` and `tickets.commons.js` 
 
 ## 0.1.5
 ### Changes
