@@ -211,6 +211,13 @@ const getTicketEntries = (state) => {
 
 const getTicketsQuantity = state => getSightEntriesAsTickets(state).length;
 
+const getTotalPrice = (state) => {
+  const entries = getTicketEntries(state);
+  return entries.reduce((acc, entry) => (
+    acc + (entry.price * entry.quantity)
+  ), 0);
+};
+
 /*
  * EXPORTS
  */
@@ -240,4 +247,5 @@ export const selectors = {
   getState,
   getTicketEntries,
   getTicketsQuantity,
+  getTotalPrice,
 };
