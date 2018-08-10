@@ -91,8 +91,8 @@ export const getFormattedEventTime = (startDate, endDate) => {
   const formattedStartTime = getFormattedTime(startDate);
   const hasSameHour = getHours(startDate) === getHours(endDate);
   const hasSameMinute = getMinutes(startDate) === getMinutes(endDate);
-  // TODO: fix linter error
-  if (endDate == null || hasSameHour && hasSameMinute) {
+
+  if (endDate == null || (hasSameHour && hasSameMinute)) {
     return formattedStartTime;
   }
 
