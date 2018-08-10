@@ -8,6 +8,7 @@
 * Added CHANGELOG
 * Renamed `ticketPoolParcer` to `ticketPoolParser`
 * Added `cart.js` and `tickets.commons.js` 
+* Added `getTotalPrice` selector to `cart` duck
 
 ## 0.1.5
 ### Changes
