@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.1.7
+* Cancel request when `clearItem` is called (in `sights` and `sightEvents` ducks)
+
 ## 0.1.6
 ### Changes
 * Updated npm pubishing scripts
