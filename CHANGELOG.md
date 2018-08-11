@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.1.7
+* Add source maps
+
 ## 0.1.6
 ### Changes
 * Updated npm pubishing scripts
