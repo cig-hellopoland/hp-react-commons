@@ -122,7 +122,7 @@ export default class MuiPickersDateFnsUtils {
   getWeekdays() {
     const now = new Date();
     // TODO: weekStartsOn should depend on locale, AFAIK not possible in date-fns v1
-    // TODO: mograte to date-fns v2
+    // TODO: migrate to date-fns v2
     const start = startOfWeek(now, { weekStartsOn: 1 });
     const end = endOfWeek(now, { weekStartsOn: 1 });
 
