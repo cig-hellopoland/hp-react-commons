@@ -1,6 +1,7 @@
 # Changelog
 
 ## 0.1.7
+* Add source maps
 * Cancel request when `clearItem` is called (in `sights` and `sightEvents` ducks)
 
 ## 0.1.6
