@@ -526,7 +526,7 @@ const fetchSightItemLogic = createLogic({
     FETCH_ITEM,
   ],
   cancelType: [
-    FETCH_ITEM_CANCEL,
+    FETCH_ITEM_CANCEL, CLEAR_ITEM,
   ],
   latest: true,
   async process({ action: { payload }, httpClient, cancelled$ }, dispatch, done) {
