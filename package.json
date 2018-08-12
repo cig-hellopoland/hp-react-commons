@@ -1,6 +1,6 @@
 {
   "name": "@hello-poland/commons",
-  "version": "0.1.6",
+  "version": "0.1.7",
   "main": "redux/index.js",
   "repository": {
     "type": "git",
@@ -38,7 +38,7 @@
     "redux-logic": "^0.15.0"
   },
   "scripts": {
-    "build": "babel src --out-dir ./dist --ignore '**/*.test.js'",
+    "build": "babel src --out-dir ./dist --ignore '**/*.test.js' --source-maps",
     "clean": "rimraf ./dist",
     "distribute": "cd dist && npm publish --registry=https://packages.fream.pl/repository/npm-fream/",
     "lint": "eslint . --ext .js,.jsx --ignore-path .gitignore --cache",
