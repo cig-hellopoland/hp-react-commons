@@ -1,6 +1,6 @@
 import { Component } from 'react';
 import PropTypes from 'prop-types';
-import exactProp from 'utils/exactProp';
+import exactProp from '../utils/exactProp';
 
 class EntryPickerController extends Component {
   handleRemoveButtonClick = () => {
