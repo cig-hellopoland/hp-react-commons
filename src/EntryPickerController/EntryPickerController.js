@@ -4,15 +4,13 @@ import exactProp from '../utils/exactProp';
 
 class EntryPickerController extends Component {
   handleRemoveButtonClick = () => {
-    const { onChange, value, entry } = this.props;
-    const entryId = entry.id;
+    const { onChange, value, entryId } = this.props;
 
     onChange({ entryId, value: value - 1 > 0 ? value - 1 : 0 });
   };
 
   handleAddButtonClick = () => {
-    const { onChange, value, entry } = this.props;
-    const entryId = entry.id;
+    const { onChange, value, entryId } = this.props;
 
     onChange({ entryId, value: value + 1 });
   };
@@ -29,11 +27,7 @@ class EntryPickerController extends Component {
 
 EntryPickerController.propTypes = {
   children: PropTypes.func.isRequired,
-  entry: PropTypes.shape({
-    id: PropTypes.number.isRequired,
-    name: PropTypes.string.isRequired,
-    price: PropTypes.number.isRequired,
-  }).isRequired,
+  entryId: PropTypes.number.isRequired,
   onChange: PropTypes.func.isRequired,
   value: PropTypes.number,
 };
