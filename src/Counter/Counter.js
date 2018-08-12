@@ -4,24 +4,24 @@ import exactProp from '../utils/exactProp';
 
 /**
  * @example
-   <Counter
-     value={this.state.value}
-     onChange={this.handlePickerChange}
-     id={entry.id} // optional, will be passed to onChange callback
-     step={2} // optional
-     minValue={10} // optional
-     maxValue={20} // optional
-   >
-     {({ value, increase, decrease }) => (
-        // implement view (web / native)
-        <div>
-          <p>{entry.name}</p>
-          <button onClick={decrease}>-</button>
-          <span>{value}</span>
-          <button onClick={increase}>+</button>
-        </div>
-      )}
-   </Counter>
+  <Counter
+    value={this.state.value}
+    onChange={this.handlePickerChange}
+    id={entry.id} // optional, will be passed to onChange callback
+    step={2} // optional
+    minValue={10} // optional
+    maxValue={20} // optional
+  >
+   {({ value, increase, decrease }) => (
+      // implement view (web / native)
+      <div>
+        <p>{entry.name}</p>
+        <button onClick={decrease}>-</button>
+        <span>{value}</span>
+        <button onClick={increase}>+</button>
+      </div>
+    )}
+  </Counter>
  */
 
 class Counter extends Component {
