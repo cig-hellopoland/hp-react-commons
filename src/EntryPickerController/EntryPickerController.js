@@ -4,15 +4,15 @@ import exactProp from '../utils/exactProp';
 
 class EntryPickerController extends Component {
   handleRemoveButtonClick = () => {
-    const { onChange, value } = this.props;
-    const entryId = this.props.entry.id;
+    const { onChange, value, entry } = this.props;
+    const entryId = entry.id;
 
     onChange({ entryId, value: value - 1 > 0 ? value - 1 : 0 });
   };
 
   handleAddButtonClick = () => {
-    const { onChange, value } = this.props;
-    const entryId = this.props.entry.id;
+    const { onChange, value, entry } = this.props;
+    const entryId = entry.id;
 
     onChange({ entryId, value: value + 1 });
   };
