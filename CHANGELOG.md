@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.2.0
+* Added `EntryPickerController` component
+
 ## 0.1.6
 ### Changes
 * Updated npm pubishing scripts
