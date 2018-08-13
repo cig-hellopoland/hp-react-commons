@@ -1,6 +1,7 @@
 # Changelog
 
 ## 0.2.0
+* Added `MuiPickersDateFnsUtils` for date-fns v1
 * Added `Counter` component
 
 ## 0.1.7
