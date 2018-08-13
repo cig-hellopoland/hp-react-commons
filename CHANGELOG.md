@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.3.1
+* Fixed `ticketPoolDefinitions` duck
+
 ## 0.3.0
 * Added `ticketPoolDefinitions` duck
 * Changed `sights` and `sightEvents` ducks by adding `apiURL`
