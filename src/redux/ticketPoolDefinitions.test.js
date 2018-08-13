@@ -5,7 +5,7 @@ import reducer, {
   selectors,
   types,
   defaultInitialState,
-} from './sights';
+} from './ticketPoolDefinitions';
 
 
 /*
@@ -435,51 +435,51 @@ describe('selectors', () => {
     });
   });
 
-  describe('using getSight', () => {
+  describe('using getTicketPoolDefinition', () => {
     it('should return null if there is no item data', () => {
-      const { getSight } = selectors;
+      const { getTicketPoolDefinition } = selectors;
 
-      expect(getSight(appState)).toBeNull();
+      expect(getTicketPoolDefinition(appState)).toBeNull();
     });
 
     it('should return item data', () => {
-      const { getSight } = selectors;
+      const { getTicketPoolDefinition } = selectors;
       const expectedValue = { id: 1 };
       const state = generateAppState({ item: expectedValue });
 
-      expect(getSight(state)).toEqual(expectedValue);
+      expect(getTicketPoolDefinition(state)).toEqual(expectedValue);
     });
   });
 
-  describe('using getSights', () => {
+  describe('using getTicketPoolDefinitions', () => {
     it('should return null if there is no list data', () => {
-      const { getSights } = selectors;
+      const { getTicketPoolDefinitions } = selectors;
 
-      expect(getSights(appState)).toBeNull();
+      expect(getTicketPoolDefinitions(appState)).toBeNull();
     });
 
     it('should return list data', () => {
-      const { getSights } = selectors;
+      const { getTicketPoolDefinitions } = selectors;
       const expectedValue = [
         { id: 1 },
         { id: 2 },
       ];
       const state = generateAppState({ list: expectedValue });
 
-      expect(getSights(state)).toEqual(expectedValue);
+      expect(getTicketPoolDefinitions(state)).toEqual(expectedValue);
     });
   });
 
-  describe('using getSightById', () => {
+  describe('using getTicketPoolDefinitionById', () => {
     it('should return null if there is no item data', () => {
-      const { getSightById } = selectors;
+      const { getTicketPoolDefinitionById } = selectors;
 
-      expect(getSightById(appState)).toBeNull();
-      expect(getSightById(appState, 1)).toBeNull();
+      expect(getTicketPoolDefinitionById(appState)).toBeNull();
+      expect(getTicketPoolDefinitionById(appState, 1)).toBeNull();
     });
 
     it('should return list data', () => {
-      const { getSightById } = selectors;
+      const { getTicketPoolDefinitionById } = selectors;
       const id = 1;
       const expectedValue = [
         { id: 1 },
@@ -487,7 +487,7 @@ describe('selectors', () => {
       ];
       const state = generateAppState({ list: expectedValue });
 
-      expect(getSightById(state, id)).toEqual(expectedValue[0]);
+      expect(getTicketPoolDefinitionById(state, id)).toEqual(expectedValue[0]);
     });
   });
 });
@@ -502,7 +502,7 @@ describe('reducer', () => {
   });
 
   it('should return current state if action type was not found', () => {
-    expect(reducer()(initialState, { type: 'INVALID_TYPE' })).toEqual(initialState);
+    expect(reducer()(undefined, { type: 'INVALID_TYPE' })).toEqual(defaultInitialState);
   });
 
   it('should handle CLEAR_SEARCH_RESULTS', () => {
