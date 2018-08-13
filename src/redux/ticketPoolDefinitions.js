@@ -1,13 +1,14 @@
 /* eslint-disable-next-line no-unused-vars */
-import regeneratorRuntime from '@babel/runtime/regenerator';
+// import regeneratorRuntime from '@babel/runtime/regenerator';
 import { createLogic } from 'redux-logic';
 import _find from 'lodash/find';
 
 const debounceTime = 500;
 
-export const apiURL = '/sight-events';
-export const name = 'sightEvents';
+export const apiURL = '/ticket-pool-definitions';
+export const name = 'ticketPoolDefinitions';
 const prefix = `commons/${name}/`;
+
 
 /*
  * TYPES
@@ -423,7 +424,7 @@ const getError = state => getState(state).error;
  * @param {Object} state
  * @return {*}
  */
-const getSightEvent = state => getState(state).item;
+const getTicketPoolDefinition = state => getState(state).item;
 
 /**
  * Returns currently loaded SightEvents list.
@@ -432,7 +433,7 @@ const getSightEvent = state => getState(state).item;
  * @param {Object} state
  * @return {*}
  */
-const getSightEvents = state => getState(state).list;
+const getTicketPoolDefinitions = state => getState(state).list;
 
 /**
  * Returns SightEvent with specified id from SightEvents list.
@@ -442,17 +443,17 @@ const getSightEvents = state => getState(state).list;
  * @param {number} id - Sight id
  * @return {*}
  */
-const getSightEventById = (state, id) => {
-  const list = getSightEvents(state);
+const getTicketPoolDefinitionById = (state, id) => {
+  const list = getTicketPoolDefinitions(state);
 
   return _find(list, { id }) || null;
 };
 
 export const selectors = {
   getError,
-  getSightEvent,
-  getSightEventById,
-  getSightEvents,
+  getTicketPoolDefinition,
+  getTicketPoolDefinitionById,
+  getTicketPoolDefinitions,
   getState,
 };
 
@@ -461,7 +462,7 @@ export const selectors = {
  * LOGIC
  */
 
-const clearSightEventSearchResultsLogic = createLogic({
+const clearTicketPoolDefinitionsSearchResultsLogic = createLogic({
   type: [
     CLEAR_SEARCH_RESULTS,
   ],
@@ -473,7 +474,7 @@ const clearSightEventSearchResultsLogic = createLogic({
   },
 });
 
-const createSightEventItemLogic = createLogic({
+const createTicketPoolDefinitionsItemLogic = createLogic({
   type: [
     CREATE_ITEM,
   ],
@@ -496,7 +497,7 @@ const createSightEventItemLogic = createLogic({
   },
 });
 
-const deleteSightEventItemLogic = createLogic({
+const deleteTicketPoolDefinitionItemLogic = createLogic({
   type: [
     DELETE_ITEM,
   ],
@@ -519,7 +520,7 @@ const deleteSightEventItemLogic = createLogic({
   },
 });
 
-const fetchSightEventItemLogic = createLogic({
+const fetchTicketPoolDefinitionItemLogic = createLogic({
   type: [
     FETCH_ITEM,
   ],
@@ -544,7 +545,7 @@ const fetchSightEventItemLogic = createLogic({
   },
 });
 
-const fetchSightEventListLogic = createLogic({
+const fetchTicketPoolDefinitionsListLogic = createLogic({
   type: [
     FETCH_LIST,
   ],
@@ -569,7 +570,7 @@ const fetchSightEventListLogic = createLogic({
   },
 });
 
-const fetchSightEventSearchResultsLogic = createLogic({
+const fetchTicketPoolDefinitionsSearchResultsLogic = createLogic({
   type: [
     FETCH_SEARCH_RESULTS,
   ],
@@ -594,7 +595,7 @@ const fetchSightEventSearchResultsLogic = createLogic({
   },
 });
 
-const updateSightEventItemLogic = createLogic({
+const updateTicketPoolDefinitionItemLogic = createLogic({
   type: [
     UPDATE_ITEM,
   ],
@@ -618,13 +619,13 @@ const updateSightEventItemLogic = createLogic({
 });
 
 export const logic = {
-  clearSightEventSearchResultsLogic,
-  createSightEventItemLogic,
-  deleteSightEventItemLogic,
-  fetchSightEventItemLogic,
-  fetchSightEventListLogic,
-  fetchSightEventSearchResultsLogic,
-  updateSightEventItemLogic,
+  clearTicketPoolDefinitionsSearchResultsLogic,
+  createTicketPoolDefinitionsItemLogic,
+  deleteTicketPoolDefinitionItemLogic,
+  fetchTicketPoolDefinitionItemLogic,
+  fetchTicketPoolDefinitionsListLogic,
+  fetchTicketPoolDefinitionsSearchResultsLogic,
+  updateTicketPoolDefinitionItemLogic,
 };
 
 

@@ -6,6 +6,7 @@ import { actions as sightEventsActions } from './sightEvents';
 
 const debounceTime = 500;
 
+export const apiURL = '/sights';
 export const name = 'sights';
 const prefix = `commons/${name}/`;
 
@@ -99,7 +100,7 @@ const clearItem = () => ({
 const createItem = (data, options) => ({
   type: CREATE_ITEM,
   payload: {
-    url: '/sights',
+    url: apiURL,
     method: 'post',
     ...options,
     data,
@@ -141,7 +142,7 @@ const createItemSuccess = data => ({
 const deleteItem = (id, options) => ({
   type: DELETE_ITEM,
   payload: {
-    url: `/sights/${id}`,
+    url: `${apiURL}/${id}`,
     method: 'delete',
     ...options,
   },
@@ -180,7 +181,7 @@ const deleteItemSuccess = () => ({
 const fetchItem = (id, options) => ({
   type: FETCH_ITEM,
   payload: {
-    url: `/sights/${id}`,
+    url: `${apiURL}/${id}`,
     method: 'get',
     ...options,
   },
@@ -231,7 +232,7 @@ const fetchItemSuccess = data => ({
 const fetchList = (data, options) => ({
   type: FETCH_LIST,
   payload: {
-    url: '/sights',
+    url: apiURL,
     method: 'get',
     ...options,
     data,
@@ -283,7 +284,7 @@ const fetchListSuccess = data => ({
 const fetchSearchResults = (data, options) => ({
   type: FETCH_SEARCH_RESULTS,
   payload: {
-    url: '/sights/search',
+    url: `${apiURL}/search`,
     method: 'post',
     ...options,
     data,
@@ -336,7 +337,7 @@ const fetchSearchResultsSuccess = data => ({
 const updateItem = (id, data, options) => ({
   type: UPDATE_ITEM,
   payload: {
-    url: `/sights/${id}`,
+    url: `${apiURL}/${id}`,
     method: 'put',
     ...options,
     data,

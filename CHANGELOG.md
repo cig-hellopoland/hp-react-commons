@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.3.0
+* Added `ticketPoolDefinitions` duck
+* Changed `sights` and `sightEvents` ducks by adding `apiURL`
+
 ## 0.2.0
 * Added `MuiPickersDateFnsUtils` for date-fns v1
 * Added `Counter` component
