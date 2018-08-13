@@ -1,5 +1,6 @@
 import reducer, {
   actions,
+  apiURL,
   name,
   selectors,
   types,
@@ -57,7 +58,7 @@ describe('actions', () => {
     const expectedValue = {
       type: CREATE_ITEM,
       payload: {
-        url: '/sight-events',
+        url: apiURL,
         method: 'post',
         data,
       },
@@ -109,7 +110,7 @@ describe('actions', () => {
     const expectedValue = {
       type: DELETE_ITEM,
       payload: {
-        url: `/sight-events/${id}`,
+        url: `${apiURL}/${id}`,
         method: 'delete',
       },
     };
@@ -168,7 +169,7 @@ describe('actions', () => {
     const expectedValue = {
       type: FETCH_ITEM,
       payload: {
-        url: `/sight-events/${id}`,
+        url: `${apiURL}/${id}`,
         method: 'get',
       },
     };
@@ -229,7 +230,7 @@ describe('actions', () => {
     const expectedValue = {
       type: FETCH_LIST,
       payload: {
-        url: '/sight-events',
+        url: apiURL,
         method: 'get',
       },
     };
@@ -301,7 +302,7 @@ describe('actions', () => {
     const expectedValue = {
       type: FETCH_SEARCH_RESULTS,
       payload: {
-        url: '/sight-events/search',
+        url: `${apiURL}/search`,
         method: 'post',
         data,
       },
@@ -364,7 +365,7 @@ describe('actions', () => {
     const expectedValue = {
       type: UPDATE_ITEM,
       payload: {
-        url: `/sight-events/${id}`,
+        url: `${apiURL}/${id}`,
         method: 'put',
         data,
       },
