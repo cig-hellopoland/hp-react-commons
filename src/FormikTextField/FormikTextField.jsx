@@ -11,24 +11,19 @@ import React from 'react';
 import { Formik } from 'formik';
 import FormikTextField from '@hello-poland/commons/FormikTextField';
 import Button from '@material-ui/core/Button';
+import yupObject from 'yup/lib/object';
+import yupString from 'yup/lib/string';
+import setLocale from 'yup/lib/setLocale';
+import plLocale from '@hello-poland/commons/utils/yupLocalePl';
 
-function validate(values) {
-  const errors = {};
+// set yup locale to pl
+setLocale(plLocale);
 
-  if (!values.email) {
-    errors.email = 'Required';
-  } else if (values.email.length <= 3) {
-    errors.email = 'Minimal length is 4';
-  }
-
-  if (!values.password) {
-    errors.password = 'Required';
-  } else if (values.password.length < 8) {
-    errors.password = 'Password should have at least 8 symbols';
-  }
-
-  return errors;
-}
+// use yup for validation
+const schema = yupObject().shape({
+  email: yupString().email().required(),
+  password: yupString().min(8).max(40).required(),
+});
 
 const Form = () => (
  <Formik
@@ -36,7 +31,7 @@ const Form = () => (
       email: '',
       password: '',
     }}
-   validate={validate}
+   validationSchema={schema}
    onSubmit={(
      values,
      { setSubmitting, setErrors }
