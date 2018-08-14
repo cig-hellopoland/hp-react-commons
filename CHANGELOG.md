@@ -1,6 +1,9 @@
 # Changelog
 
-## 0.3.1
+## 0.4.0
+* Added `FormikTextField` component
+
+## 0.3.2
 * Fixed `ticketPoolDefinitions` duck
 
 ## 0.3.0
