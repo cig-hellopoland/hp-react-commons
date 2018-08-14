@@ -2,6 +2,7 @@
 
 ## 0.4.0
 * Added `FormikTextField` component
+* Added `yupLocalePl` util
 
 ## 0.3.2
 * Fixed `ticketPoolDefinitions` duck
