@@ -13,6 +13,11 @@ import { TextField } from 'formik-material-ui';
 import Button from '@material-ui/core/Button';
 import yupObject from 'yup/lib/object';
 import yupString from 'yup/lib/string';
+import setLocale from 'yup/lib/setLocale';
+import plLocale from '@hello-poland/commons/utils/yupLocalePl';
+
+// set yup locale to pl
+setLocale(plLocale);
 
 // use yup for validation
 const schema = yupObject().shape({
