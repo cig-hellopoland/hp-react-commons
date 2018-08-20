@@ -1,7 +1,7 @@
 # Changelog
 
 ## 0.4.0
-* Added `FormikTextField` component
+* Added `Forms` docs
 * Added `yupLocalePl` util
 
 ## 0.3.2
