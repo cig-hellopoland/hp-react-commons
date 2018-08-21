@@ -2,7 +2,7 @@ import { createLogic } from 'redux-logic';
 import { types as userTypes } from './profile';
 
 export const name = 'order';
-const prefix = `shared/${name}/`;
+const prefix = `commons/${name}/`;
 
 
 /*
