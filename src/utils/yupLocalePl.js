@@ -7,7 +7,7 @@ const mixed = {
 
 const string = {
   min: 'Minimum ${min} znaków',
-  max: 'Maximum ${max} znaków',
+  max: 'Maksimum ${max} znaków',
   email: 'Wpisz poprawny adres e-mail',
 };
 
