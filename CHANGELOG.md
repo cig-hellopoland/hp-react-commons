@@ -2,6 +2,7 @@
 
 ## 0.4.0
 * Added `Forms` docs
+* Added `yupLocalePl` util
 
 ## 0.3.2
 * Fixed `ticketPoolDefinitions` duck
