@@ -1,6 +1,6 @@
 {
   "name": "@hello-poland/commons",
-  "version": "0.3.3-beta3",
+  "version": "0.3.3-beta4",
   "main": "redux/index.js",
   "repository": {
     "type": "git",
