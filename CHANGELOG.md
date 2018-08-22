@@ -10,6 +10,10 @@
 ```
 logout(null, {}, () => { Router.push('/login') });
 ```
+* Added `onSuccess` callback to `login` action for performing side-effects.
+```
+login(data, {}, () => { Router.push('/') });
+```
 
 ## 0.3.1
 * Fixed `ticketPoolDefinitions` duck
