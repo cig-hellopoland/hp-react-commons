@@ -156,7 +156,7 @@ const loginSuccess = data => ({
  * @param {Object} [options] - request options
  * @return {{type: string, payload: { url: string, method: string, data: *}}}
  */
-const logout = (/* DEPRECATED */ data, options) => ({
+const logout = (/* DEPRECATED */ data, options, onSuccess) => ({
   type: LOGOUT,
   payload: {
     url: '/logout',
@@ -164,6 +164,7 @@ const logout = (/* DEPRECATED */ data, options) => ({
     ...options,
     data,
   },
+  onSuccess,
 });
 
 /**
@@ -362,6 +363,7 @@ const logoutLogic = createLogic({
 
       if (status === 200) {
         dispatch(logoutSuccess());
+        action.onSuccess();
       }
     }
 
