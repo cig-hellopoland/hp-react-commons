@@ -349,7 +349,7 @@ const logoutLogic = createLogic({
     LOGOUT,
   ],
   async process({
-    action, httpClient, cancelled$, getState: getReduxState
+    action, httpClient, cancelled$, getState: getReduxState,
   }, dispatch, done) {
     if (isAuthenticated(getReduxState())) {
       const { accessToken, refreshToken } = getCredentials(getReduxState());
