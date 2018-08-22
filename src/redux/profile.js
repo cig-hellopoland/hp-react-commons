@@ -152,11 +152,11 @@ const loginSuccess = data => ({
  * Creates action with login request details.
  *
  * @method
- * @param {Object} [data] - request data
+ * @param {Object} [data] - DEPRECATED - tokens will be taken automatically from store
  * @param {Object} [options] - request options
  * @return {{type: string, payload: { url: string, method: string, data: *}}}
  */
-const logout = (data, options) => ({
+const logout = (/* DEPRECATED */ data, options) => ({
   type: LOGOUT,
   payload: {
     url: '/logout',
@@ -347,10 +347,24 @@ const logoutLogic = createLogic({
   type: [
     LOGOUT,
   ],
-  async process({ action: { payload }, httpClient }, dispatch, done) {
-    httpClient(payload);
+  async process({
+    action, httpClient, cancelled$, getState: getReduxState
+  }, dispatch, done) {
+    if (isAuthenticated(getReduxState())) {
+      const { accessToken, refreshToken } = getCredentials(getReduxState());
+      const { status } = await httpClient.cancellable({
+        ...action.payload,
+        data: {
+          accessToken,
+          refreshToken,
+        },
+      }, cancelled$);
 
-    dispatch(logoutSuccess());
+      if (status === 200) {
+        dispatch(logoutSuccess());
+      }
+    }
+
     done();
   },
 });
@@ -385,7 +399,7 @@ export const logic = {
  */
 // export for test purposes
 export const defaultInitialState = {
-  credentials: null,
+  credentials: {},
   error: null,
   isAuthenticated: false,
   profile: null,
