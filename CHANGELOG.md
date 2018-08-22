@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.3.3
+* Fixed `profile` duck to get tokens from store automatically when calling `logout` action.
+```diff
+- login({ accessToken, refreshToken })
++ login()
+```
+
 ## 0.3.1
 * Fixed `ticketPoolDefinitions` duck
 
