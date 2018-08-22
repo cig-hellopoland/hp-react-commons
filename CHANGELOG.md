@@ -6,6 +6,10 @@
 - login({ accessToken, refreshToken })
 + login()
 ```
+* Added `onSuccess` callback to `logout` action for performing side-effects.
+```
+logout(null, {}, () => { Router.push('/login') });
+```
 
 ## 0.3.1
 * Fixed `ticketPoolDefinitions` duck
