@@ -367,7 +367,7 @@ const logoutLogic = createLogic({
 
       if (status === 200) {
         dispatch(logoutSuccess());
-        if (onSuccess) {
+        if (action.onSuccess) {
           action.onSuccess();
         }
       }
