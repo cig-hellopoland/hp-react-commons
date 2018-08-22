@@ -114,7 +114,7 @@ const fetchProfileSuccess = data => ({
  * @param {Object} [options] - request options
  * @return {{type: string, payload: { url: string, method: string, data: *}}}
  */
-const login = (data, options) => ({
+const login = (data, options, onSuccess) => ({
   type: LOGIN,
   payload: {
     url: '/login',
@@ -122,6 +122,7 @@ const login = (data, options) => ({
     ...options,
     data,
   },
+  onSuccess,
 });
 
 /**
@@ -327,12 +328,15 @@ const loginLogic = createLogic({
   type: [
     LOGIN,
   ],
-  async process({ action: { payload }, httpClient }, dispatch, done) {
+  async process({ action: { payload, onSuccess }, httpClient }, dispatch, done) {
     try {
       const { data, status } = await httpClient(payload);
 
       if (status === 200 || status === 204) {
         dispatch(loginSuccess(data));
+        if (onSuccess) {
+          onSuccess();
+        }
       } else {
         dispatch(loginFailure());
       }
