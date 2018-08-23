@@ -10,7 +10,7 @@ const prefix = `commons/${name}/`;
  */
 
 const CLEAR_ORDER = `${prefix}CLEAR_ORDER`;
-const CLEAR_HASH = `${prefix}CLEAR_HASH`;
+const CLEAR_TRANSACTION = `${prefix}CLEAR_TRANSACTION`;
 const SEND_ORDER = `${prefix}SEND_ORDER`;
 const SEND_ORDER_CANCEL = `${prefix}SEND_ORDER_CANCEL`;
 const SEND_ORDER_FAILURE = `${prefix}SEND_ORDER_FAILURE`;
@@ -23,8 +23,8 @@ const UPDATE_ENTRIES = `${prefix}UPDATE_ENTRIES`;
  * ACTIONS
  */
 
-const clearHash = () => ({
-  type: CLEAR_HASH,
+const clearTransaction = () => ({
+  type: CLEAR_TRANSACTION,
 });
 
 const clearOrder = () => ({
@@ -75,15 +75,15 @@ const initialState = {
   details: {},
   entries: [],
   error: null,
-  orderHash: null,
+  transaction: {},
 };
 
 function reducer(state = initialState, action) {
   const actions = {
-    [CLEAR_HASH]: () => ({
+    [CLEAR_TRANSACTION]: () => ({
       ...state,
       error: null,
-      orderHash: null,
+      transaction: initialState.transaction,
     }),
     [CLEAR_ORDER]: () => ({
       ...initialState,
@@ -94,12 +94,11 @@ function reducer(state = initialState, action) {
         ...action.data,
         status: action.status,
       },
-      hash: null,
     }),
     [SEND_ORDER_SUCCESS]: () => ({
       ...state,
       error: null,
-      orderHash: action.data.hash,
+      transaction: action.data,
     }),
     [UPDATE_DETAILS]: () => ({
       ...state,
@@ -169,7 +168,7 @@ const getEntries = state => getState(state).entries;
 
 const getError = state => getState(state).error;
 
-const getHash = state => getState(state).orderHash;
+const getTransaction = state => getState(state).transaction;
 
 const getOrder = (state) => {
   const { details, entries } = getState(state);
@@ -188,7 +187,7 @@ const getOrder = (state) => {
 export default reducer;
 
 export const types = {
-  CLEAR_HASH,
+  CLEAR_TRANSACTION,
   CLEAR_ORDER,
   SEND_ORDER,
   SEND_ORDER_CANCEL,
@@ -199,7 +198,7 @@ export const types = {
 };
 
 export const actions = {
-  clearHash,
+  clearTransaction,
   clearOrder,
   sendOrder,
   sendOrderCancel,
@@ -218,7 +217,7 @@ export const selectors = {
   getDetails,
   getEntries,
   getError,
-  getHash,
+  getTransaction,
   getOrder,
   getState,
 };
