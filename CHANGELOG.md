@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.4.0
+* Added `profileSubscriber` redux service
+
 ## 0.3.1
 * Fixed `ticketPoolDefinitions` duck
 
