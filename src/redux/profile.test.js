@@ -131,7 +131,7 @@ describe('actions', () => {
       },
     };
 
-    expect(login(data, options)).toEqual(expectedValue);
+    expect(login({ data, options })).toEqual(expectedValue);
   });
 
   it('should create an action to fail login request', () => {
@@ -165,7 +165,6 @@ describe('actions', () => {
   it('should create an action to make logout request', () => {
     const { logout } = actions;
     const { LOGOUT } = types;
-    const data = {};
     const options = { a: 1, data: 2 };
     const expectedValue = {
       type: LOGOUT,
@@ -179,18 +178,10 @@ describe('actions', () => {
 
     expectedValue.payload = {
       ...expectedValue.payload,
-      data,
-    };
-
-    expect(logout(data)).toEqual(expectedValue);
-
-    expectedValue.payload = {
-      ...expectedValue.payload,
       ...options,
-      data,
     };
 
-    expect(logout(data, options)).toEqual(expectedValue);
+    expect(logout({ options })).toEqual(expectedValue);
   });
 
   it('should create an action to succeed logout request', () => {
