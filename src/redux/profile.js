@@ -160,7 +160,7 @@ const loginSuccess = data => ({
  * @param {Function} [params.onSuccess] - function, which will be called when logout succeed
  * @return {{type: string, payload: { url: string, method: string, data: *}}}
  */
-const logout = ({ options, onSuccess }) => ({
+const logout = ({ options, onSuccess } = {}) => ({
   type: LOGOUT,
   payload: {
     url: '/logout',
