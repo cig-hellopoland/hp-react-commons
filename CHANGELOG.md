@@ -1,25 +1,30 @@
 # Changelog
 
 ## 0.4.0
-* Fixed `profile` duck to get tokens from store automatically when calling `logout` action.
+* Fixed `profile` duck to get tokens from store automatically when calling `logout` action:
+
 ```diff
 - logout({ accessToken, refreshToken })
 + logout()
 ```
 * Changed `login` action signature:
+
 ```diff
 - login(data, options)
 + login({ data, options })
 ```
-* Added `onSuccess` callback to `logout` action for performing side-effects.
-```
+* Added `onSuccess` callback to `logout` action for performing side-effects:
+
+```js
 logout({ onSuccess: () => Router.push('/login') });
 ```
-* Added `onSuccess` callback to `login` action for performing side-effects.
-```
+* Added `onSuccess` callback to `login` action for performing side-effects:
+
+```js
 login({ onSuccess: () => Router.push('/') });
 ```
 * Added `profileSubscriber` redux service
+* Added `order` duck
 
 ## 0.3.1
 * Fixed `ticketPoolDefinitions` duck
