@@ -25,8 +25,10 @@ login({ onSuccess: () => Router.push('/') });
 ```
 * Added `profileSubscriber` redux service
 * Added `order` duck
+* Added `Forms` docs
+* Added `yupLocalePl` util
 
-## 0.3.1
+## 0.3.2
 * Fixed `ticketPoolDefinitions` duck
 
 ## 0.3.0
