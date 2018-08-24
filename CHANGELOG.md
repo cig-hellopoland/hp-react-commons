@@ -19,6 +19,7 @@ logout({ onSuccess: () => Router.push('/login') });
 ```
 login({ onSuccess: () => Router.push('/') });
 ```
+* Added `profileSubscriber` redux service
 
 ## 0.3.1
 * Fixed `ticketPoolDefinitions` duck
