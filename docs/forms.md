@@ -42,7 +42,8 @@ const LoginForm = () => (
         // handle errors
         if (!ok) {
           let transformedErrors;
-          // transformedErrors = transformMyApiErrors(errors)
+          // transform errors from API to form errors
+          // e.g. transformedErrors = transformMyApiErrors(errors)
           setErrors(transformedErrors);
         }
       }, 1000);
