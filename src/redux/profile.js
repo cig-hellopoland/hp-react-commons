@@ -108,13 +108,15 @@ const fetchProfileSuccess = data => ({
  * Creates action with login request details.
  *
  * @method
- * @param {Object} data - request data
- * @param {string} data.login
- * @param {string} data.password
- * @param {Object} [options] - request options
+ * @param {Object} params
+ * @param {Object} params.data - request data
+ * @param {string} params.data.login
+ * @param {string} params.data.password
+ * @param {Object} [params.options] - request options
+ * @param {Function} [params.onSuccess] - function, which will be called when login succeed
  * @return {{type: string, payload: { url: string, method: string, data: *}}}
  */
-const login = (data, options) => ({
+const login = ({ data, options, onSuccess }) => ({
   type: LOGIN,
   payload: {
     url: '/login',
@@ -122,6 +124,7 @@ const login = (data, options) => ({
     ...options,
     data,
   },
+  onSuccess,
 });
 
 /**
@@ -152,18 +155,19 @@ const loginSuccess = data => ({
  * Creates action with login request details.
  *
  * @method
- * @param {Object} [data] - request data
- * @param {Object} [options] - request options
+ * @param {Object} [params]
+ * @param {Object} [params.options] - request options
+ * @param {Function} [params.onSuccess] - function, which will be called when logout succeed
  * @return {{type: string, payload: { url: string, method: string, data: *}}}
  */
-const logout = (data, options) => ({
+const logout = ({ options, onSuccess } = {}) => ({
   type: LOGOUT,
   payload: {
     url: '/logout',
     method: 'post',
     ...options,
-    data,
   },
+  onSuccess,
 });
 
 /**
@@ -326,12 +330,15 @@ const loginLogic = createLogic({
   type: [
     LOGIN,
   ],
-  async process({ action: { payload }, httpClient }, dispatch, done) {
+  async process({ action: { payload, onSuccess }, httpClient }, dispatch, done) {
     try {
       const { data, status } = await httpClient(payload);
 
       if (status === 200 || status === 204) {
         dispatch(loginSuccess(data));
+        if (onSuccess) {
+          onSuccess();
+        }
       } else {
         dispatch(loginFailure());
       }
@@ -347,10 +354,26 @@ const logoutLogic = createLogic({
   type: [
     LOGOUT,
   ],
-  async process({ action: { payload }, httpClient }, dispatch, done) {
-    httpClient(payload);
+  async process({
+    action: { payload, onSuccess }, httpClient, getState: getReduxState,
+  }, dispatch, done) {
+    if (isAuthenticated(getReduxState())) {
+      const { accessToken, refreshToken } = getCredentials(getReduxState());
+      httpClient({
+        ...payload,
+        data: {
+          accessToken,
+          refreshToken,
+        },
+      });
 
-    dispatch(logoutSuccess());
+      dispatch(logoutSuccess());
+
+      if (onSuccess) {
+        onSuccess();
+      }
+    }
+
     done();
   },
 });
@@ -385,7 +408,7 @@ export const logic = {
  */
 // export for test purposes
 export const defaultInitialState = {
-  credentials: null,
+  credentials: {},
   error: null,
   isAuthenticated: false,
   profile: null,
