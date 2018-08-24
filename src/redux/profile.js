@@ -355,23 +355,22 @@ const logoutLogic = createLogic({
     LOGOUT,
   ],
   async process({
-    action, httpClient, cancelled$, getState: getReduxState,
+    action: { payload, onSuccess }, httpClient, getState: getReduxState,
   }, dispatch, done) {
     if (isAuthenticated(getReduxState())) {
       const { accessToken, refreshToken } = getCredentials(getReduxState());
-      const { status } = await httpClient.cancellable({
-        ...action.payload,
+      httpClient({
+        ...payload,
         data: {
           accessToken,
           refreshToken,
         },
-      }, cancelled$);
+      });
 
-      if (status === 200) {
-        dispatch(logoutSuccess());
-        if (action.onSuccess) {
-          action.onSuccess();
-        }
+      dispatch(logoutSuccess());
+
+      if (onSuccess) {
+        onSuccess();
       }
     }
 
