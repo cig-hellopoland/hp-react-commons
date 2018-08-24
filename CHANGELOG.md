@@ -1,18 +1,23 @@
 # Changelog
 
-## 0.3.3
+## 0.4.0
 * Fixed `profile` duck to get tokens from store automatically when calling `logout` action.
 ```diff
-- login({ accessToken, refreshToken })
-+ login()
+- logout({ accessToken, refreshToken })
++ logout()
+```
+* Changed `login` action signature:
+```diff
+- login(data, options)
++ login({ data, options })
 ```
 * Added `onSuccess` callback to `logout` action for performing side-effects.
 ```
-logout(null, {}, () => { Router.push('/login') });
+logout({ onSuccess: () => Router.push('/login') });
 ```
 * Added `onSuccess` callback to `login` action for performing side-effects.
 ```
-login(data, {}, () => { Router.push('/') });
+login({ onSuccess: () => Router.push('/') });
 ```
 
 ## 0.3.1
