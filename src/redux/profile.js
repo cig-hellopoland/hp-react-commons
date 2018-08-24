@@ -108,13 +108,15 @@ const fetchProfileSuccess = data => ({
  * Creates action with login request details.
  *
  * @method
- * @param {Object} data - request data
- * @param {string} data.login
- * @param {string} data.password
- * @param {Object} [options] - request options
+ * @param {Object} params
+ * @param {Object} params.data - request data
+ * @param {string} params.data.login
+ * @param {string} params.data.password
+ * @param {Object} [params.options] - request options
+ * @param {Function} [params.onSuccess] - function, which will be called when login succeed
  * @return {{type: string, payload: { url: string, method: string, data: *}}}
  */
-const login = (data, options, onSuccess) => ({
+const login = ({ data, options, onSuccess }) => ({
   type: LOGIN,
   payload: {
     url: '/login',
@@ -153,17 +155,17 @@ const loginSuccess = data => ({
  * Creates action with login request details.
  *
  * @method
- * @param {Object} [data] - DEPRECATED - tokens will be taken automatically from store
- * @param {Object} [options] - request options
+ * @param {Object} [params]
+ * @param {Object} [params.options] - request options
+ * @param {Function} [params.onSuccess] - function, which will be called when logout succeed
  * @return {{type: string, payload: { url: string, method: string, data: *}}}
  */
-const logout = (/* DEPRECATED */ data, options, onSuccess) => ({
+const logout = ({ options, onSuccess }) => ({
   type: LOGOUT,
   payload: {
     url: '/logout',
     method: 'post',
     ...options,
-    data,
   },
   onSuccess,
 });
