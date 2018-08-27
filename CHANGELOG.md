@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.4.1
+* Set default initial state `profile` key to empty object in `profile` duck
+
 ## 0.4.0
 * Fixed `profile` duck to get tokens from store automatically when calling `logout` action:
 
