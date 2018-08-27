@@ -411,7 +411,7 @@ export const defaultInitialState = {
   credentials: {},
   error: null,
   isAuthenticated: false,
-  profile: null,
+  profile: {},
 };
 
 const reducer = (initialState = defaultInitialState) => (state = initialState, action) => {
