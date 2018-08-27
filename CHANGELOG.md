@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.4.2
+* Changed `TicketPoolDefinitions` list fetching action to one from `SightEvents` duck.
+
 ## 0.4.1
 * Set default initial state `profile` key to empty object in `profile` duck
 

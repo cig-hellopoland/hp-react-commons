@@ -2,6 +2,7 @@
 import regeneratorRuntime from '@babel/runtime/regenerator';
 import { createLogic } from 'redux-logic';
 import _find from 'lodash/find';
+import { actions as sightEventsActions } from './sightEvents';
 
 const debounceTime = 500;
 
@@ -485,7 +486,8 @@ const createTicketPoolDefinitionsItemLogic = createLogic({
 
       if (status === 200 || status === 204) {
         dispatch(createItemSuccess(data));
-        dispatch(fetchList());
+        // dispatch(fetchList());
+        dispatch(sightEventsActions.fetchList());
       } else {
         dispatch(createItemFailure());
       }
@@ -508,7 +510,8 @@ const deleteTicketPoolDefinitionItemLogic = createLogic({
 
       if (status === 200 || status === 204) {
         dispatch(deleteItemSuccess());
-        dispatch(fetchList());
+        // dispatch(fetchList());
+        dispatch(sightEventsActions.fetchList());
       } else {
         dispatch(deleteItemFailure());
       }
@@ -606,7 +609,8 @@ const updateTicketPoolDefinitionItemLogic = createLogic({
 
       if (status === 200 || status === 201) {
         dispatch(updateItemSuccess(data));
-        dispatch(fetchList());
+        // dispatch(fetchList());
+        dispatch(sightEventsActions.fetchList());
       } else {
         dispatch(updateItemFailure());
       }
