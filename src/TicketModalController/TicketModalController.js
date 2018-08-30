@@ -4,14 +4,19 @@ import _find from 'lodash/find';
 import getISOStringWithoutSeconds from '../utils/getISOStringWithoutSeconds';
 
 class TicketModalController extends Component {
-  state = {
-    activeStep: this.props.poolDefinition.isCyclic ? 1 : 2,
-    date: this.props.poolDefinition.isCyclic
-      ? new Date()
-      : new Date(this.props.poolDefinition.startDate),
-    ticketsQty: {}, // [entryId]: ticketsQty<Number>
-    checkedAgreements: {}, // [agreementId]: checked<Boolean>
-  };
+  constructor(props) {
+    super(props);
+    const { poolDefinition } = this.props;
+
+    this.state = {
+      activeStep: poolDefinition.isCyclic ? 1 : 2,
+      date: poolDefinition.isCyclic
+        ? new Date()
+        : new Date(poolDefinition.startDate),
+      ticketsQty: {}, // [entryId]: ticketsQty<Number>
+      checkedAgreements: {}, // [agreementId]: checked<Boolean>
+    };
+  }
 
   getTotalPrice = () => {
     const { ticketsQty } = this.state;
@@ -49,25 +54,28 @@ class TicketModalController extends Component {
   };
 
   handleNextButtonClick = () => {
-    if (this.state.activeStep <= this.props.steps - 1) {
+    const { activeStep } = this.state;
+    const { steps, onSubmit } = this.props;
+
+    if (activeStep <= steps - 1) {
       this.nextStep();
-    } else if (this.props.onSubmit) {
+    } else if (onSubmit) {
+      const { date, ticketsQty } = this.state;
       const { poolDefinition, sightEvent } = this.props;
       const { ticketDefinitions } = poolDefinition;
-      const date = getISOStringWithoutSeconds(this.state.date);
 
-      const entries = Object.keys(this.state.ticketsQty).map((entryId) => {
+      const entries = Object.keys(ticketsQty).map((entryId) => {
         const entry = _find(ticketDefinitions, { id: +entryId });
         return {
           id: entry.id,
           name: entry.name,
           price: entry.price,
-          quantity: this.state.ticketsQty[entryId],
-          date,
+          quantity: ticketsQty[entryId],
+          date: getISOStringWithoutSeconds(date),
         };
       });
 
-      this.props.onSubmit({
+      onSubmit({
         id: sightEvent.id,
         name: sightEvent.name,
         city: sightEvent.city,
@@ -77,7 +85,8 @@ class TicketModalController extends Component {
   };
 
   handlePrevButtonClick = () => {
-    if (this.state.activeStep > 1) {
+    const { activeStep } = this.state;
+    if (activeStep > 1) {
       this.prevStep();
     }
   };
