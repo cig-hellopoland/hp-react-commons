@@ -37,15 +37,15 @@ class TicketModalController extends Component {
   };
 
   nextStep = () => {
-    this.setState({
-      activeStep: this.state.activeStep + 1,
-    });
+    this.setState(state => ({
+      activeStep: state.activeStep + 1,
+    }));
   };
 
   prevStep = () => {
-    this.setState({
-      activeStep: this.state.activeStep - 1,
-    });
+    this.setState(state => ({
+      activeStep: state.activeStep - 1,
+    }));
   };
 
   handleNextButtonClick = () => {
@@ -87,21 +87,21 @@ class TicketModalController extends Component {
   };
 
   handleTicketsQtyChange = ({ id, value }) => {
-    this.setState({
+    this.setState(state => ({
       ticketsQty: {
-        ...this.state.ticketsQty,
+        ...state.ticketsQty,
         [id]: value,
       },
-    });
+    }));
   };
 
   handleAgreementChange = (agreementId, value) => {
-    this.setState({
+    this.setState(state => ({
       checkedAgreements: {
-        ...this.state.checkedAgreements,
+        ...state.checkedAgreements,
         [agreementId]: value,
       },
-    });
+    }));
   };
 
   render() {
