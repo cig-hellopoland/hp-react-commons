@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.5.0
+* Added `TicketModalController` component
+
 ## 0.4.2
 * Changed `TicketPoolDefinitions` list fetching action to one from `SightEvents` duck.
 
