@@ -1,7 +1,7 @@
 import { Component } from 'react';
 import PropTypes from 'prop-types';
 import _find from 'lodash/find';
-import getISOStringWithoutSeconds from '../utils/getISOStringWithoutSeconds';
+import getISOStringWithoutSeconds from 'utils/getISOStringWithoutSeconds';
 
 class TicketModalController extends Component {
   constructor(props) {
@@ -9,22 +9,22 @@ class TicketModalController extends Component {
     const { poolDefinition } = this.props;
 
     this.state = {
-      activeStep: poolDefinition.isCyclic ? 1 : 2,
-      date: poolDefinition.isCyclic
+      activeStep: poolDefinition.frequencyData ? 1 : 2,
+      date: poolDefinition.frequencyData
         ? new Date()
         : new Date(poolDefinition.startDate),
-      ticketsQty: {}, // [entryId]: ticketsQty<Number>
+      entries: {}, // [entryId]: { quantity: <Number> }
       checkedAgreements: {}, // [agreementId]: checked<Boolean>
     };
   }
 
   getTotalPrice = () => {
-    const { ticketsQty } = this.state;
+    const { entries } = this.state;
     const { poolDefinition: { ticketDefinitions } } = this.props;
 
-    return Object.keys(ticketsQty).reduce((acc, entryId) => {
+    return Object.keys(entries).reduce((acc, entryId) => {
       const entry = _find(ticketDefinitions, { id: +entryId });
-      const quantity = ticketsQty[entryId];
+      const { quantity } = entries[entryId];
 
       let total = 0;
 
@@ -37,8 +37,46 @@ class TicketModalController extends Component {
   };
 
   getTotalTickertsQty = () => {
-    const { ticketsQty } = this.state;
-    return Object.values(ticketsQty).reduce((sum, qty) => sum + qty, 0);
+    const { entries } = this.state;
+    return Object.values(entries).reduce((sum, { quantity }) => sum + quantity, 0);
+  };
+
+  getEntriesByPropName = (propertyName) => {
+    const { entries } = this.state;
+
+    return Object.keys(entries).reduce((acc, entryId) => {
+      const propertyValue = entries[entryId][propertyName];
+
+      if (propertyValue !== undefined) {
+        acc[entryId] = propertyValue;
+      }
+
+      return acc;
+    }, {});
+  };
+
+  generateCartItem = () => {
+    const { date, entries } = this.state;
+    const { poolDefinition, sightEvent } = this.props;
+    const { ticketDefinitions } = poolDefinition;
+
+    const entriesArray = Object.keys(entries).map((entryId) => {
+      const entry = _find(ticketDefinitions, { id: +entryId });
+      return {
+        id: entry.id,
+        name: entry.name,
+        price: entry.price,
+        quantity: entries[entryId].quantity,
+        date: getISOStringWithoutSeconds(date),
+      };
+    });
+
+    return {
+      id: sightEvent.id,
+      name: sightEvent.name,
+      city: sightEvent.city,
+      entries: entriesArray,
+    };
   };
 
   nextStep = () => {
@@ -60,27 +98,8 @@ class TicketModalController extends Component {
     if (activeStep <= steps - 1) {
       this.nextStep();
     } else if (onSubmit) {
-      const { date, ticketsQty } = this.state;
-      const { poolDefinition, sightEvent } = this.props;
-      const { ticketDefinitions } = poolDefinition;
-
-      const entries = Object.keys(ticketsQty).map((entryId) => {
-        const entry = _find(ticketDefinitions, { id: +entryId });
-        return {
-          id: entry.id,
-          name: entry.name,
-          price: entry.price,
-          quantity: ticketsQty[entryId],
-          date: getISOStringWithoutSeconds(date),
-        };
-      });
-
-      onSubmit({
-        id: sightEvent.id,
-        name: sightEvent.name,
-        city: sightEvent.city,
-        entries,
-      });
+      const cartItem = this.generateCartItem();
+      onSubmit(cartItem);
     }
   };
 
@@ -95,11 +114,14 @@ class TicketModalController extends Component {
     this.setState({ date });
   };
 
-  handleTicketsQtyChange = ({ id, value }) => {
+  handleEntryChange = (id, values) => {
     this.setState(state => ({
-      ticketsQty: {
-        ...state.ticketsQty,
-        [id]: value,
+      entries: {
+        ...state.entries,
+        [id]: {
+          ...state.entries[id],
+          ...values,
+        },
       },
     }));
   };
@@ -122,10 +144,11 @@ class TicketModalController extends Component {
       totalPrice: this.getTotalPrice(),
       totalTicketsQty: this.getTotalTickertsQty(),
       handleAgreementChange: this.handleAgreementChange,
-      handleTicketsQtyChange: this.handleTicketsQtyChange,
+      handleEntryChange: this.handleEntryChange,
       handleDateChange: this.handleDateChange,
       handlePrevButtonClick: this.handlePrevButtonClick,
       handleNextButtonClick: this.handleNextButtonClick,
+      getEntriesByPropName: this.getEntriesByPropName,
     });
   }
 }
@@ -138,7 +161,7 @@ TicketModalController.propTypes = {
     ticketDefinitions: PropTypes.arrayOf((
       PropTypes.shape({})
     )).isRequired,
-    isCyclic: PropTypes.bool.isRequired,
+    frequencyData: PropTypes.shape({}).isRequired,
     startDate: PropTypes.string.isRequired,
   }).isRequired,
   sightEvent: PropTypes.shape({
