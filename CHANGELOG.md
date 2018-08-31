@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.4.4
+* Added `tickets` duck
+
 ## 0.4.3
 * Added `TicketModalController` component
 
