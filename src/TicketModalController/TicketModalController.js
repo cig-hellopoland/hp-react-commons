@@ -13,7 +13,7 @@ class TicketModalController extends Component {
       date: poolDefinition.frequencyData
         ? new Date()
         : new Date(poolDefinition.startDate),
-      entries: {}, // [entryId]: { quantity: <Number> }
+      entries: {}, // [entryId]: { [propName]: * }
       checkedAgreements: {}, // [agreementId]: checked<Boolean>
     };
   }
