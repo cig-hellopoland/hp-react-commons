@@ -36,7 +36,7 @@ class TicketModalController extends Component {
     }, 0);
   };
 
-  getTotalTickertsQty = () => {
+  getTotalTicketsQty = () => {
     const { entries } = this.state;
     return Object.values(entries).reduce((sum, { quantity }) => sum + quantity, 0);
   };
@@ -142,7 +142,7 @@ class TicketModalController extends Component {
       ...props,
       ...this.state,
       totalPrice: this.getTotalPrice(),
-      totalTicketsQty: this.getTotalTickertsQty(),
+      totalTicketsQty: this.getTotalTicketsQty(),
       handleAgreementChange: this.handleAgreementChange,
       handleEntryChange: this.handleEntryChange,
       handleDateChange: this.handleDateChange,
