@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.5.0
+## 0.4.3
 * Added `TicketModalController` component
 
 ## 0.4.2
