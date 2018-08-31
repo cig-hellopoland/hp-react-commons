@@ -1,7 +1,7 @@
 import { Component } from 'react';
 import PropTypes from 'prop-types';
 import _find from 'lodash/find';
-import getISOStringWithoutSeconds from 'utils/getISOStringWithoutSeconds';
+import getISOStringWithoutSeconds from '../utils/getISOStringWithoutSeconds';
 
 class TicketModalController extends Component {
   constructor(props) {
