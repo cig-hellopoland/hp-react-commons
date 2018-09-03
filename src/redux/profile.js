@@ -1,5 +1,3 @@
-/* eslint-disable-next-line no-unused-vars */
-import regeneratorRuntime from '@babel/runtime/regenerator';
 import { createLogic } from 'redux-logic';
 
 export const name = 'profile';
