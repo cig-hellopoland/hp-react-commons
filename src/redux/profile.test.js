@@ -22,16 +22,6 @@ const appState = {
   [name]: initialState,
 };
 
-function onFailure() {}
-function onSuccess() {}
-
-const axiosResponseError = {
-  data: {
-    a: 1,
-  },
-  status: 500,
-};
-
 /*
  * Helper functions
  */
@@ -64,19 +54,21 @@ describe('actions', () => {
       type: ERROR_UNAUTHORIZED,
       payload: {},
     };
+    const data = { a: 1 };
 
     expect(errorUnauthorized()).toEqual(expectedValue);
 
-    const payload = { a: 1 };
-    expectedValue.payload = payload;
-
-    expect(errorUnauthorized(payload)).toEqual(expectedValue);
+    expect(errorUnauthorized({ data })).toEqual({
+      ...expectedValue,
+      payload: {
+        data,
+      },
+    });
   });
 
   it('should create an action to make profile request', () => {
     const { fetchProfile } = actions;
     const { FETCH_PROFILE } = types;
-    const options = { b: 2 };
     const expectedValue = {
       type: FETCH_PROFILE,
       payload: {
@@ -86,20 +78,6 @@ describe('actions', () => {
     };
 
     expect(fetchProfile()).toEqual(expectedValue);
-
-    expectedValue.payload = {
-      ...expectedValue.payload,
-      ...options,
-    };
-
-    expect(fetchProfile({ options })).toEqual(expectedValue);
-
-    expectedValue.onFailure = onFailure;
-    expectedValue.onSuccess = onSuccess;
-
-    expect(fetchProfile({
-      options, onFailure, onSuccess,
-    })).toEqual(expectedValue);
   });
 
   it('should create an action to cancel profile request', () => {
@@ -121,10 +99,6 @@ describe('actions', () => {
     };
 
     expect(fetchProfileFailure()).toEqual(expectedValue);
-
-    expectedValue.error = axiosResponseError;
-
-    expect(fetchProfileFailure(axiosResponseError)).toEqual(expectedValue);
   });
 
   it('should create an action to succeed profile request', () => {
@@ -158,13 +132,6 @@ describe('actions', () => {
     };
 
     expect(login({ data, options })).toEqual(expectedValue);
-
-    expectedValue.onFailure = onFailure;
-    expectedValue.onSuccess = onSuccess;
-
-    expect(login({
-      data, options, onFailure, onSuccess,
-    })).toEqual(expectedValue);
   });
 
   it('should create an action to fail login request', () => {
@@ -177,9 +144,10 @@ describe('actions', () => {
 
     expect(loginFailure()).toEqual(expectedValue);
 
-    expectedValue.error = axiosResponseError;
+    const error = { a: 1 };
+    expectedValue.error = error;
 
-    expect(loginFailure(axiosResponseError)).toEqual(expectedValue);
+    expect(loginFailure(error)).toEqual(expectedValue);
   });
 
   it('should create an action to succeed login request', () => {
@@ -214,13 +182,6 @@ describe('actions', () => {
     };
 
     expect(logout({ options })).toEqual(expectedValue);
-
-    expectedValue.onFailure = onFailure;
-    expectedValue.onSuccess = onSuccess;
-
-    expect(logout({
-      options, onFailure, onSuccess,
-    })).toEqual(expectedValue);
   });
 
   it('should create an action to succeed logout request', () => {
@@ -247,7 +208,7 @@ describe('actions', () => {
       },
     };
 
-    expect(refreshAccessToken({ data })).toEqual(expectedValue);
+    expect(refreshAccessToken(data)).toEqual(expectedValue);
 
     expectedValue.payload = {
       ...expectedValue.payload,
@@ -255,14 +216,7 @@ describe('actions', () => {
       data,
     };
 
-    expect(refreshAccessToken({ data, options })).toEqual(expectedValue);
-
-    expectedValue.onFailure = onFailure;
-    expectedValue.onSuccess = onSuccess;
-
-    expect(refreshAccessToken({
-      data, options, onFailure, onSuccess,
-    })).toEqual(expectedValue);
+    expect(refreshAccessToken(data, options)).toEqual(expectedValue);
   });
 
   it('should create an action to succeed refresh access token request', () => {
@@ -396,6 +350,9 @@ describe('reducer', () => {
   });
 
   it('should handle FETCH_PROFILE_FAILURE', () => {
+    const error = {
+      a: 1,
+    };
     let action = actions.fetchProfileFailure();
     const expectedValue = {
       ...defaultInitialState,
@@ -404,13 +361,16 @@ describe('reducer', () => {
 
     expect(reducer()(defaultInitialState, action)).toEqual(expectedValue);
 
-    action = actions.fetchProfileFailure(axiosResponseError);
-    expectedValue.error = axiosResponseError;
+    action = actions.fetchProfileFailure(error);
+    expectedValue.error = error;
 
     expect(reducer()(defaultInitialState, action)).toEqual(expectedValue);
   });
 
   it('should handle LOGIN_FAILURE', () => {
+    const error = {
+      a: 1,
+    };
     let action = actions.loginFailure();
     const expectedValue = {
       ...defaultInitialState,
@@ -419,8 +379,8 @@ describe('reducer', () => {
 
     expect(reducer()(defaultInitialState, action)).toEqual(expectedValue);
 
-    action = actions.loginFailure(axiosResponseError);
-    expectedValue.error = axiosResponseError;
+    action = actions.loginFailure(error);
+    expectedValue.error = error;
 
     expect(reducer()(defaultInitialState, action)).toEqual(expectedValue);
   });

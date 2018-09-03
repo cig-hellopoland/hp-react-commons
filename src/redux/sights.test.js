@@ -23,16 +23,6 @@ const appState = {
   [name]: initialState,
 };
 
-function onFailure() {}
-function onSuccess() {}
-
-const axiosResponseError = {
-  data: {
-    a: 1,
-  },
-  status: 500,
-};
-
 
 /*
  * Helper functions
@@ -74,21 +64,14 @@ describe('actions', () => {
       },
     };
 
-    expect(createItem({ data })).toEqual(expectedValue);
+    expect(createItem(data)).toEqual(expectedValue);
 
     expectedValue.payload = {
       ...expectedValue.payload,
       ...options,
     };
 
-    expect(createItem({ data, options })).toEqual(expectedValue);
-
-    expectedValue.onFailure = onFailure;
-    expectedValue.onSuccess = onSuccess;
-
-    expect(createItem({
-      data, options, onFailure, onSuccess,
-    })).toEqual(expectedValue);
+    expect(createItem(data, options)).toEqual(expectedValue);
   });
 
   it('should create an action to fail item create request', () => {
@@ -101,9 +84,10 @@ describe('actions', () => {
 
     expect(createItemFailure()).toEqual(expectedValue);
 
-    expectedValue.error = axiosResponseError;
+    const error = { a: 1 };
+    expectedValue.error = error;
 
-    expect(createItemFailure(axiosResponseError)).toEqual(expectedValue);
+    expect(createItemFailure(error)).toEqual(expectedValue);
   });
 
   it('should create an action to succeed item create request', () => {
@@ -131,21 +115,14 @@ describe('actions', () => {
       },
     };
 
-    expect(deleteItem({ id })).toEqual(expectedValue);
+    expect(deleteItem(id)).toEqual(expectedValue);
 
     expectedValue.payload = {
       ...expectedValue.payload,
       ...options,
     };
 
-    expect(deleteItem({ id, options })).toEqual(expectedValue);
-
-    expectedValue.onFailure = onFailure;
-    expectedValue.onSuccess = onSuccess;
-
-    expect(deleteItem({
-      id, options, onFailure, onSuccess,
-    })).toEqual(expectedValue);
+    expect(deleteItem(id, options)).toEqual(expectedValue);
   });
 
   it('should create an action to fail item delete request', () => {
@@ -158,9 +135,10 @@ describe('actions', () => {
 
     expect(deleteItemFailure()).toEqual(expectedValue);
 
-    expectedValue.error = axiosResponseError;
+    const error = { a: 1 };
+    expectedValue.error = error;
 
-    expect(deleteItemFailure(axiosResponseError)).toEqual(expectedValue);
+    expect(deleteItemFailure(error)).toEqual(expectedValue);
   });
 
   it('should create an action to succeed item delete request', () => {
@@ -196,21 +174,14 @@ describe('actions', () => {
       },
     };
 
-    expect(fetchItem({ id })).toEqual(expectedValue);
+    expect(fetchItem(id)).toEqual(expectedValue);
 
     expectedValue.payload = {
       ...expectedValue.payload,
       ...options,
     };
 
-    expect(fetchItem({ id, options })).toEqual(expectedValue);
-
-    expectedValue.onFailure = onFailure;
-    expectedValue.onSuccess = onSuccess;
-
-    expect(fetchItem({
-      id, options, onFailure, onSuccess,
-    })).toEqual(expectedValue);
+    expect(fetchItem(id, options)).toEqual(expectedValue);
   });
 
   it('should create an action to cancel item request', () => {
@@ -233,9 +204,10 @@ describe('actions', () => {
 
     expect(fetchItemFailure()).toEqual(expectedValue);
 
-    expectedValue.error = axiosResponseError;
+    const error = { a: 1 };
+    expectedValue.error = error;
 
-    expect(fetchItemFailure(axiosResponseError)).toEqual(expectedValue);
+    expect(fetchItemFailure(error)).toEqual(expectedValue);
   });
 
   it('should create an action to succeed item request', () => {
@@ -271,14 +243,7 @@ describe('actions', () => {
       ...options,
     };
 
-    expect(fetchList({ data, options })).toEqual(expectedValue);
-
-    expectedValue.onFailure = onFailure;
-    expectedValue.onSuccess = onSuccess;
-
-    expect(fetchList({
-      data, options, onFailure, onSuccess,
-    })).toEqual(expectedValue);
+    expect(fetchList(data, options)).toEqual(expectedValue);
   });
 
   it('should create an action to cancel list request', () => {
@@ -301,9 +266,10 @@ describe('actions', () => {
 
     expect(fetchListFailure()).toEqual(expectedValue);
 
-    expectedValue.error = axiosResponseError;
+    const error = { a: 1 };
+    expectedValue.error = error;
 
-    expect(fetchListFailure(axiosResponseError)).toEqual(expectedValue);
+    expect(fetchListFailure(error)).toEqual(expectedValue);
   });
 
   it('should create an action to succeed list request', () => {
@@ -342,21 +308,14 @@ describe('actions', () => {
       },
     };
 
-    expect(fetchSearchResults({ data })).toEqual(expectedValue);
+    expect(fetchSearchResults(data)).toEqual(expectedValue);
 
     expectedValue.payload = {
       ...expectedValue.payload,
       ...options,
     };
 
-    expect(fetchSearchResults({ data, options })).toEqual(expectedValue);
-
-    expectedValue.onFailure = onFailure;
-    expectedValue.onSuccess = onSuccess;
-
-    expect(fetchSearchResults({
-      data, options, onFailure, onSuccess,
-    })).toEqual(expectedValue);
+    expect(fetchSearchResults(data, options)).toEqual(expectedValue);
   });
 
   it('should create an action to cancel search request', () => {
@@ -379,9 +338,10 @@ describe('actions', () => {
 
     expect(fetchSearchResultsFailure()).toEqual(expectedValue);
 
-    expectedValue.error = axiosResponseError;
+    const error = { a: 1 };
+    expectedValue.error = error;
 
-    expect(fetchSearchResultsFailure(axiosResponseError)).toEqual(expectedValue);
+    expect(fetchSearchResultsFailure(error)).toEqual(expectedValue);
   });
 
   it('should create an action to succeed search request', () => {
@@ -411,21 +371,14 @@ describe('actions', () => {
       },
     };
 
-    expect(updateItem({ id, data })).toEqual(expectedValue);
+    expect(updateItem(id, data)).toEqual(expectedValue);
 
     expectedValue.payload = {
       ...expectedValue.payload,
       ...options,
     };
 
-    expect(updateItem({ id, data, options })).toEqual(expectedValue);
-
-    expectedValue.onFailure = onFailure;
-    expectedValue.onSuccess = onSuccess;
-
-    expect(updateItem({
-      id, data, options, onFailure, onSuccess,
-    })).toEqual(expectedValue);
+    expect(updateItem(id, data, options)).toEqual(expectedValue);
   });
 
   it('should create an action to fail item update request', () => {
@@ -438,9 +391,10 @@ describe('actions', () => {
 
     expect(updateItemFailure()).toEqual(expectedValue);
 
-    expectedValue.error = axiosResponseError;
+    const error = { a: 1 };
+    expectedValue.error = error;
 
-    expect(updateItemFailure(axiosResponseError)).toEqual(expectedValue);
+    expect(updateItemFailure(error)).toEqual(expectedValue);
   });
 
   it('should create an action to succeed item update request', () => {
@@ -571,6 +525,9 @@ describe('reducer', () => {
 
   it('should handle CREATE_ITEM_FAILURE', () => {
     let action = actions.createItemFailure();
+    const error = {
+      a: 1,
+    };
     const expectedValue = {
       ...defaultInitialState,
       error: {},
@@ -578,14 +535,17 @@ describe('reducer', () => {
 
     expect(reducer()(defaultInitialState, action)).toEqual(expectedValue);
 
-    action = actions.createItemFailure(axiosResponseError);
-    expectedValue.error = axiosResponseError;
+    action = actions.createItemFailure(error);
+    expectedValue.error = error;
 
     expect(reducer()(defaultInitialState, action)).toEqual(expectedValue);
   });
 
   it('should handle DELETE_ITEM_FAILURE', () => {
     let action = actions.deleteItemFailure();
+    const error = {
+      a: 1,
+    };
     const expectedValue = {
       ...defaultInitialState,
       error: {},
@@ -593,14 +553,17 @@ describe('reducer', () => {
 
     expect(reducer()(defaultInitialState, action)).toEqual(expectedValue);
 
-    action = actions.deleteItemFailure(axiosResponseError);
-    expectedValue.error = axiosResponseError;
+    action = actions.deleteItemFailure(error);
+    expectedValue.error = error;
 
     expect(reducer()(defaultInitialState, action)).toEqual(expectedValue);
   });
 
   it('should handle FETCH_ITEM_FAILURE', () => {
     let action = actions.fetchItemFailure();
+    const error = {
+      a: 1,
+    };
     const expectedValue = {
       ...defaultInitialState,
       error: {},
@@ -608,14 +571,17 @@ describe('reducer', () => {
 
     expect(reducer()(defaultInitialState, action)).toEqual(expectedValue);
 
-    action = actions.fetchItemFailure(axiosResponseError);
-    expectedValue.error = axiosResponseError;
+    action = actions.fetchItemFailure(error);
+    expectedValue.error = error;
 
     expect(reducer()(defaultInitialState, action)).toEqual(expectedValue);
   });
 
   it('should handle FETCH_LIST_FAILURE', () => {
     let action = actions.fetchListFailure();
+    const error = {
+      a: 1,
+    };
     const expectedValue = {
       ...defaultInitialState,
       error: {},
@@ -623,14 +589,17 @@ describe('reducer', () => {
 
     expect(reducer()(defaultInitialState, action)).toEqual(expectedValue);
 
-    action = actions.fetchListFailure(axiosResponseError);
-    expectedValue.error = axiosResponseError;
+    action = actions.fetchListFailure(error);
+    expectedValue.error = error;
 
     expect(reducer()(defaultInitialState, action)).toEqual(expectedValue);
   });
 
   it('should handle FETCH_SEARCH_RESULTS_FAILURE', () => {
     let action = actions.fetchSearchResultsFailure();
+    const error = {
+      a: 1,
+    };
     const expectedValue = {
       ...defaultInitialState,
       error: {},
@@ -638,14 +607,17 @@ describe('reducer', () => {
 
     expect(reducer()(defaultInitialState, action)).toEqual(expectedValue);
 
-    action = actions.fetchSearchResultsFailure(axiosResponseError);
-    expectedValue.error = axiosResponseError;
+    action = actions.fetchSearchResultsFailure(error);
+    expectedValue.error = error;
 
     expect(reducer()(defaultInitialState, action)).toEqual(expectedValue);
   });
 
   it('should handle UPDATE_ITEM_FAILURE', () => {
     let action = actions.updateItemFailure();
+    const error = {
+      a: 1,
+    };
     const expectedValue = {
       ...defaultInitialState,
       error: {},
@@ -653,8 +625,8 @@ describe('reducer', () => {
 
     expect(reducer()(defaultInitialState, action)).toEqual(expectedValue);
 
-    action = actions.updateItemFailure(axiosResponseError);
-    expectedValue.error = axiosResponseError;
+    action = actions.updateItemFailure(error);
+    expectedValue.error = error;
 
     expect(reducer()(defaultInitialState, action)).toEqual(expectedValue);
   });
