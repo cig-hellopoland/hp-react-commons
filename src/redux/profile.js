@@ -58,16 +58,30 @@ const errorUnauthorized = (payload = {}) => ({
  * Creates action with profile request details.
  *
  * @method
- * @param {Object} [options] - request config
- * @return {{type: string, payload: { url: string, method: string}}}
+ * @callback failureCallback
+ * @callback successCallback
+ * @param {Object} params
+ * @param {Object} [params.options] - request config
+ * @param {failureCallback} [params.onFailure] - failure callback
+ * @param {successCallback} [params.onSuccess] - success callback
+ * @return {{
+ *   type: string,
+ *   payload: {url: string, method: string, data: *, options: *},
+ *   onFailure: failureCallback,
+ *   onSuccess: successCallback
+ * }}
  */
-const fetchProfile = options => ({
+const fetchProfile = ({
+  options, onFailure, onSuccess,
+} = {}) => ({
   type: FETCH_PROFILE,
   payload: {
     url: '/users/me',
     method: 'get',
     ...options,
   },
+  onFailure,
+  onSuccess,
 });
 
 /**
@@ -84,12 +98,20 @@ const fetchProfileCancel = () => ({
  * Creates action for profile request failing.
  *
  * @method
- * @param {Object} [error] - Response error.
- * @return {{ type: string, error: * }}
+ * @param {Object} params - axios response schema
+ * @param params.data - response body
+ * @param params.status - response status
+ * @return {{
+ *   type: string,
+ *   error: {data, status: number}
+ * }}
  */
-const fetchProfileFailure = (error = {}) => ({
+const fetchProfileFailure = ({ data, status } = {}) => ({
   type: FETCH_PROFILE_FAILURE,
-  error,
+  error: {
+    data,
+    status,
+  },
 });
 
 /**
@@ -108,15 +130,23 @@ const fetchProfileSuccess = data => ({
  * Creates action with login request details.
  *
  * @method
+ * @callback failureCallback
+ * @callback successCallback
  * @param {Object} params
  * @param {Object} params.data - request data
- * @param {string} params.data.login
- * @param {string} params.data.password
  * @param {Object} [params.options] - request options
- * @param {Function} [params.onSuccess] - function, which will be called when login succeed
- * @return {{type: string, payload: { url: string, method: string, data: *}}}
+ * @param {failureCallback} [params.onFailure] - failure callback
+ * @param {successCallback} [params.onSuccess] - success callback
+ * @return {{
+ *   type: string,
+ *   payload: {url: string, method: string, data: *, options: *},
+ *   onFailure: failureCallback,
+ *   onSuccess: successCallback
+ * }}
  */
-const login = ({ data, options, onSuccess }) => ({
+const login = ({
+  data, options, onFailure, onSuccess,
+} = {}) => ({
   type: LOGIN,
   payload: {
     url: '/login',
@@ -125,18 +155,27 @@ const login = ({ data, options, onSuccess }) => ({
     data,
   },
   onSuccess,
+  onFailure,
 });
 
 /**
  * Creates action for login request failing.
  *
  * @method
- * @param {Object} [error] - Response error.
- * @return {{ type: string, error: * }}
+ * @param {Object} params - axios response schema
+ * @param params.data - response body
+ * @param params.status - response status
+ * @return {{
+ *   type: string,
+ *   error: {data, status: number}
+ * }}
  */
-const loginFailure = (error = {}) => ({
+const loginFailure = ({ data, status } = {}) => ({
   type: LOGIN_FAILURE,
-  error,
+  error: {
+    data,
+    status,
+  },
 });
 
 /**
@@ -155,12 +194,22 @@ const loginSuccess = data => ({
  * Creates action with login request details.
  *
  * @method
+ * @callback failureCallback
+ * @callback successCallback
  * @param {Object} [params]
  * @param {Object} [params.options] - request options
- * @param {Function} [params.onSuccess] - function, which will be called when logout succeed
- * @return {{type: string, payload: { url: string, method: string, data: *}}}
+ * @param {failureCallback} [params.onFailure] - failure callback
+ * @param {successCallback} [params.onSuccess] - success callback
+ * @return {{
+ *   type: string,
+ *   payload: {url: string, method: string, data: *, options: *},
+ *   onFailure: failureCallback,
+ *   onSuccess: successCallback
+ * }}
  */
-const logout = ({ options, onSuccess } = {}) => ({
+const logout = ({
+  options, onFailure, onSuccess,
+} = {}) => ({
   type: LOGOUT,
   payload: {
     url: '/logout',
@@ -168,6 +217,7 @@ const logout = ({ options, onSuccess } = {}) => ({
     ...options,
   },
   onSuccess,
+  onFailure,
 });
 
 /**
@@ -184,11 +234,23 @@ const logoutSuccess = () => ({
  * Creates action for JWT token refreshing.
  *
  * @method
- * @param {Object} data - request data
- * @param {Object} [options] - request options
- * @return {{type: string, payload: { url: string, method: string, data: *}}}
+ * @callback failureCallback
+ * @callback successCallback
+ * @param {Object} [params]
+ * @param {Object} params.data - request data
+ * @param {Object} [params.options] - request options
+ * @param {failureCallback} [params.onFailure] - failure callback
+ * @param {successCallback} [params.onSuccess] - success callback
+ * @return {{
+ *   type: string,
+ *   payload: {url: string, method: string, data: *, options: *},
+ *   onFailure: failureCallback,
+ *   onSuccess: successCallback
+ * }}
  */
-const refreshAccessToken = (data, options) => ({
+const refreshAccessToken = ({
+  data, options, onFailure, onSuccess,
+} = {}) => ({
   type: REFRESH_ACCESS_TOKEN,
   payload: {
     url: '/refresh',
@@ -196,6 +258,8 @@ const refreshAccessToken = (data, options) => ({
     ...options,
     data,
   },
+  onFailure,
+  onSuccess,
 });
 
 /**
@@ -296,17 +360,34 @@ const fetchProfileLogic = createLogic({
     FETCH_PROFILE_CANCEL,
     LOGOUT,
   ],
-  async process({ action: { payload }, httpClient, cancelled$ }, dispatch, done) {
+  async process(
+    { action: { payload, onFailure, onSuccess }, httpClient, cancelled$ },
+    dispatch,
+    done,
+  ) {
     try {
-      const { data, status } = await httpClient.cancellable(payload, cancelled$);
+      const response = await httpClient.cancellable(payload, cancelled$);
+      const { data, status } = response;
 
       if (status === 200 || status === 204) {
         dispatch(fetchProfileSuccess(data));
+
+        if (onSuccess) {
+          onSuccess();
+        }
       } else {
-        dispatch(fetchProfileFailure());
+        dispatch(fetchProfileFailure(response));
+
+        if (onFailure) {
+          onFailure();
+        }
       }
-    } catch (error) {
-      dispatch(fetchProfileFailure());
+    } catch ({ response }) {
+      dispatch(fetchProfileFailure(response));
+
+      if (onFailure) {
+        onFailure();
+      }
     }
 
     done();
@@ -330,20 +411,34 @@ const loginLogic = createLogic({
   type: [
     LOGIN,
   ],
-  async process({ action: { payload, onSuccess }, httpClient }, dispatch, done) {
+  async process(
+    { action: { payload, onFailure, onSuccess }, httpClient },
+    dispatch,
+    done,
+  ) {
     try {
-      const { data, status } = await httpClient(payload);
+      const response = await httpClient(payload);
+      const { data, status } = response;
 
       if (status === 200 || status === 204) {
         dispatch(loginSuccess(data));
+
         if (onSuccess) {
           onSuccess();
         }
       } else {
-        dispatch(loginFailure());
+        dispatch(loginFailure(response));
+
+        if (onFailure) {
+          onFailure();
+        }
       }
-    } catch (error) {
-      dispatch(loginFailure());
+    } catch ({ response }) {
+      dispatch(loginFailure(response));
+
+      if (onFailure) {
+        onFailure();
+      }
     }
 
     done();
@@ -354,18 +449,19 @@ const logoutLogic = createLogic({
   type: [
     LOGOUT,
   ],
-  async process({
-    action: { payload, onSuccess }, httpClient, getState: getReduxState,
-  }, dispatch, done) {
+  async process(
+    { action: { payload, onSuccess }, httpClient, getState: getReduxState },
+    dispatch,
+    done,
+  ) {
     if (isAuthenticated(getReduxState())) {
       const { accessToken, refreshToken } = getCredentials(getReduxState());
-      httpClient({
-        ...payload,
-        data: {
-          accessToken,
-          refreshToken,
-        },
-      });
+      const data = {
+        accessToken,
+        refreshToken,
+      };
+
+      httpClient({ ...payload, data });
 
       dispatch(logoutSuccess());
 
