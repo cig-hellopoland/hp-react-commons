@@ -1,6 +1,6 @@
 {
   "name": "@hello-poland/commons",
-  "version": "0.4.4",
+  "version": "0.5.0",
   "main": "redux/index.js",
   "repository": {
     "type": "git",
@@ -48,8 +48,9 @@
     "distribute": "cd dist && npm publish --registry=https://packages.fream.pl/repository/npm-fream/",
     "lint": "eslint . --ext .js,.jsx --ignore-path .gitignore --cache",
     "lint-fix": "npm run lint -- --fix",
-    "package": "npm run clean && npm run build && cpy .npmrc package.json CHANGELOG.md README.md ./dist",
+    "package": "npm run verify && npm run build && cpy .npmrc package.json CHANGELOG.md README.md ./dist",
     "test": "jest",
-    "test-watch": "npm test -- --watch"
+    "test-watch": "npm test -- --watch",
+    "verify": "npm run clean && npm run lint && npm run test"
   }
 }
