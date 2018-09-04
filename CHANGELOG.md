@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.4.5
+* Use `@babel/plugin-transform-runtime` to transpile files properly
+
 ## 0.4.4
 * Added `tickets` duck
 
