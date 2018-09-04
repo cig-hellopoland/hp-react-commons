@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.5.1
+* Use `@babel/plugin-transform-runtime` to transpile files properly
+
 ## 0.5.0
 * Changed all ducks to match new duck convention
   * All ducks have new request methods arguments list
@@ -21,6 +24,9 @@
 * Added `order` duck test suite
 * Added `verify` script to `package.json`
 * Added redux utils in `utils/redux.js`
+
+## 0.4.5
+* Use `@babel/plugin-transform-runtime` to transpile files properly
 
 ## 0.4.4
 * Added `tickets` duck
