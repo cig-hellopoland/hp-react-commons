@@ -1,6 +1,5 @@
 import { createLogic } from 'redux-logic';
 import _find from 'lodash/find';
-import { actions as sightEventsActions } from './sightEvents';
 
 const debounceTime = 500;
 
@@ -91,11 +90,23 @@ const clearItem = () => ({
  * Creates action with item creation request details.
  *
  * @method
- * @param {Object} data - request data
- * @param {Object} [options] - request config
- * @return {{type: string, payload: {url: string, method: string}}}
+ * @callback failureCallback
+ * @callback successCallback
+ * @param {Object} params
+ * @param {Object} params.data - request data
+ * @param {Object} [params.options] - request config
+ * @param {failureCallback} [params.onFailure] - failure callback
+ * @param {successCallback} [params.onSuccess] - success callback
+ * @return {{
+ *   type: string,
+ *   payload: {url: string, method: string, data: *, options: *},
+ *   onFailure: failureCallback,
+ *   onSuccess: successCallback
+ * }}
  */
-const createItem = (data, options) => ({
+const createItem = ({
+  data, options, onFailure, onSuccess,
+} = {}) => ({
   type: CREATE_ITEM,
   payload: {
     url: apiURL,
@@ -103,18 +114,28 @@ const createItem = (data, options) => ({
     ...options,
     data,
   },
+  onFailure,
+  onSuccess,
 });
 
 /**
  * Creates action for item creation request failing.
  *
  * @method
- * @param {Object} error
- * @return {{type: string, error: *}}
+ * @param {Object} params - axios response schema
+ * @param params.data - response body
+ * @param params.status - response status
+ * @return {{
+ *   type: string,
+ *   error: {data, status: number}
+ * }}
  */
-const createItemFailure = (error = {}) => ({
+const createItemFailure = ({ data, status } = {}) => ({
   type: CREATE_ITEM_FAILURE,
-  error,
+  error: {
+    data,
+    status,
+  },
 });
 
 /**
@@ -133,29 +154,51 @@ const createItemSuccess = data => ({
  * Creates action with item deletion request details.
  *
  * @method
- * @param {number} id - item id
- * @param {Object} [options] - request config
- * @return {{type: string, payload: {url: string, method: string}}}
+ * @callback failureCallback
+ * @callback successCallback
+ * @param {Object} params
+ * @param {number} params.id - item id
+ * @param {Object} [params.options] - request config
+ * @param {failureCallback} [params.onFailure] - failure callback
+ * @param {successCallback} [params.onSuccess] - success callback
+ * @return {{
+ *   type: string,
+ *   payload: {url: string, method: string, options: *},
+ *   onFailure: failureCallback,
+ *   onSuccess: successCallback
+ * }}
  */
-const deleteItem = (id, options) => ({
+const deleteItem = ({
+  id, options, onFailure, onSuccess,
+} = {}) => ({
   type: DELETE_ITEM,
   payload: {
     url: `${apiURL}/${id}`,
     method: 'delete',
     ...options,
   },
+  onFailure,
+  onSuccess,
 });
 
 /**
  * Creates action for item deletion request failing.
  *
  * @method
- * @param {Object} [error]
- * @return {{type: string, error: *}}
+ * @param {Object} params - axios response schema
+ * @param params.data - response body
+ * @param params.status - response status
+ * @return {{
+ *   type: string,
+ *   error: {data, status: number}
+ * }}
  */
-const deleteItemFailure = (error = {}) => ({
+const deleteItemFailure = ({ data, status } = {}) => ({
   type: DELETE_ITEM_FAILURE,
-  error,
+  error: {
+    data,
+    status,
+  },
 });
 
 /**
@@ -172,17 +215,31 @@ const deleteItemSuccess = () => ({
  * Creates action with item request details.
  *
  * @method
- * @param {number} id - item id
- * @param {Object} [options] - request config
- * @return {{type: string, payload: {url: string, method: string}}}
+ * @callback failureCallback
+ * @callback successCallback
+ * @param {Object} params
+ * @param {number} params.id - item id
+ * @param {Object} [params.options] - request config
+ * @param {failureCallback} [params.onFailure] - failure callback
+ * @param {successCallback} [params.onSuccess] - success callback
+ * @return {{
+ *   type: string,
+ *   payload: {url: string, method: string, options: *},
+ *   onFailure: failureCallback,
+ *   onSuccess: successCallback
+ * }}
  */
-const fetchItem = (id, options) => ({
+const fetchItem = ({
+  id, options, onFailure, onSuccess,
+} = {}) => ({
   type: FETCH_ITEM,
   payload: {
     url: `${apiURL}/${id}`,
     method: 'get',
     ...options,
   },
+  onFailure,
+  onSuccess,
 });
 
 /**
@@ -199,12 +256,20 @@ const fetchItemCancel = () => ({
  * Creates action for item request failing.
  *
  * @method
- * @param {Object} [error]
- * @return {{type: string, error: *}}
+ * @param {Object} params - axios response schema
+ * @param params.data - response body
+ * @param params.status - response status
+ * @return {{
+ *   type: string,
+ *   error: {data, status: number}
+ * }}
  */
-const fetchItemFailure = (error = {}) => ({
+const fetchItemFailure = ({ data, status } = {}) => ({
   type: FETCH_ITEM_FAILURE,
-  error,
+  error: {
+    data,
+    status,
+  },
 });
 
 /**
@@ -223,11 +288,23 @@ const fetchItemSuccess = data => ({
  * Creates action with list request details.
  *
  * @method
- * @param {Object} [data] - request data
- * @param {Object} [options] - request config
- * @return {{type: string, payload: {url: string, method: string}}}
+ * @callback failureCallback
+ * @callback successCallback
+ * @param {Object} params
+ * @param {Object} [params.data] - request data
+ * @param {Object} [params.options] - request config
+ * @param {failureCallback} [params.onFailure] - failure callback
+ * @param {successCallback} [params.onSuccess] - success callback
+ * @return {{
+ *   type: string,
+ *   payload: {url: string, method: string, data: *, options: *},
+ *   onFailure: failureCallback,
+ *   onSuccess: successCallback
+ * }}
  */
-const fetchList = (data, options) => ({
+const fetchList = ({
+  data, options, onFailure, onSuccess,
+} = {}) => ({
   type: FETCH_LIST,
   payload: {
     url: apiURL,
@@ -235,6 +312,8 @@ const fetchList = (data, options) => ({
     ...options,
     data,
   },
+  onFailure,
+  onSuccess,
 });
 
 /**
@@ -251,12 +330,20 @@ const fetchListCancel = () => ({
  * Creates action for list request failing.
  *
  * @method
- * @param {Object} error
- * @return {{type: string, error: *}}
+ * @param {Object} params - axios response schema
+ * @param params.data - response body
+ * @param params.status - response status
+ * @return {{
+ *   type: string,
+ *   error: {data, status: number}
+ * }}
  */
-const fetchListFailure = (error = {}) => ({
+const fetchListFailure = ({ data, status } = {}) => ({
   type: FETCH_LIST_FAILURE,
-  error,
+  error: {
+    data,
+    status,
+  },
 });
 
 /**
@@ -275,11 +362,23 @@ const fetchListSuccess = data => ({
  * Creates action with search request details.
  *
  * @method
- * @param {Object} data - request data
- * @param {Object} [options] - request config
- * @return {{type: string, payload: {url: string, method: string}}}
+ * @callback failureCallback
+ * @callback successCallback
+ * @param {Object} params
+ * @param {Object} params.data - request data
+ * @param {Object} [params.options] - request config
+ * @param {failureCallback} [params.onFailure] - failure callback
+ * @param {successCallback} [params.onSuccess] - success callback
+ * @return {{
+ *   type: string,
+ *   payload: {url: string, method: string, data: *, options: *},
+ *   onFailure: failureCallback,
+ *   onSuccess: successCallback
+ * }}
  */
-const fetchSearchResults = (data, options) => ({
+const fetchSearchResults = ({
+  data, options, onFailure, onSuccess,
+} = {}) => ({
   type: FETCH_SEARCH_RESULTS,
   payload: {
     url: `${apiURL}/search`,
@@ -287,6 +386,8 @@ const fetchSearchResults = (data, options) => ({
     ...options,
     data,
   },
+  onFailure,
+  onSuccess,
 });
 
 /**
@@ -303,12 +404,20 @@ const fetchSearchResultsCancel = () => ({
  * Creates action for search request failing.
  *
  * @method
- * @param {Object} [error]
- * @return {{type: string, error: *}}
+ * @param {Object} params - axios response schema
+ * @param params.data - response body
+ * @param params.status - response status
+ * @return {{
+ *   type: string,
+ *   error: {data, status: number}
+ * }}
  */
-const fetchSearchResultsFailure = (error = {}) => ({
+const fetchSearchResultsFailure = ({ data, status } = {}) => ({
   type: FETCH_SEARCH_RESULTS_FAILURE,
-  error,
+  error: {
+    data,
+    status,
+  },
 });
 
 /**
@@ -327,12 +436,24 @@ const fetchSearchResultsSuccess = data => ({
  * Creates action with item update request details.
  *
  * @method
- * @param {Object} id - item id
- * @param {Object} data - request body
- * @param {Object} [options] - request config
- * @return {{type: string, payload: {url: string, method: string}}}
+ * @callback failureCallback
+ * @callback successCallback
+ * @param {Object} params
+ * @param {Object} params.id - item id
+ * @param {Object} params.data - request body
+ * @param {Object} [params.options] - request config
+ * @param {failureCallback} [params.onFailure] - failure callback
+ * @param {successCallback} [params.onSuccess] - success callback
+ * @return {{
+ *   type: string,
+ *   payload: {url: string, method: string, data: *, options: *},
+ *   onFailure: failureCallback,
+ *   onSuccess: successCallback
+ * }}
  */
-const updateItem = (id, data, options) => ({
+const updateItem = ({
+  id, data, options, onFailure, onSuccess,
+} = {}) => ({
   type: UPDATE_ITEM,
   payload: {
     url: `${apiURL}/${id}`,
@@ -340,24 +461,34 @@ const updateItem = (id, data, options) => ({
     ...options,
     data,
   },
+  onFailure,
+  onSuccess,
 });
 
 /**
  * Creates action for item update request failing.
  *
  * @method
- * @param {Object} [error]
- * @return {{type: string, error: *}}
+ * @param {Object} params - axios response schema
+ * @param params.data - response body
+ * @param params.status - response status
+ * @return {{
+ *   type: string,
+ *   error: {data, status: number}
+ * }}
  */
-const updateItemFailure = (error = {}) => ({
+const updateItemFailure = ({ data, status } = {}) => ({
   type: UPDATE_ITEM_FAILURE,
-  error,
+  error: {
+    data,
+    status,
+  },
 });
 
 /**
  * Creates action for successful item creation request.
  *
- * @method
+ * @methoddeleteItemFailure
  * @param {Object} data - response body
  * @return {{type: string, data: *}}
  */
@@ -460,7 +591,7 @@ export const selectors = {
  * LOGIC
  */
 
-const clearSightSearchResultsLogic = createLogic({
+const clearSearchResultsLogic = createLogic({
   type: [
     CLEAR_SEARCH_RESULTS,
   ],
@@ -472,55 +603,85 @@ const clearSightSearchResultsLogic = createLogic({
   },
 });
 
-const createSightItemLogic = createLogic({
+const createItemLogic = createLogic({
   type: [
     CREATE_ITEM,
   ],
   latest: true,
-  async process({ action: { payload }, httpClient, cancelled$ }, dispatch, done) {
+  async process(
+    { action: { payload, onFailure, onSuccess }, httpClient, cancelled$ },
+    dispatch,
+    done,
+  ) {
     try {
-      const { data, status } = await httpClient.cancellable(payload, cancelled$);
+      const response = await httpClient.cancellable(payload, cancelled$);
+      const { data, status } = response;
 
-      if (status === 200 || status === 201) {
+      if (status === 200 || status === 204) {
         dispatch(createItemSuccess(data));
-        dispatch(fetchList());
-        dispatch(sightEventsActions.fetchList());
+
+        if (onSuccess) {
+          onSuccess();
+        }
       } else {
-        dispatch(createItemFailure());
+        dispatch(createItemFailure(response));
+
+        if (onFailure) {
+          onFailure();
+        }
       }
-    } catch (error) {
-      dispatch(createItemFailure());
+    } catch ({ response }) {
+      dispatch(createItemFailure(response));
+
+      if (onFailure) {
+        onFailure();
+      }
     }
 
     done();
   },
 });
 
-const deleteSightItemLogic = createLogic({
+const deleteItemLogic = createLogic({
   type: [
     DELETE_ITEM,
   ],
   latest: true,
-  async process({ action: { payload }, httpClient, cancelled$ }, dispatch, done) {
+  async process(
+    { action: { payload, onFailure, onSuccess }, httpClient, cancelled$ },
+    dispatch,
+    done,
+  ) {
     try {
-      const { status } = await httpClient.cancellable(payload, cancelled$);
+      const response = await httpClient.cancellable(payload, cancelled$);
+      const { status } = response;
 
       if (status === 200 || status === 204) {
         dispatch(deleteItemSuccess());
-        dispatch(fetchList());
-        dispatch(sightEventsActions.fetchList());
+
+        if (onSuccess) {
+          onSuccess();
+        }
       } else {
-        dispatch(deleteItemFailure());
+        dispatch(deleteItemFailure(response));
+
+        if (onFailure) {
+          onFailure();
+        }
       }
-    } catch (error) {
-      dispatch(deleteItemFailure());
+    } catch ({ response }) {
+      dispatch(deleteItemFailure(response));
+
+      if (onFailure) {
+        onFailure();
+      }
     }
 
     done();
   },
 });
 
-const fetchSightItemLogic = createLogic({
+const fetchItemLogic = createLogic({
   type: [
     FETCH_ITEM,
   ],
@@ -528,24 +689,41 @@ const fetchSightItemLogic = createLogic({
     FETCH_ITEM_CANCEL, CLEAR_ITEM,
   ],
   latest: true,
-  async process({ action: { payload }, httpClient, cancelled$ }, dispatch, done) {
+  async process(
+    { action: { payload, onFailure, onSuccess }, httpClient, cancelled$ },
+    dispatch,
+    done,
+  ) {
     try {
-      const { data, status } = await httpClient.cancellable(payload, cancelled$);
+      const response = await httpClient.cancellable(payload, cancelled$);
+      const { data, status } = response;
 
       if (status === 200 || status === 204) {
         dispatch(fetchItemSuccess(data));
+
+        if (onSuccess) {
+          onSuccess();
+        }
       } else {
-        dispatch(fetchItemFailure());
+        dispatch(fetchItemFailure(response));
+
+        if (onFailure) {
+          onFailure();
+        }
       }
-    } catch (error) {
-      dispatch(fetchItemFailure());
+    } catch ({ response }) {
+      dispatch(fetchItemFailure(response));
+
+      if (onFailure) {
+        onFailure();
+      }
     }
 
     done();
   },
 });
 
-const fetchSightListLogic = createLogic({
+const fetchListLogic = createLogic({
   type: [
     FETCH_LIST,
   ],
@@ -553,24 +731,41 @@ const fetchSightListLogic = createLogic({
     FETCH_LIST_CANCEL,
   ],
   latest: true,
-  async process({ action: { payload }, httpClient, cancelled$ }, dispatch, done) {
+  async process(
+    { action: { payload, onFailure, onSuccess }, httpClient, cancelled$ },
+    dispatch,
+    done,
+  ) {
     try {
-      const { data, status } = await httpClient.cancellable(payload, cancelled$);
+      const response = await httpClient.cancellable(payload, cancelled$);
+      const { data, status } = response;
 
-      if (status === 200 || status === 204) {
+      if (status === 200) {
         dispatch(fetchListSuccess(data));
+
+        if (onSuccess) {
+          onSuccess();
+        }
       } else {
-        dispatch(fetchListFailure());
+        dispatch(fetchListFailure(response));
+
+        if (onFailure) {
+          onFailure();
+        }
       }
-    } catch (error) {
-      dispatch(fetchListFailure());
+    } catch ({ response }) {
+      dispatch(fetchListFailure(response));
+
+      if (onFailure) {
+        onFailure();
+      }
     }
 
     done();
   },
 });
 
-const fetchSightSearchResultsLogic = createLogic({
+const fetchSearchResultsLogic = createLogic({
   type: [
     FETCH_SEARCH_RESULTS,
   ],
@@ -578,41 +773,73 @@ const fetchSightSearchResultsLogic = createLogic({
     FETCH_SEARCH_RESULTS_CANCEL,
   ],
   latest: true,
-  async process({ action: { payload }, httpClient, cancelled$ }, dispatch, done) {
+  async process(
+    { action: { payload, onFailure, onSuccess }, httpClient, cancelled$ },
+    dispatch,
+    done,
+  ) {
     try {
-      const { data, status } = await httpClient.cancellable(payload, cancelled$);
+      const response = await httpClient.cancellable(payload, cancelled$);
+      const { data, status } = response;
 
       if (status === 200 || status === 204) {
         dispatch(fetchSearchResultsSuccess(data));
+
+        if (onSuccess) {
+          onSuccess();
+        }
       } else {
-        dispatch(fetchSearchResultsFailure());
+        dispatch(fetchSearchResultsFailure(response));
+
+        if (onFailure) {
+          onFailure();
+        }
       }
-    } catch (error) {
-      dispatch(fetchSearchResultsFailure());
+    } catch ({ response }) {
+      dispatch(fetchSearchResultsFailure(response));
+
+      if (onFailure) {
+        onFailure();
+      }
     }
 
     done();
   },
 });
 
-const updateSightItemLogic = createLogic({
+const updateItemLogic = createLogic({
   type: [
     UPDATE_ITEM,
   ],
   latest: true,
-  async process({ action: { payload }, httpClient, cancelled$ }, dispatch, done) {
+  async process(
+    { action: { payload, onFailure, onSuccess }, httpClient, cancelled$ },
+    dispatch,
+    done,
+  ) {
     try {
-      const { data, status } = await httpClient.cancellable(payload, cancelled$);
+      const response = await httpClient.cancellable(payload, cancelled$);
+      const { data, status } = response;
 
-      if (status === 200) {
+      if (status === 200 || status === 201) {
         dispatch(updateItemSuccess(data));
-        dispatch(fetchList());
-        dispatch(sightEventsActions.fetchList());
+
+        if (onSuccess) {
+          onSuccess();
+        }
       } else {
-        dispatch(updateItemFailure());
+        dispatch(updateItemFailure(response));
+
+        if (onFailure) {
+          onFailure();
+        }
       }
-    } catch (error) {
-      dispatch(updateItemFailure());
+    } catch ({ response }) {
+      dispatch(updateItemFailure(response));
+
+      if (onFailure) {
+        onFailure();
+      }
     }
 
     done();
@@ -620,13 +847,13 @@ const updateSightItemLogic = createLogic({
 });
 
 export const logic = {
-  clearSightSearchResultsLogic,
-  createSightItemLogic,
-  deleteSightItemLogic,
-  fetchSightItemLogic,
-  fetchSightListLogic,
-  fetchSightSearchResultsLogic,
-  updateSightItemLogic,
+  clearSearchResultsLogic,
+  createItemLogic,
+  deleteItemLogic,
+  fetchItemLogic,
+  fetchListLogic,
+  fetchSearchResultsLogic,
+  updateItemLogic,
 };
 
 

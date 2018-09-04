@@ -1,5 +1,27 @@
 # Changelog
 
+## 0.5.0
+* Changed all ducks to match new duck convention
+  * All ducks have new request methods arguments list
+  * Added `onFailure` and `onSuccess` callbacks to request actions
+  * Changed logic function names to more general ones, so they will have to be manually converted to an array before applying to `store`:
+    ```javascript
+    // services/redux/logic.js
+    import { logic as profileLogic } from '@hello-poland/commons/redux/profile';
+    import { logic as sightEventsLogic } from '@hello-poland/commons/redux/sightEvents';
+    import { logic as sightsLogic } from '@hello-poland/commons/redux/sights';
+    
+    export default Object.values({
+      profileLogic,
+      sightEventsLogic,
+      sightsLogic,
+    }).reduce((acc, obj) => [...acc, ...Object.values(obj)], []);
+
+    ```
+* Added `order` duck test suite
+* Added `verify` script to `package.json`
+* Added redux utils in `utils/redux.js`
+
 ## 0.4.5
 * Use `@babel/plugin-transform-runtime` to transpile files properly
 
@@ -17,27 +39,23 @@
 
 ## 0.4.0
 * Fixed `profile` duck to get tokens from store automatically when calling `logout` action:
-
-```diff
-- logout({ accessToken, refreshToken })
-+ logout()
-```
+  ```diff
+  - logout({ accessToken, refreshToken })
+  + logout()
+  ```
 * Changed `login` action signature:
-
-```diff
-- login(data, options)
-+ login({ data, options })
-```
+  ```diff
+  - login(data, options)
+  + login({ data, options })
+  ```
 * Added `onSuccess` callback to `logout` action for performing side-effects:
-
-```js
-logout({ onSuccess: () => Router.push('/login') });
-```
+  ```js
+  logout({ onSuccess: () => Router.push('/login') });
+  ```
 * Added `onSuccess` callback to `login` action for performing side-effects:
-
-```js
-login({ onSuccess: () => Router.push('/') });
-```
+  ```js
+  login({ onSuccess: () => Router.push('/') });
+  ```
 * Added `profileSubscriber` redux service
 * Added `order` duck
 * Added `Forms` docs
