@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.5.2
+* Lock `babel` version in package.json to 7.0.0-beta.54
+
 ## 0.5.1
 * Use `@babel/plugin-transform-runtime` to transpile files properly
 
