@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.5.2
+* Lock `babel` version in package.json to 7.0.0-beta.54
+
 ## 0.5.1
 * Use `@babel/plugin-transform-runtime` to transpile files properly
 
@@ -8,6 +11,7 @@
   * All ducks have new request methods arguments list
   * Added `onFailure` and `onSuccess` callbacks to request actions
   * Changed logic function names to more general ones, so they will have to be manually converted to an array before applying to `store`:
+
     ```javascript
     // services/redux/logic.js
     import { logic as profileLogic } from '@hello-poland/commons/redux/profile';
