@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.6.0
+
+* Added `ticket-pool-parser` utils
+
 ## 0.5.3
 * Update `babel` to stable `7.0.0` version
 
