@@ -1,5 +1,5 @@
 import constants from './constants';
-import getSinglePoolDefinitionsAsDays from './getSinglePoolDefinitionsAsDates';
+import getSinglePoolDefinitionsAsDates from './getSinglePoolDefinitionsAsDates';
 import format from './format';
 
 const singlePoolDefinition = {
@@ -14,19 +14,19 @@ const cyclicPoolDefinition = {
 };
 
 describe('Ticket Pool Parser', () => {
-  describe('getSinglePoolDefinitionsAsDays', () => {
+  describe('getSinglePoolDefinitionsAsDates', () => {
     it('should return empty array if TicketPoolDefinitions list is incorrect', () => {
       const expectedValue = [];
       const data = [
         { ...singlePoolDefinition, endDate: null },
       ];
 
-      expect(getSinglePoolDefinitionsAsDays()).toEqual(expectedValue);
-      expect(getSinglePoolDefinitionsAsDays([])).toEqual(expectedValue);
-      expect(getSinglePoolDefinitionsAsDays({})).toEqual(expectedValue);
-      expect(getSinglePoolDefinitionsAsDays('')).toEqual(expectedValue);
-      expect(getSinglePoolDefinitionsAsDays(1)).toEqual(expectedValue);
-      expect(getSinglePoolDefinitionsAsDays(data)).toEqual(expectedValue);
+      expect(getSinglePoolDefinitionsAsDates()).toEqual(expectedValue);
+      expect(getSinglePoolDefinitionsAsDates([])).toEqual(expectedValue);
+      expect(getSinglePoolDefinitionsAsDates({})).toEqual(expectedValue);
+      expect(getSinglePoolDefinitionsAsDates('')).toEqual(expectedValue);
+      expect(getSinglePoolDefinitionsAsDates(1)).toEqual(expectedValue);
+      expect(getSinglePoolDefinitionsAsDates(data)).toEqual(expectedValue);
     });
 
     it('should return all non-cyclic entry dates', () => {
@@ -36,7 +36,7 @@ describe('Ticket Pool Parser', () => {
         singlePoolDefinition,
       ];
 
-      expect(getSinglePoolDefinitionsAsDays(data)).toEqual(expectedValue);
+      expect(getSinglePoolDefinitionsAsDates(data)).toEqual(expectedValue);
     });
 
     it('should return all non-cyclic entry dates from provided time range', () => {
@@ -63,7 +63,7 @@ describe('Ticket Pool Parser', () => {
       const start = format(new Date(2001, 7, 30));
       const end = format(new Date(2001, 9, 30));
 
-      expect(getSinglePoolDefinitionsAsDays(data, { start, end })).toEqual(expectedValue);
+      expect(getSinglePoolDefinitionsAsDates(data, { start, end })).toEqual(expectedValue);
     });
 
     it('should return all non-cyclic entry dates without duplicates', () => {
@@ -85,7 +85,7 @@ describe('Ticket Pool Parser', () => {
       const start = format(new Date(2001, 7, 30));
       const end = format(new Date(2001, 9, 30));
 
-      expect(getSinglePoolDefinitionsAsDays(data, { start, end })).toEqual(expectedValue);
+      expect(getSinglePoolDefinitionsAsDates(data, { start, end })).toEqual(expectedValue);
     });
   });
 });

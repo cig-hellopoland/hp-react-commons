@@ -7,11 +7,6 @@ const singlePoolDefinition = {
   startDate: format(new Date(2001, 8, 13, 4)),
 };
 
-// const cyclicPoolDefinition = {
-//   ...singlePoolDefinition,
-//   frequencyData: {},
-// };
-
 describe('Ticket Pool Parser', () => {
   describe('isInPoolScope', () => {
     it('should throw if invalid number of arguments was provided', () => {

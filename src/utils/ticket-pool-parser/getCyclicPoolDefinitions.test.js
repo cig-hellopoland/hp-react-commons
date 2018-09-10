@@ -12,7 +12,7 @@ const cyclicPoolDefinition = {
 };
 
 describe('Ticket Pool Parser', () => {
-  describe('getSinglePoolDefinitions', () => {
+  describe('getCyclicPoolDefinitions', () => {
     it('should return empty array if TicketPoolDefinitions list is incorrect', () => {
       const expectedValue = [];
       const data = [
