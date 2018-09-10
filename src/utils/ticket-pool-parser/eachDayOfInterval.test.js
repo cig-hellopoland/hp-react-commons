@@ -1,6 +1,5 @@
 import eachDayOfInterval from './eachDayOfInterval';
 import format from './format';
-import constants from './constants';
 
 describe('Ticket Pool Parser', () => {
   describe('eachDayOfInterval', () => {

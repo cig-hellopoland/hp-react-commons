@@ -1,5 +1,6 @@
 import isValid from 'date-fns/is_valid';
 import setDay from 'date-fns/set_day';
+import _uniq from 'lodash/uniq';
 import constants from './constants';
 import eachDayOfInterval from './eachDayOfInterval';
 import format from './format';
@@ -8,7 +9,6 @@ import getCyclicPoolDefinitions from './getCyclicPoolDefinitions';
 import isAfter from './isAfter';
 import isBefore from './isBefore';
 import parse from './parse';
-import _uniq from 'lodash/uniq';
 
 function getIntervalDate(date, dateToCompare, compareFn) {
   let value;
@@ -71,5 +71,4 @@ export default function getCyclicPoolDefinitionsAsDates(poolDefinitions, options
     .sort();
 
   return _uniq(result);
-
 }
