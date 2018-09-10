@@ -1,7 +1,7 @@
 import isPoolDefinitionList from './isPoolDefinitionList';
 
 describe('Ticket Pool Parser', () => {
-  describe('isPoolDefinition', () => {
+  describe('isPoolDefinitionList', () => {
     it('should throw if no arguments were provided', () => {
       expect(() => isPoolDefinitionList()).toThrow();
     });
