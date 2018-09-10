@@ -3,7 +3,7 @@ import addMonths from 'date-fns/add_months';
 import addWeeks from 'date-fns/add_weeks';
 import addYears from 'date-fns/add_years';
 
-import checkArguments from './validateFnArguments';
+import validateFnArguments from './validateFnArguments';
 import isAfter from './isAfter';
 import isBefore from './isBefore';
 import isDateValid from './isDateValid';
@@ -25,7 +25,7 @@ const UNITS = {
 };
 
 export default function eachDayOfInterval(dirtyInterval, dirtyOptions) {
-  checkArguments(arguments.length, 1);
+  validateFnArguments(arguments.length, 1);
 
   const interval = dirtyInterval || {};
   const options = dirtyOptions || {};
