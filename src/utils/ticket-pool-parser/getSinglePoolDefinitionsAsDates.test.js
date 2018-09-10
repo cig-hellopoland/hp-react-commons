@@ -1,5 +1,5 @@
 import constants from './constants';
-import getSinglePoolDefinitionsAsDays from './getSinglePoolDefinitionsAsDays';
+import getSinglePoolDefinitionsAsDays from './getSinglePoolDefinitionsAsDates';
 import format from './format';
 
 const singlePoolDefinition = {

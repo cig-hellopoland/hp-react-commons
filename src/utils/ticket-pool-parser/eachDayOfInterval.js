@@ -2,11 +2,13 @@ import addDays from 'date-fns/add_days';
 import addMonths from 'date-fns/add_months';
 import addWeeks from 'date-fns/add_weeks';
 import addYears from 'date-fns/add_years';
-import parse from 'date-fns/parse';
 
 import checkArguments from './validateFnArguments';
 import isAfter from './isAfter';
 import isBefore from './isBefore';
+import isDateValid from './isDateValid';
+import format from './format';
+import parse from './parse';
 
 const addFns = {
   addDays,
@@ -31,13 +33,13 @@ export default function eachDayOfInterval(dirtyInterval, dirtyOptions) {
   const startDate = parse(interval.start);
   const endDate = parse(interval.end);
 
-  if (isBefore(endDate, startDate)) {
+  if (!(isDateValid(startDate) || isDateValid(endDate)) || isBefore(endDate, startDate)) {
     throw new RangeError('Invalid interval');
   }
 
   const unit = options.unit || UNITS.day;
 
-  const addFnName = `add${unit.charAt(0).toUpperCase()}${unit.toLowerCase()}s`;
+  const addFnName = `add${unit.charAt(0).toUpperCase()}${unit.substring(1).toLowerCase()}s`;
   const addFn = addFns[addFnName];
 
   if (!addFn) {
@@ -50,7 +52,7 @@ export default function eachDayOfInterval(dirtyInterval, dirtyOptions) {
   let currentDay = startDate;
 
   while (!isAfter(currentDay, endDate)) {
-    days.push(currentDay);
+    days.push(format(currentDay));
     currentDay = addFn(currentDay, step);
   }
 

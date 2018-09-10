@@ -1,25 +1,40 @@
 import isValid from 'date-fns/is_valid';
 import setDay from 'date-fns/set_day';
+import constants from './constants';
 import eachDayOfInterval from './eachDayOfInterval';
 import format from './format';
 import frequencyTypes from './frequencyTypes';
 import getCyclicPoolDefinitions from './getCyclicPoolDefinitions';
 import isAfter from './isAfter';
 import isBefore from './isBefore';
+import parse from './parse';
+import _uniq from 'lodash/uniq';
+
+function getIntervalDate(date, dateToCompare, compareFn) {
+  let value;
+
+  if (!date) {
+    value = dateToCompare;
+  } else if (!dateToCompare) {
+    value = date;
+  } else {
+    value = compareFn(date, dateToCompare) ? date : dateToCompare;
+  }
+
+  return parse(value);
+}
 
 export default function getCyclicPoolDefinitionsAsDates(poolDefinitions, options = {}) {
   const { start, end } = options;
 
-  return getCyclicPoolDefinitions(poolDefinitions, options)
+  const result = getCyclicPoolDefinitions(poolDefinitions, options)
     .reduce((acc, poolDefinition) => {
       const { frequencyData, startDate } = poolDefinition;
-      const {
-        endDate, daysOFWeek, frequency, frequencyType,
-      } = frequencyData;
-      const intervalStartDate = isAfter(start, startDate) ? start : startDate;
-      const intervalEndDate = isBefore(end, endDate) ? end : endDate;
+      const { endDate, frequency, frequencyType } = frequencyData;
+      const intervalStartDate = getIntervalDate(start, startDate, isAfter);
+      const intervalEndDate = getIntervalDate(end, endDate, isBefore);
 
-      if (!isValid(intervalEndDate)) {
+      if (!intervalEndDate || !isValid(intervalEndDate)) {
         throw new RangeError('Ending date must be defined');
       }
 
@@ -29,13 +44,14 @@ export default function getCyclicPoolDefinitionsAsDates(poolDefinitions, options
 
       if (frequencyType === frequencyTypes.WEEKLY) {
         intervalOptions.unit = 'week';
+        const { daysOfWeek } = frequencyData;
 
-        dates = daysOFWeek.reduce((bcc, dayOFWeek) => {
-          interval.start = setDay(intervalStartDate, dayOFWeek === 7 ? 0 : dayOFWeek);
+        dates = daysOfWeek.reduce((bcc, dayOfWeek) => {
+          interval.start = setDay(intervalStartDate, dayOfWeek === 7 ? 0 : dayOfWeek);
 
           return [
             ...bcc,
-            ...eachDayOfInterval(interval, options),
+            ...eachDayOfInterval(interval, intervalOptions),
           ];
         }, []);
       } else {
@@ -43,7 +59,7 @@ export default function getCyclicPoolDefinitionsAsDates(poolDefinitions, options
           intervalOptions.unit = 'month';
         }
 
-        dates = eachDayOfInterval(interval, options);
+        dates = eachDayOfInterval(interval, intervalOptions);
       }
 
       return [
@@ -51,5 +67,9 @@ export default function getCyclicPoolDefinitionsAsDates(poolDefinitions, options
         ...dates,
       ];
     }, [])
-    .map(date => format(date));
+    .map(date => format(date, constants.DAY_FORMAT))
+    .sort();
+
+  return _uniq(result);
+
 }

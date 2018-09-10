@@ -1,7 +1,10 @@
+import addDays from 'date-fns/add_days';
+import subDays from 'date-fns/sub_days';
+
 import constants from './constants';
 import format from './format';
 import getCyclicPoolDefinitionsAsDates from './getCyclicPoolDefinitionsAsDates';
-import getSinglePoolDefinitionsAsDays from './getSinglePoolDefinitionsAsDays';
+import getSinglePoolDefinitionsAsDays from './getSinglePoolDefinitionsAsDates';
 import validateFnArguments from './validateFnArguments';
 
 export default function isInPoolScope(poolDefinitions, date) {
@@ -12,12 +15,12 @@ export default function isInPoolScope(poolDefinitions, date) {
 
   let isDateInScope = singleEventDates.some(item => item === formattedDate);
 
-  if (isDateInScope || !isDateInScope) {
+  if (isDateInScope) {
     return isDateInScope;
   }
 
-  const start = undefined;
-  const end = undefined;
+  const start = subDays(date, 1);
+  const end = addDays(date, 1);
 
   const cyclicEventDates = getCyclicPoolDefinitionsAsDates(poolDefinitions, { start, end });
 

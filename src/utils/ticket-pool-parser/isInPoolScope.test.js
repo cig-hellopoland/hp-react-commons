@@ -56,11 +56,22 @@ describe('Ticket Pool Parser', () => {
           endDate: format(new Date(2002, 3, 5, 13)),
         },
       ];
-      const date = format(new Date(2001, 7, 15, 3));
+      let date = format(new Date(2001, 7, 15, 3));
 
       expect(isInPoolScope(data, date)).toEqual(expectedValue);
 
       // TODO: cyclic pools
+
+      data.push({
+        ...singlePoolDefinition,
+        frequencyData: {
+          endDate: format(new Date(2003, 7, 15)),
+        },
+      });
+
+      date = format(new Date(2002, 7, 15));
+
+      expect(isInPoolScope(data, date)).toEqual(expectedValue);
     });
   });
 });
