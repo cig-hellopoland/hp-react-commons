@@ -1,7 +1,7 @@
 # Changelog
 
 ## 0.6.1
-* Added `getClosestEventDate` to `ticket-pool-parser`
+* Added `getClosestEventDate` and `getPoolDefinitionsAsDates` to `ticket-pool-parser`
 * Changed some `ticket-pool-parser` tests
 
 ## 0.6.0
