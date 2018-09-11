@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.6.2
+* Added `start` option to `getClosestEventDate` 
+* Changed `getClosestEventDate` to fix issue with incorrect hours
+
 ## 0.6.1
 * Added `getClosestEventDate` and `getPoolDefinitionsAsDates` to `ticket-pool-parser`
 * Changed some `ticket-pool-parser` tests
