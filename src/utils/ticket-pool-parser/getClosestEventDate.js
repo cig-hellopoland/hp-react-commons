@@ -1,19 +1,20 @@
 import addMonths from 'date-fns/add_months';
 import addYears from 'date-fns/add_years';
+import startOfToday from 'date-fns/start_of_today';
 
 import getSinglePoolDefinitionsAsDates from './getSinglePoolDefinitionsAsDates';
 import getCyclicPoolDefinitionsAsDates from './getCyclicPoolDefinitionsAsDates';
 import validateFnArguments from './validateFnArguments';
 import isPoolDefinitionList from './isPoolDefinitionList';
 
-export default function getClosestEventDate(poolDefinitions) {
+export default function getClosestEventDate(poolDefinitions, dirtyOptions = {}) {
   validateFnArguments(arguments.length, 1);
 
   if (!isPoolDefinitionList(poolDefinitions)) {
     return null;
   }
 
-  let start = new Date();
+  let start = dirtyOptions.start || startOfToday();
   let result;
   let counter = 0;
 
