@@ -1,34 +1,39 @@
 import { createLogic } from 'redux-logic';
+import _find from 'lodash/find';
+import _uniq from 'lodash/uniq';
 import { types as profileTypes } from './profile';
 
 export const name = 'cart';
 const prefix = `commons/${name}/`;
-// use always the same empty array reference for shallow equality check
-const emptyArray = [];
 
 /*
  * HELPERS
  */
 
-/**
- * Removes old entries
- *
- * @method
- * @param {Object[]} entries - persisted entries
- * @param {Object[]} prevEntries - entries to be deleted
- * @return {Object[]} - remaining entries
- */
-function removeEntriesByDates(entries, prevEntries) {
-  return entries.reduce((acc, entry) => {
-    const result = [...acc];
-    const hasEntry = prevEntries.some(item => item.date === entry.date);
+function getDetailsFromState(state, entries) {
+  return Object.entries(state.details).reduce((acc, detail) => {
+    const [key, value] = detail;
 
-    if (!hasEntry) {
-      result.push(entry);
+    if (entries.indexOf(+key) !== -1) {
+      return acc;
     }
 
-    return result;
-  }, []);
+    return { ...acc, [key]: value };
+  });
+}
+
+function getEntriesFromState(state, entries) {
+  return state.entries.filter(entry => entries.indexOf(entry.id) !== -1);
+}
+
+function getMerchantFromState(state, merchantId) {
+  return _find(state.merchants, { id: merchantId });
+}
+
+function getProductFromState(state, entries) {
+  return state.products.filter(
+    product => product.entries.every(entryId => entries.indexOf(entryId) !== -1),
+  )[0];
 }
 
 const getTicketsAsList = tickets => tickets.reduce((acc, ticket) => {
@@ -60,8 +65,11 @@ const getTicketsAsList = tickets => tickets.reduce((acc, ticket) => {
 }, []);
 
 export const helpers = {
+  getDetailsFromState,
+  getEntriesFromState,
+  getMerchantFromState,
+  getProductFromState,
   getTicketsAsList,
-  removeEntriesByDates,
 };
 
 
@@ -72,8 +80,16 @@ export const helpers = {
 const CLEAR_SIGHT_ENTRIES = `${prefix}CLEAR_SIGHT_ENTRIES`;
 const DELETE_SIGHT_ENTRIES = `${prefix}DELETE_SIGHT_ENTRIES`;
 const UPDATE_SIGHT_ENTRIES = `${prefix}UPDATE_SIGHT_ENTRIES`;
+const CART_ITEM_ADD = `${prefix}CART_ITEM_ADD`;
+const CART_ITEM_DELETE = `${prefix}CART_ITEM_DELETE`;
+const CART_ITEM_UPDATE = `${prefix}CART_ITEM_UPDATE`;
+const CLEAR_CART = `${prefix}CLEAR_CART`;
 
 export const types = {
+  CART_ITEM_ADD,
+  CART_ITEM_DELETE,
+  CART_ITEM_UPDATE,
+  CLEAR_CART,
   CLEAR_SIGHT_ENTRIES,
   DELETE_SIGHT_ENTRIES,
   UPDATE_SIGHT_ENTRIES,
@@ -84,7 +100,74 @@ export const types = {
  * ACTIONS
  */
 
-const addSightEntries = data => ({
+/**
+ * Creates action with new cart item details
+ *
+ * @method
+ * @param {Object} [details] - extra information about entries
+ * @param {Object[]} entries - order information
+ * @param {Object} [product] - product details
+ * @param {Object} [merchant] - merchant details
+ * @return {{
+ *   type: string,
+ *   data: {details, entries: Object[], product, merchant}
+ * }}
+ */
+const cartItemAdd = ({
+  details, entries, product, merchant,
+} = {}) => ({
+  type: CART_ITEM_ADD,
+  data: {
+    details,
+    entries,
+    product,
+    merchant,
+  },
+});
+
+/**
+ * Creates an action for cart item deletion
+ *
+ * @method
+ * @param {number} id - cart item id
+ * @return {{
+ *   type: string,
+ *   data: {id: number}
+ * }}
+ */
+const cartItemDelete = id => ({
+  type: CART_ITEM_DELETE,
+  data: {
+    id,
+  },
+});
+
+/**
+ * Creates an action for cart item updates
+ *
+ * @method
+ * @param {number} id - cart item id
+ * @param {Object} [details] - extra information about entries
+ * @param {Object[]} entries - order information
+ * @return {{
+ *   type: string,
+ *   data: {id: number, details, entries: Object[]}
+ * }}
+ */
+const cartItemUpdate = ({ id, details, entries } = {}) => ({
+  type: CART_ITEM_UPDATE,
+  data: {
+    id,
+    details,
+    entries,
+  },
+});
+
+const clearCart = () => ({
+  type: CLEAR_CART,
+});
+
+const addSightEntries = data => ({ // TODO: delete method
   type: UPDATE_SIGHT_ENTRIES,
   data: {
     nextSightEntry: data,
@@ -92,11 +175,9 @@ const addSightEntries = data => ({
   },
 });
 
-const clearSightEntries = () => ({
-  type: CLEAR_SIGHT_ENTRIES,
-});
+const clearSightEntries = clearCart;
 
-const deleteSightEntries = (sightId, entries) => ({
+const deleteSightEntries = (sightId, entries) => ({ // TODO: refactor for API compliance
   type: DELETE_SIGHT_ENTRIES,
   data: {
     sightId,
@@ -104,7 +185,7 @@ const deleteSightEntries = (sightId, entries) => ({
   },
 });
 
-const updateSightEntries = (prevSightEntry, nextSightEntry) => ({
+const updateSightEntries = (prevSightEntry, nextSightEntry) => ({ // TODO: delete method
   type: UPDATE_SIGHT_ENTRIES,
   data: {
     nextSightEntry,
@@ -113,6 +194,10 @@ const updateSightEntries = (prevSightEntry, nextSightEntry) => ({
 });
 
 export const actions = {
+  cartItemAdd,
+  cartItemDelete,
+  cartItemUpdate,
+  clearCart,
   addSightEntries,
   clearSightEntries,
   deleteSightEntries,
@@ -125,21 +210,79 @@ export const actions = {
  */
 
 /**
- * Returns state
+ * Returns current state.
  *
  * @method
- * @param {object} state
- * @return {object}
+ * @param {Object} state
+ * @return {*}
  */
 const getState = state => state[name];
+
+/**
+ * Get single cart item.
+ *
+ * @method
+ * @param {Object} state
+ * @param {number} cartItemId
+ * @return {{
+ *   id: number,
+ *   details,
+ *   entries: Object[],
+ *   entries,
+ *   product
+ * }}
+ */
+const getCartItem = (state, cartItemId) => {
+  const localState = getState(state);
+  const { items } = localState;
+
+  const cartItem = _find(items, { id: cartItemId });
+
+  if (!cartItem) {
+    return cartItem;
+  }
+
+  const product = getProductFromState(localState, cartItem.entries);
+
+  return {
+    id: cartItemId,
+    details: getDetailsFromState(localState, cartItem.entries),
+    entries: getEntriesFromState(localState, cartItem.entries),
+    merchant: getMerchantFromState(localState, product && product.merchantId),
+    product,
+  };
+};
+
+/**
+ * Returns list of cart items.
+ *
+ * @method
+ * @param {Object} state
+ * @return {Object[]}
+ */
+const getCartItems = (state) => {
+  const { items } = getState(state);
+
+  return items.map(item => getCartItem(state, item.id));
+};
 
 const getSightEntries = state => getState(state).sightEntries;
 
 const getSightEntriesAsTickets = (state) => {
-  const tickets = getSightEntries(state);
+  const cartItems = getCartItems(state);
 
-  return getTicketsAsList(tickets);
+  return cartItems.map(({
+    id, details, entries, product,
+  }) => ({
+    cartItemId: id,
+    id: product.id,
+    city: product.location.city,
+    name: product.name,
+    entries: entries.map(entry => ({ ...entry, ...details[entry.id] })),
+  }));
 };
+
+const getEntries = state => getState(state).entries;
 
 const getTicketEntries = (state) => {
   const sightEntries = getSightEntries(state);
@@ -150,21 +293,49 @@ const getTicketEntries = (state) => {
   ]), []);
 };
 
-const getTicketsQuantity = state => getSightEntriesAsTickets(state).length;
+/**
+ * Get number of total items in cart.
+ *
+ * @method
+ * @param state
+ * @return {number}
+ */
+const getTotalItems = state => getState(state).items.length;
 
+const getTicketsQuantity = state => getTotalItems(state);
+
+/**
+ * Get total price of cart items as basic monetary value.
+ *
+ * @method
+ * @param state
+ * @return {number}
+ */
 const getTotalPrice = (state) => {
-  const entries = getTicketEntries(state);
+  const { details, entries } = getState(state);
 
-  return entries.reduce((acc, { price, quantity }) => acc + (price * quantity), 0);
+  return entries.reduce((acc, { id, quantity }) => {
+    const { price } = details[id] || {};
+
+    if (price) {
+      return acc + price * quantity;
+    }
+
+    return acc;
+  }, 0);
 };
 
 export const selectors = {
+  getCartItem,
+  getCartItems,
+  getEntries,
+  getState,
+  getTotalItems,
+  getTotalPrice,
   getSightEntries,
   getSightEntriesAsTickets,
-  getState,
   getTicketEntries,
   getTicketsQuantity,
-  getTotalPrice,
 };
 
 
@@ -172,17 +343,17 @@ export const selectors = {
  * LOGIC
  */
 
-const clearSightEntriesLogic = createLogic({
+const clearCartLogic = createLogic({
   type: [
     profileTypes.LOGOUT_SUCCESS,
   ],
   process() {
-    return clearSightEntries();
+    return clearCart();
   },
 });
 
 export const logic = {
-  clearSightEntriesLogic,
+  clearCartLogic,
 };
 
 
@@ -190,88 +361,199 @@ export const logic = {
  * REDUCERS
  */
 
+/**
+ * Cart model
+ *
+ * items: Array<{ id: number, entries: Array<entryId> }>
+ * entries: Array<{ id: number, quantity: number, *}> - entries for order API
+ * details: { [entryId]: {price: number, *} } - extra information about entries
+ * merchants: Array<{ id: number, products: Array<productId>, *}>
+ * products: Array<{ id: number, merchantId: number, entries: Array<entryId>, *}>
+ *
+ */
 export const defaultInitialState = {
-  sightEntries: emptyArray,
+  items: [],
+  details: {},
+  entries: [],
+  products: [],
+  merchants: [],
 };
 
 const reducer = (initialState = defaultInitialState) => (state = initialState, action) => {
   switch (action.type) {
-    case CLEAR_SIGHT_ENTRIES:
+    case CART_ITEM_ADD: {
+      const {
+        details: nextDetails, entries: nextEntries, product: nextProduct, merchant: nextMerchant,
+      } = action.data;
+
+      let cartItemId = 1;
+
+      if (state.items.length) {
+        const latestItem = state.items[state.items.length - 1];
+
+        cartItemId = latestItem.id + 1;
+      }
+
+
+      // ITEMS
+      let items = [...state.items];
+
+      const hasEntries = items.some(
+        item => nextEntries.every(entry => item.entries.indexOf(entry.id) !== -1),
+      );
+
+      if (!hasEntries) {
+        items = [
+          ...items,
+          { id: cartItemId, entries: nextEntries.map(entry => entry.id) },
+        ];
+      }
+
+
+      // DETAILS
+      const details = {
+        ...state.details,
+        ...nextDetails,
+      };
+
+
+      // ENTRIES
+      const entries = [
+        ...state.entries.filter(entry => !_find(nextEntries, { id: entry.id })),
+        ...nextEntries,
+      ];
+
+
+      // MERCHANTS
+      let merchants = [...state.merchants];
+
+      if (nextMerchant) {
+        const isMerchantInState = !!_find(merchants, { id: nextMerchant.id });
+
+        if (isMerchantInState) {
+          merchants = merchants.map((merchant) => {
+            if (merchant.id === nextMerchant.id) {
+              return {
+                ...merchant,
+                products: _uniq([
+                  ...merchant.products,
+                  nextProduct.id,
+                ]),
+              };
+            }
+
+            return merchant;
+          });
+        } else {
+          merchants.push({
+            ...nextMerchant, // WAT
+            products: [nextProduct.id],
+          });
+        }
+      }
+
+
+      // PRODUCTS
+      let products = [...state.products];
+
+      if (nextProduct) {
+        const isProductInState = !!_find(products, { id: nextProduct.id });
+
+        if (isProductInState) {
+          products = products.map((product) => {
+            const merchant = _find(merchants, m => m.products.indexOf(nextProduct.id) !== -1);
+
+            if (product.id === nextProduct.id) {
+              return {
+                ...nextProduct,
+                entries: nextEntries.map(entry => entry.id),
+                merchantId: merchant && merchant.id,
+              };
+            }
+
+            return product;
+          });
+        } else {
+          const merchant = _find(merchants, m => m.products.indexOf(nextProduct.id) !== -1);
+
+          products.push({
+            ...nextProduct, // WAT
+            entries: nextEntries.map(entry => entry.id),
+            merchantId: merchant && merchant.id,
+          });
+        }
+      }
+
+      return {
+        ...state,
+        entries,
+        details,
+        items,
+        merchants,
+        products,
+      };
+    }
+    case CART_ITEM_DELETE: {
+      const { id } = action.data;
+      const cartItem = _find(state.items, { id });
+
+      if (!cartItem) {
+        return {
+          ...state,
+        };
+      }
+
+
+      // DETAILS
+      const details = Object.entries(state.details).reduce((acc, detail) => {
+        const key = detail[0];
+        const value = detail[1];
+
+        if (cartItem.entries.indexOf(+key) !== -1) {
+          return acc;
+        }
+
+        return {
+          ...acc,
+          [key]: value,
+        };
+      }, {});
+
+
+      // ENTRIES
+      const entries = state.entries.filter(entry => cartItem.entries.indexOf(entry.id) === -1);
+
+
+      // ITEMS
+      const items = state.items.filter(item => item.id !== id);
+
+
+      // PRODUCTS
+      const products = state.products
+        .map(product => ({
+          ...product,
+          entries: product.entries.filter(entryId => cartItem.entries.indexOf(entryId) === -1),
+        }))
+        .filter(product => product.entries.length !== 0);
+
+
+      // MERCHANTS
+      const merchants = state.merchants
+        .filter(merchant => products.some(({ merchantId }) => merchantId === merchant.id));
+
+      return {
+        ...state,
+        details,
+        entries,
+        items,
+        merchants,
+        products,
+      };
+    }
+    case CLEAR_CART:
       return {
         ...initialState,
       };
-    case DELETE_SIGHT_ENTRIES:
-      return (function deleteSightEntriesReducer() {
-        const { sightEntries: stateSightEntries } = state;
-        const sightEntries = [...stateSightEntries];
-        const { data } = action;
-
-        const entryIndex = stateSightEntries.findIndex(sight => sight.id === data.sightId);
-
-        if (entryIndex !== -1) {
-          const sightEntry = sightEntries[entryIndex];
-
-          sightEntry.entries = removeEntriesByDates(sightEntry.entries, data.entries);
-        }
-
-        return {
-          ...state,
-          sightEntries,
-        };
-      }());
-    case UPDATE_SIGHT_ENTRIES:
-      return (function updateSightEntriesReducer() {
-        const { sightEntries: stateSightEntries } = state;
-        const sightEntries = [...stateSightEntries];
-        const { data: { nextSightEntry, prevSightEntry } } = action;
-
-        const entryIndex = stateSightEntries.findIndex(sight => sight.id === nextSightEntry.id);
-
-        // remove old entries
-        if (prevSightEntry && entryIndex !== -1) {
-          const sightEntry = sightEntries[entryIndex];
-
-          sightEntry.entries = removeEntriesByDates(sightEntry.entries, prevSightEntry.entries);
-        }
-
-        // add new entries
-        const entries = nextSightEntry.entries.filter(({ quantity }) => quantity && quantity > 0);
-
-        if (entryIndex !== -1) {
-          entries.forEach((entry) => {
-            const index = sightEntries[entryIndex].entries.findIndex(({ date, id }) => (
-              date === entry.date && id === entry.id
-            ));
-
-            if (index !== -1) {
-              let { quantity } = sightEntries[entryIndex].entries[index];
-              quantity += entry.quantity;
-              sightEntries[entryIndex].entries[index].quantity = quantity;
-            } else {
-              sightEntries[entryIndex].entries.push(entry);
-            }
-          });
-        } else {
-          sightEntries.push({
-            ...nextSightEntry,
-            entries,
-          });
-        }
-
-        // sort entries by date
-        sightEntries.forEach((sight) => {
-          sight.entries.sort((a, b) => {
-            const timestamp = (new Date(a.date)).getTime() - (new Date(b.date)).getTime();
-
-            return timestamp || a.id - b.id;
-          });
-        });
-
-        return {
-          ...state,
-          sightEntries,
-        };
-      }());
     default:
       return state;
   }
