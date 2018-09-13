@@ -1,5 +1,5 @@
 import format from 'date-fns/format';
-import querystring from 'querystring';
+import querystring from 'qs';
 import reducer, {
   actions,
   apiURL,

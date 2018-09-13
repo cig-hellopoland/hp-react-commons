@@ -1,6 +1,6 @@
 import { createLogic } from 'redux-logic';
 import _find from 'lodash/find';
-import querystring from 'querystring';
+import querystring from 'qs';
 
 const debounceTime = 500;
 
