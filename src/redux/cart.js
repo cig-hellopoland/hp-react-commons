@@ -14,12 +14,12 @@ function getDetailsFromState(state, entries) {
   return Object.entries(state.details).reduce((acc, detail) => {
     const [key, value] = detail;
 
-    if (entries.indexOf(+key) !== -1) {
+    if (entries.indexOf(+key) === -1) {
       return acc;
     }
 
     return { ...acc, [key]: value };
-  });
+  }, {});
 }
 
 function getEntriesFromState(state, entries) {
@@ -177,14 +177,6 @@ const addSightEntries = data => ({ // TODO: delete method
 
 const clearSightEntries = clearCart;
 
-const deleteSightEntries = (sightId, entries) => ({ // TODO: refactor for API compliance
-  type: DELETE_SIGHT_ENTRIES,
-  data: {
-    sightId,
-    entries,
-  },
-});
-
 const updateSightEntries = (prevSightEntry, nextSightEntry) => ({ // TODO: delete method
   type: UPDATE_SIGHT_ENTRIES,
   data: {
@@ -200,7 +192,6 @@ export const actions = {
   clearCart,
   addSightEntries,
   clearSightEntries,
-  deleteSightEntries,
   updateSightEntries,
 };
 
@@ -266,8 +257,6 @@ const getCartItems = (state) => {
   return items.map(item => getCartItem(state, item.id));
 };
 
-const getSightEntries = state => getState(state).sightEntries;
-
 const getSightEntriesAsTickets = (state) => {
   const cartItems = getCartItems(state);
 
@@ -275,23 +264,25 @@ const getSightEntriesAsTickets = (state) => {
     id, details, entries, product,
   }) => ({
     cartItemId: id,
-    id: product.id,
-    city: product.location.city,
-    name: product.name,
+    id: product && product.id,
+    city: product && product.location && product.location.city,
+    name: product && product.name,
     entries: entries.map(entry => ({ ...entry, ...details[entry.id] })),
   }));
 };
 
+/**
+ * Returns order entries.
+ *
+ * @method
+ * @param state
+ * @return {Object[]}
+ */
 const getEntries = state => getState(state).entries;
 
-const getTicketEntries = (state) => {
-  const sightEntries = getSightEntries(state);
+const getSightEntries = getCartItems;
 
-  return sightEntries.reduce((acc, { entries }) => ([
-    ...acc,
-    ...entries,
-  ]), []);
-};
+const getTicketEntries = getEntries;
 
 /**
  * Get number of total items in cart.
@@ -302,7 +293,7 @@ const getTicketEntries = (state) => {
  */
 const getTotalItems = state => getState(state).items.length;
 
-const getTicketsQuantity = state => getTotalItems(state);
+const getTicketsQuantity = getTotalItems;
 
 /**
  * Get total price of cart items as basic monetary value.
