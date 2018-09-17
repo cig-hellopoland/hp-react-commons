@@ -260,6 +260,10 @@ const fetchAvailableTickets = ({
     method: 'get',
     ...options,
   },
+  params: {
+    sightEventId: id,
+    ...query,
+  },
   onFailure,
   onSuccess,
 });
@@ -796,7 +800,11 @@ const fetchAvailableTicketsLogic = createLogic({
   ],
   latest: true,
   async process(
-    { action: { payload, onFailure, onSuccess }, httpClient, cancelled$ },
+    {
+      action: {
+        params, payload, onFailure, onSuccess,
+      }, httpClient, cancelled$,
+    },
     dispatch,
     done,
   ) {
@@ -805,7 +813,7 @@ const fetchAvailableTicketsLogic = createLogic({
       const { data, status } = response;
 
       if (status === 200 || status === 204) {
-        dispatch(fetchAvailableTicketsSuccess({ tickets: data }));
+        dispatch(fetchAvailableTicketsSuccess({ ...data, ...params }));
 
         if (onSuccess) {
           onSuccess();
@@ -1059,8 +1067,7 @@ const reducer = (initialState = defaultInitialState) => (state = initialState, a
       return {
         ...state,
         availableTickets: {
-          sightEventId: action.data.id,
-          tickets: action.data.tickets,
+          ...action.data,
         },
       };
     case FETCH_ITEM_SUCCESS:

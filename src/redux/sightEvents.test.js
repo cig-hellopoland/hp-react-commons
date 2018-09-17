@@ -201,6 +201,10 @@ describe('actions', () => {
         url: `${apiURL}/${id}/available-tickets?${urlQuery}`,
         method: 'get',
       },
+      params: {
+        sightEventId: id,
+        ...query,
+      },
     };
 
     expect(fetchAvailableTickets({ id, query })).toEqual(expectedValue);
@@ -810,15 +814,15 @@ describe('reducer', () => {
 
   it('should handle FETCH_AVAILABLE_TICKETS_SUCCESS', () => {
     const data = {
-      id: 123,
-      tickets: [{ id: 1 }],
+      date: '2018-01-01',
+      sightEventId: 123,
+      ticketPools: [{ id: 1 }],
     };
     const action = actions.fetchAvailableTicketsSuccess(data);
     const expectedValue = {
       ...defaultInitialState,
       availableTickets: {
-        sightEventId: data.id,
-        tickets: data.tickets,
+        ...data,
       },
     };
 
