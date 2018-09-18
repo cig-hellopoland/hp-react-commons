@@ -14,6 +14,7 @@ import {
 import TicketModalController from './TicketModalController';
 import FALLBACK_TYPES from './fallbackTypes';
 
+
 class TicketModalStateConnector extends React.Component {
   state = {
     isFetching: false,
@@ -76,13 +77,6 @@ class TicketModalStateConnector extends React.Component {
     this.handleFetchRequest();
   };
 
-  fetchAvailableTicketsByDate = ({ id, date }) => {
-    const { fetchAvailableTickets } = this.props;
-    const query = { date };
-
-    fetchAvailableTickets({ id, query });
-  };
-
   handleFallback = () => {
     const { fallback } = this.props;
     const hasError = this.hasError();
@@ -99,11 +93,17 @@ class TicketModalStateConnector extends React.Component {
     return fallback(cb);
   };
 
-  handleFetchError = () => this.setState({ hasRequestError: true, isFetching: false });
+  handleFetchError = () => this.setState({
+    hasCatchError: false, hasRequestError: true, isFetching: false,
+  });
 
-  handleFetchRequest = () => this.setState({ hasRequestError: false, isFetching: true });
+  handleFetchRequest = () => this.setState({
+    hasCatchError: false, hasRequestError: false, isFetching: true,
+  });
 
-  handleFetchSuccess = () => this.setState({ hasRequestError: false, isFetching: false });
+  handleFetchSuccess = () => this.setState({
+    hasCatchError: false, hasRequestError: false, isFetching: false,
+  });
 
   handleSubmit = (cartItem) => {
     const { addItemToCart, onSubmit } = this.props;
@@ -116,16 +116,12 @@ class TicketModalStateConnector extends React.Component {
   };
 
   componentDidCatch() {
-    const hasFallback = this.hasFallback();
-
-    if (hasFallback) {
-      this.setState({ hasCatchError: true });
-    }
+    this.setState({ hasCatchError: true });
   }
 
   render() {
     const {
-      availableTickets, cartItem, children, open, sightEvent,
+      availableTickets, cartItem, children, fetchAvailableTickets, open, sightEvent,
     } = this.props;
     const isFallbackRequired = this.isFallbackRequired();
 
@@ -140,7 +136,7 @@ class TicketModalStateConnector extends React.Component {
     return (
       <TicketModalController
         cartItem={cartItem}
-        fetchAvailableTickets={this.fetchAvailableTicketsByDate}
+        fetchAvailableTicketsByDate={fetchAvailableTickets}
         onSubmit={this.handleSubmit}
         sightEvent={sightEvent}
         availableTickets={availableTickets}

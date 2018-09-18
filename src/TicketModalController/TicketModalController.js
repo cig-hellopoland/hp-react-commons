@@ -4,44 +4,72 @@ import format from 'date-fns/format';
 import _find from 'lodash/find';
 import _uniqBy from 'lodash/uniqBy';
 import getClosestEventDate from '../utils/ticket-pool-parser/getClosestEventDate';
+import constants from '../utils/ticket-pool-parser/constants';
+import getClosestEventDateWithTimezone from '../utils/ticket-pool-parser/getClosestEventDateWithTimezone';
+import getDateFromCalendar from '../utils/ticket-pool-parser/getDateFromCalendar';
 
 class TicketModalController extends Component {
   constructor(props) {
     super(props);
+    const { cartItem } = props;
 
     this.state = {
-      activeStep: this.getInitialActiveStep(),
-      poolId: this.getInitialPoolId(),
-      date: this.getInitialDate(), // "YYYY-MM-dd'T'HH:mmZ"
-      entries: this.getInitialEntries(props.cartItem), // [entryId]: { [propName]: * }
+      activeStep: this.getInitialActiveStep(cartItem),
       checkedAgreements: {}, // [agreementId]: checked<Boolean>
+      date: this.getInitialDate(cartItem), // "YYYY-MM-DDTHH:mmZ"
+      entries: this.getInitialEntries(cartItem), // [entryId]: { [propName]: * }
+      isFetching: false,
+      poolId: this.getInitialPoolId(cartItem),
     };
   }
 
-  getInitialActiveStep = () => {
+  componentDidMount() {
     const { sightEvent } = this.props;
-    const { ticketPoolDefinitions } = sightEvent;
 
+    if (sightEvent && sightEvent.id) {
+      const date = getClosestEventDate(sightEvent.ticketPoolDefinitions);
+
+      this.fetchAvailableTickets(date);
+    }
+  }
+
+  componentDidUpdate() {
+    const { availableTickets } = this.props;
+
+    this.setSinglePoolParams(availableTickets);
+  }
+
+  getInitialActiveStep = (cartItem) => {
+    // TODO: handle this as it's stupid
     if (!this.isPoolValid()) {
       return 0;
     }
 
-    const isPoolSingle = this.isPoolSingle();
-    const isPoolCyclic = this.isPoolCyclic(ticketPoolDefinitions[0].id);
+    const { sightEvent } = this.props;
+    const { ticketPoolDefinitions } = sightEvent;
+    const { id: poolId } = ticketPoolDefinitions[0];
 
-    if (isPoolSingle && !isPoolCyclic) {
+    const isPoolSingle = this.isPoolSingle(ticketPoolDefinitions);
+    const isPoolCyclic = this.isPoolCyclic(ticketPoolDefinitions, poolId);
+
+    if ((cartItem && cartItem.id) || (isPoolSingle && !isPoolCyclic)) {
       return 3;
-      // return 1;
     }
 
     return 1;
   };
 
-  getInitialDate = () => {
+  getInitialDate = (cartItem) => {
     const { sightEvent } = this.props;
     const { ticketPoolDefinitions } = sightEvent;
 
-    return new Date(getClosestEventDate(ticketPoolDefinitions));
+    if (cartItem && cartItem.id) {
+      const { date } = cartItem.entries[0];
+
+      return date;
+    }
+
+    return getClosestEventDateWithTimezone(ticketPoolDefinitions);
   };
 
   getInitialEntries = (cartItem) => {
@@ -64,26 +92,35 @@ class TicketModalController extends Component {
     return {};
   };
 
-  getInitialPoolId = () => {
-    const { sightEvent: { ticketPoolDefinitions } } = this.props;
+  getInitialPoolId = (cartItem) => {
+    if (cartItem && cartItem.id) {
+      const { details, entries } = cartItem;
+      const { id } = entries[0];
+      const { poolId } = details[id];
 
-    if (this.isPoolSingle(ticketPoolDefinitions)) {
-      return ticketPoolDefinitions[0].id;
+      return poolId;
     }
 
     return null;
   };
 
+
   getTicketDefinitions = (poolId) => {
-    const { sightEvent: { ticketPoolDefinitions } } = this.props;
+    const { availableTickets: { ticketPools } } = this.props;
 
-    let pools = [...ticketPoolDefinitions];
-
-    if (poolId) {
-      pools = [_find(ticketPoolDefinitions, { id: +poolId })];
+    if (!ticketPools) {
+      return [];
     }
 
-    const ticketDefs = pools.reduce((acc, pool) => {
+    let ticketPoolInstances = [...ticketPools];
+
+    if (poolId) {
+      const ticketPool = this.getTicketPoolById(ticketPools, poolId);
+
+      ticketPoolInstances = ticketPool ? [ticketPool] : [];
+    }
+
+    const ticketDefs = ticketPoolInstances.reduce((acc, pool) => {
       const { ticketDefinitions } = pool;
 
       if (ticketDefinitions && ticketDefinitions.length) {
@@ -98,6 +135,8 @@ class TicketModalController extends Component {
 
     return _uniqBy(ticketDefs, 'id');
   };
+
+  getTicketPoolById = (ticketPools, poolId) => _find(ticketPools, { id: +poolId });
 
   getTotalPrice = () => {
     const { entries } = this.state;
@@ -119,6 +158,7 @@ class TicketModalController extends Component {
 
   getTotalTicketsQty = () => {
     const { entries } = this.state;
+
     return Object.values(entries).reduce((sum, { quantity }) => sum + quantity, 0);
   };
 
@@ -134,6 +174,30 @@ class TicketModalController extends Component {
 
       return acc;
     }, {});
+  };
+
+  setSinglePoolParams = ({ ticketPools } = {}) => {
+    const { activeStep, date, poolId } = this.state;
+    const { sightEvent: { ticketPoolDefinitions } } = this.props;
+    const isPoolDefinitionSingle = this.isPoolSingle(ticketPoolDefinitions);
+    const hasAvailableTickets = !!(ticketPools && ticketPools.length);
+
+    if (activeStep === 3 && isPoolDefinitionSingle && hasAvailableTickets) {
+      const { id, startDate } = ticketPools[0];
+      const isPoolInstanceCyclic = this.isPoolCyclic(ticketPools, id);
+
+      const nextState = {
+        poolId: id,
+      };
+
+      if (isPoolInstanceCyclic) {
+        nextState.date = getDateFromCalendar(date, startDate);
+      }
+
+      if (poolId !== id) {
+        this.setState(nextState);
+      }
+    }
   };
 
   setStep = (step) => {
@@ -170,18 +234,13 @@ class TicketModalController extends Component {
     );
   };
 
-  isPoolCyclic = (poolId) => {
-    const { sightEvent: { ticketPoolDefinitions } } = this.props;
-    const poolDefinition = _find(ticketPoolDefinitions, { id: +poolId });
+  isPoolCyclic = (ticketPools, poolId) => {
+    const ticketPool = this.getTicketPoolById(ticketPools, poolId);
 
-    return !!(poolDefinition && poolDefinition.frequencyData);
+    return !!(ticketPool && ticketPool.frequencyData);
   };
 
-  isPoolSingle = () => {
-    const { sightEvent: { ticketPoolDefinitions } } = this.props;
-
-    return ticketPoolDefinitions.length === 1;
-  };
+  isPoolSingle = pool => pool && pool.length === 1;
 
   isPoolValid = () => {
     const { sightEvent: { ticketPoolDefinitions } } = this.props;
@@ -207,20 +266,45 @@ class TicketModalController extends Component {
   };
 
   isPrevButtonActive = () => {
-    const { poolId } = this.state;
+    const {
+      availableTickets: { ticketPools },
+      sightEvent: { ticketPoolDefinitions },
+    } = this.props;
+    const { activeStep, poolId } = this.state;
+    const isPoolValid = this.isPoolValid();
+    const isPoolDefinitionSingle = this.isPoolSingle(ticketPoolDefinitions);
+    const isPoolInstanceCyclic = this.isPoolCyclic(ticketPools, poolId);
+    const hasMultipleEvents = !isPoolDefinitionSingle || isPoolInstanceCyclic;
 
-    return this.isPoolValid() && (!this.isPoolSingle() || this.isPoolCyclic(poolId));
+    return activeStep !== 1 && isPoolValid && hasMultipleEvents;
   };
 
+  fetchAvailableTickets = (date) => {
+    const { fetchAvailableTicketsByDate, sightEvent } = this.props;
+    const data = {
+      id: sightEvent.id,
+      query: {},
+      onError: this.handleFetchError,
+      onSuccess: this.handleFetchSuccess,
+    };
+
+    if (date) {
+      data.query.date = format(date, constants.DATE_FORMAT);
+
+      fetchAvailableTicketsByDate(data);
+
+      this.setState({ isFetching: true });
+    }
+  };
+
+
   generateCartItem = () => {
-    const { date, entries } = this.state;
+    const { date, entries, poolId } = this.state;
     const { sightEvent: product } = this.props;
     const ticketDefinitions = this.getTicketDefinitions();
 
-
     const detailedEntries = Object.keys(entries).reduce((acc, entryId) => {
       const entry = _find(ticketDefinitions, { id: +entryId });
-
 
       return {
         details: {
@@ -228,13 +312,14 @@ class TicketModalController extends Component {
           [entryId]: {
             name: entry.name,
             price: entry.price,
+            poolId,
           },
         },
         entries: [
           ...acc.entries,
           {
             id: entry.id,
-            date: format(date, 'YYYY-MM-DDTHH:mmZ'),
+            date: format(date, constants.DATE_FORMAT),
             quantity: entries[entry.id].quantity,
           },
         ],
@@ -259,13 +344,20 @@ class TicketModalController extends Component {
     }));
   };
 
+  handleFetchError = () => this.setState({ isFetching: false });
+
+  handleFetchSuccess = () => this.setState({ isFetching: false });
+
   handleNextButtonClick = () => {
     const { activeStep, date } = this.state;
     const { steps, onSubmit } = this.props;
 
     if (this.isPoolValid()) {
       if (activeStep <= steps - 1) {
-        if (activeStep === 1 && this.isPoolSingle()) {
+        const { sightEvent: { ticketPoolDefinitions } } = this.props;
+        const isPoolDefinitionSingle = this.isPoolSingle(ticketPoolDefinitions);
+
+        if (activeStep === 1 && isPoolDefinitionSingle) {
           this.setStep(3);
         } else {
           this.nextStep();
@@ -281,7 +373,10 @@ class TicketModalController extends Component {
     const { activeStep } = this.state;
 
     if (activeStep > 1) {
-      if (activeStep === 3 && this.isPoolSingle()) {
+      const { sightEvent: { ticketPoolDefinitions } } = this.props;
+      const isPoolDefinitionSingle = this.isPoolSingle(ticketPoolDefinitions);
+
+      if (activeStep === 3 && isPoolDefinitionSingle) {
         this.setStep(1);
       } else {
         this.prevStep();
@@ -315,11 +410,17 @@ class TicketModalController extends Component {
   };
 
   handlePoolChange = (poolId) => {
-    this.setState({
-      poolId,
+    const { availableTickets: { ticketPools } } = this.props;
+
+    const { startDate } = this.getTicketPoolById(ticketPools, poolId);
+    const isPoolCyclic = this.isPoolCyclic(ticketPools, poolId);
+
+    this.setState(state => ({
+      date: isPoolCyclic ? getDateFromCalendar(state.date, startDate) : startDate,
       // clear entries on pool change
       entries: {},
-    });
+      poolId,
+    }));
   };
 
   render() {
@@ -330,6 +431,7 @@ class TicketModalController extends Component {
       ...this.state,
       totalPrice: this.getTotalPrice(),
       totalTicketsQty: this.getTotalTicketsQty(),
+      fetchAvailableTickets: this.fetchAvailableTickets,
       handleAgreementChange: this.handleAgreementChange,
       handleEntryChange: this.handleEntryChange,
       handleDateChange: this.handleDateChange,
@@ -349,7 +451,7 @@ TicketModalController.propTypes = {
   cartItem: PropTypes.shape({}),
   children: PropTypes.func.isRequired,
   onSubmit: PropTypes.func.isRequired,
-  fetchAvailableTickets: PropTypes.func.isRequired,
+  fetchAvailableTicketsByDate: PropTypes.func.isRequired,
   sightEvent: PropTypes.shape({}).isRequired,
   steps: PropTypes.number,
 };
