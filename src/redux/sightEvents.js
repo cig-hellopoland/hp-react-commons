@@ -1,6 +1,5 @@
 import { createLogic } from 'redux-logic';
 import _find from 'lodash/find';
-import querystring from 'qs';
 
 const debounceTime = 500;
 
@@ -256,14 +255,12 @@ const fetchAvailableTickets = ({
 } = {}) => ({
   type: FETCH_AVAILABLE_TICKETS,
   payload: {
-    url: `${apiURL}/${id}/available-tickets?${querystring.stringify(query)}`,
+    url: `${apiURL}/${id}/available-tickets`,
     method: 'get',
+    params: query,
     ...options,
   },
-  params: {
-    sightEventId: id,
-    ...query,
-  },
+  sightEventId: id,
   onFailure,
   onSuccess,
 });
@@ -802,7 +799,7 @@ const fetchAvailableTicketsLogic = createLogic({
   async process(
     {
       action: {
-        params, payload, onFailure, onSuccess,
+        sightEventId, payload, onFailure, onSuccess,
       }, httpClient, cancelled$,
     },
     dispatch,
@@ -813,7 +810,7 @@ const fetchAvailableTicketsLogic = createLogic({
       const { data, status } = response;
 
       if (status === 200 || status === 204) {
-        dispatch(fetchAvailableTicketsSuccess({ ...data, ...params }));
+        dispatch(fetchAvailableTicketsSuccess({ ...data, ...payload.params, sightEventId }));
 
         if (onSuccess) {
           onSuccess();
