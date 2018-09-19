@@ -7,7 +7,7 @@ import _uniqBy from 'lodash/uniqBy';
 import getClosestEventDate from '../utils/ticket-pool-parser/getClosestEventDate';
 import constants from '../utils/ticket-pool-parser/constants';
 import getClosestEventDateWithTimezone from '../utils/ticket-pool-parser/getClosestEventDateWithTimezone';
-import getDateFromCalendar from '../utils/ticket-pool-parser/getDateFromCalendar';
+import extendDateWithEventTime from '../utils/ticket-pool-parser/extendDateWithEventTime';
 
 class TicketModalController extends Component {
   constructor(props) {
@@ -197,7 +197,7 @@ class TicketModalController extends Component {
       };
 
       if (isPoolInstanceCyclic) {
-        nextState.date = getDateFromCalendar(date, startDate);
+        nextState.date = extendDateWithEventTime(date, startDate);
       }
 
       this.setState(nextState);
@@ -422,7 +422,7 @@ class TicketModalController extends Component {
     const isPoolCyclic = this.isPoolCyclic(ticketPools, poolId);
 
     this.setState(state => ({
-      date: isPoolCyclic ? getDateFromCalendar(state.date, startDate) : startDate,
+      date: isPoolCyclic ? extendDateWithEventTime(state.date, startDate) : startDate,
       // clear entries on pool change
       entries: {},
       poolId,
