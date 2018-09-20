@@ -36,8 +36,7 @@
     "react-redux": "^5.0.7",
     "redux": "^4.0.0",
     "redux-logic": "^0.15.0",
-    "rimraf": "^2.6.2",
-    "qs": "^6.5.2"
+    "rimraf": "^2.6.2"
   },
   "peerDependencies": {
     "date-fns": "^1.29.0",
@@ -46,8 +45,7 @@
     "react": "^16.4.0",
     "react-redux": "^5.0.7",
     "redux": "^4.0.0",
-    "redux-logic": "^0.15.0",
-    "qs": "^6.5.2"
+    "redux-logic": "^0.15.0"
   },
   "scripts": {
     "build": "babel src --out-dir ./dist --ignore src/**/*.test.js --source-maps",

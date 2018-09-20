@@ -30,15 +30,6 @@ class TicketModalStateConnector extends React.Component {
     }
   }
 
-  componentDidUpdate(prevProps) {
-    const { sightEventId: prevSightEventId } = prevProps;
-    const { open, sightEventId, sightEvent } = this.props;
-
-    if (open && prevSightEventId !== sightEventId && sightEvent.id !== sightEventId) {
-      this.fetchSightEventById(sightEventId);
-    }
-  }
-
   hasError = () => {
     const { hasCatchError, hasRequestError } = this.state;
 
@@ -121,15 +112,16 @@ class TicketModalStateConnector extends React.Component {
 
   render() {
     const {
-      availableTickets, cartItem, children, fetchAvailableTickets, open, sightEvent,
+      availableTickets, cartItem, children, fetchAvailableTickets,
+      open, sightEvent, fetchAvailableTicketsCancel,
     } = this.props;
-    const isFallbackRequired = this.isFallbackRequired();
+    const showFallback = this.isFallbackRequired();
 
     if (!open) {
       return null;
     }
 
-    if (isFallbackRequired) {
+    if (showFallback) {
       return this.handleFallback();
     }
 
@@ -137,6 +129,7 @@ class TicketModalStateConnector extends React.Component {
       <TicketModalController
         cartItem={cartItem}
         fetchAvailableTicketsByDate={fetchAvailableTickets}
+        fetchAvailableTicketsCancel={fetchAvailableTicketsCancel}
         onSubmit={this.handleSubmit}
         sightEvent={sightEvent}
         availableTickets={availableTickets}
@@ -155,6 +148,7 @@ TicketModalStateConnector.propTypes = {
   children: PropTypes.func.isRequired,
   fallback: PropTypes.func,
   fetchAvailableTickets: PropTypes.func.isRequired,
+  fetchAvailableTicketsCancel: PropTypes.func.isRequired,
   fetchSightEvent: PropTypes.func.isRequired,
   onSubmit: PropTypes.func,
   open: PropTypes.bool,
@@ -181,6 +175,7 @@ const mapStateToProps = (state, { cartItemId }) => ({
 const mapDispatchToProps = {
   addItemToCart: cartActions.cartItemAdd,
   fetchAvailableTickets: sightEventsActions.fetchAvailableTickets,
+  fetchAvailableTicketsCancel: sightEventsActions.fetchAvailableTicketsCancel,
   fetchSightEvent: sightEventsActions.fetchItem,
 };
 

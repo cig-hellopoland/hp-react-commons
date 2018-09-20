@@ -1,5 +1,4 @@
 import format from 'date-fns/format';
-import querystring from 'qs';
 import reducer, {
   actions,
   apiURL,
@@ -190,37 +189,27 @@ describe('actions', () => {
     const { fetchAvailableTickets } = actions;
     const { FETCH_AVAILABLE_TICKETS } = types;
     const id = 1;
-    const query = {
+    const params = {
       date: format(new Date(2011, 4, 12), 'YYYY-MM-DDTHH:MMZ'),
     };
-    const options = { a: 1 };
-    const urlQuery = querystring.stringify(query);
+    const options = { a: 1, params };
     const expectedValue = {
       type: FETCH_AVAILABLE_TICKETS,
       payload: {
-        url: `${apiURL}/${id}/available-tickets?${urlQuery}`,
+        url: `${apiURL}/${id}/available-tickets`,
         method: 'get',
+        ...options,
       },
-      params: {
-        sightEventId: id,
-        ...query,
-      },
+      sightEventId: id,
     };
 
-    expect(fetchAvailableTickets({ id, query })).toEqual(expectedValue);
-
-    expectedValue.payload = {
-      ...expectedValue.payload,
-      ...options,
-    };
-
-    expect(fetchAvailableTickets({ id, options, query })).toEqual(expectedValue);
+    expect(fetchAvailableTickets({ id, options })).toEqual(expectedValue);
 
     expectedValue.onFailure = onFailure;
     expectedValue.onSuccess = onSuccess;
 
     expect(fetchAvailableTickets({
-      id, options, query, onFailure, onSuccess,
+      id, options, onFailure, onSuccess,
     })).toEqual(expectedValue);
   });
 
