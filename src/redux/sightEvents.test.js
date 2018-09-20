@@ -1,3 +1,4 @@
+import format from 'date-fns/format';
 import reducer, {
   actions,
   apiURL,
@@ -16,6 +17,7 @@ const initialState = {
   error: null,
   item: null,
   list: null,
+  availableTickets: null,
 };
 
 const appState = {
@@ -171,6 +173,81 @@ describe('actions', () => {
     };
 
     expect(deleteItemSuccess()).toEqual(expectedValue);
+  });
+
+  it('should create an action to clear available tickets from state', () => {
+    const { clearAvailableTickets } = actions;
+    const { CLEAR_AVAILABLE_TICKETS } = types;
+    const expectedValue = {
+      type: CLEAR_AVAILABLE_TICKETS,
+    };
+
+    expect(clearAvailableTickets()).toEqual(expectedValue);
+  });
+
+  it('should create an action to make available tickets request', () => {
+    const { fetchAvailableTickets } = actions;
+    const { FETCH_AVAILABLE_TICKETS } = types;
+    const id = 1;
+    const params = {
+      date: format(new Date(2011, 4, 12), 'YYYY-MM-DDTHH:MMZ'),
+    };
+    const options = { a: 1, params };
+    const expectedValue = {
+      type: FETCH_AVAILABLE_TICKETS,
+      payload: {
+        url: `${apiURL}/${id}/available-tickets`,
+        method: 'get',
+        ...options,
+      },
+      sightEventId: id,
+    };
+
+    expect(fetchAvailableTickets({ id, options })).toEqual(expectedValue);
+
+    expectedValue.onFailure = onFailure;
+    expectedValue.onSuccess = onSuccess;
+
+    expect(fetchAvailableTickets({
+      id, options, onFailure, onSuccess,
+    })).toEqual(expectedValue);
+  });
+
+  it('should create an action to cancel available tickets request', () => {
+    const { fetchAvailableTicketsCancel } = actions;
+    const { FETCH_AVAILABLE_TICKETS_CANCEL } = types;
+    const expectedValue = {
+      type: FETCH_AVAILABLE_TICKETS_CANCEL,
+    };
+
+    expect(fetchAvailableTicketsCancel()).toEqual(expectedValue);
+  });
+
+  it('should create an action to fail available tickets request', () => {
+    const { fetchAvailableTicketsFailure } = actions;
+    const { FETCH_AVAILABLE_TICKETS_FAILURE } = types;
+    const expectedValue = {
+      type: FETCH_AVAILABLE_TICKETS_FAILURE,
+      error: {},
+    };
+
+    expect(fetchAvailableTicketsFailure()).toEqual(expectedValue);
+
+    expectedValue.error = axiosResponseError;
+
+    expect(fetchAvailableTicketsFailure(axiosResponseError)).toEqual(expectedValue);
+  });
+
+  it('should create an action to succeed available tickets request', () => {
+    const { fetchAvailableTicketsSuccess } = actions;
+    const { FETCH_AVAILABLE_TICKETS_SUCCESS } = types;
+    const data = { a: 1 };
+    const expectedValue = {
+      type: FETCH_AVAILABLE_TICKETS_SUCCESS,
+      data,
+    };
+
+    expect(fetchAvailableTicketsSuccess(data)).toEqual(expectedValue);
   });
 
   it('should create an action to clear item from state', () => {
@@ -458,22 +535,21 @@ describe('actions', () => {
 
 describe('selectors', () => {
   describe('using getState', () => {
-    it(`should return ${name} state`, () => {
-      const { getState } = selectors;
+    const { getState } = selectors;
 
+    it(`should return ${name} state`, () => {
       expect(getState(appState)).toEqual(initialState);
     });
   });
 
   describe('using getError', () => {
-    it('should return null if there was no error', () => {
-      const { getError } = selectors;
+    const { getError } = selectors;
 
+    it('should return null if there was no error', () => {
       expect(getError(appState)).toBeNull();
     });
 
     it('should return some error message if there was an error', () => {
-      const { getError } = selectors;
       const error = 'omg';
       const state = generateAppState({ error });
 
@@ -482,14 +558,13 @@ describe('selectors', () => {
   });
 
   describe('using getSightEvent', () => {
-    it('should return null if there is no item data', () => {
-      const { getSightEvent } = selectors;
+    const { getSightEvent } = selectors;
 
+    it('should return null if there is no item data', () => {
       expect(getSightEvent(appState)).toBeNull();
     });
 
     it('should return item data', () => {
-      const { getSightEvent } = selectors;
       const expectedValue = { id: 1 };
       const state = generateAppState({ item: expectedValue });
 
@@ -498,14 +573,13 @@ describe('selectors', () => {
   });
 
   describe('using getSightEvents', () => {
-    it('should return null if there is no list data', () => {
-      const { getSightEvents } = selectors;
+    const { getSightEvents } = selectors;
 
+    it('should return null if there is no list data', () => {
       expect(getSightEvents(appState)).toBeNull();
     });
 
     it('should return list data', () => {
-      const { getSightEvents } = selectors;
       const expectedValue = [
         { id: 1 },
         { id: 2 },
@@ -517,15 +591,14 @@ describe('selectors', () => {
   });
 
   describe('using getSightEventById', () => {
-    it('should return null if there is no item data', () => {
-      const { getSightEventById } = selectors;
+    const { getSightEventById } = selectors;
 
+    it('should return null if there is no item data', () => {
       expect(getSightEventById(appState)).toBeNull();
       expect(getSightEventById(appState, 1)).toBeNull();
     });
 
     it('should return list data', () => {
-      const { getSightEventById } = selectors;
       const id = 1;
       const expectedValue = [
         { id: 1 },
@@ -534,6 +607,31 @@ describe('selectors', () => {
       const state = generateAppState({ list: expectedValue });
 
       expect(getSightEventById(state, id)).toEqual(expectedValue[0]);
+    });
+  });
+
+  describe('using getAvailableTickets', () => {
+    const { getAvailableTickets } = selectors;
+
+    it('should return empty object if no pools are present', () => {
+      const expectedValue = {};
+      const state = generateAppState({ availableTickets: expectedValue });
+
+      expect(getAvailableTickets(state)).toEqual(expectedValue);
+    });
+
+    it('should return TicketPools with Tickets instances', () => {
+      const expectedValue = {
+        sightEventId: 1,
+        tickets: [
+          { id: 1 },
+          { id: 2 },
+        ],
+      };
+
+      const state = generateAppState({ availableTickets: expectedValue });
+
+      expect(getAvailableTickets(state)).toEqual(expectedValue);
     });
   });
 });
@@ -549,6 +647,15 @@ describe('reducer', () => {
 
   it('should return current state if action type was not found', () => {
     expect(reducer()(undefined, { type: 'INVALID_TYPE' })).toEqual(defaultInitialState);
+  });
+
+  it('should handle CLEAR_AVAILABLE_TICKETS', () => {
+    const action = actions.clearAvailableTickets();
+    const expectedValue = {
+      ...defaultInitialState,
+    };
+
+    expect(reducer()(defaultInitialState, action)).toEqual(expectedValue);
   });
 
   it('should handle CLEAR_SEARCH_RESULTS', () => {
@@ -594,6 +701,21 @@ describe('reducer', () => {
     expect(reducer()(defaultInitialState, action)).toEqual(expectedValue);
 
     action = actions.deleteItemFailure(axiosResponseError);
+    expectedValue.error = axiosResponseError;
+
+    expect(reducer()(defaultInitialState, action)).toEqual(expectedValue);
+  });
+
+  it('should handle FETCH_AVAILABLE_TICKETS_FAILURE', () => {
+    let action = actions.fetchAvailableTicketsFailure();
+    const expectedValue = {
+      ...defaultInitialState,
+      error: {},
+    };
+
+    expect(reducer()(defaultInitialState, action)).toEqual(expectedValue);
+
+    action = actions.fetchItemFailure(axiosResponseError);
     expectedValue.error = axiosResponseError;
 
     expect(reducer()(defaultInitialState, action)).toEqual(expectedValue);
@@ -674,6 +796,23 @@ describe('reducer', () => {
     const action = actions.updateItemSuccess(data);
     const expectedValue = {
       ...defaultInitialState,
+    };
+
+    expect(reducer()(defaultInitialState, action)).toEqual(expectedValue);
+  });
+
+  it('should handle FETCH_AVAILABLE_TICKETS_SUCCESS', () => {
+    const data = {
+      date: '2018-01-01',
+      sightEventId: 123,
+      ticketPools: [{ id: 1 }],
+    };
+    const action = actions.fetchAvailableTicketsSuccess(data);
+    const expectedValue = {
+      ...defaultInitialState,
+      availableTickets: {
+        ...data,
+      },
     };
 
     expect(reducer()(defaultInitialState, action)).toEqual(expectedValue);

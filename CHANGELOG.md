@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.7.1
+* Added `TicketModalStoreConnector`, which uses `TicketModalController` internally and should replace it for end user.
+* Patched `TicketModalController`.
+* Changed cart data model, added new actions and selectors.
+* Added available tickets fetching functionality to `sightEvents` duck.
+* Fixes and improvements for `ticket-pool-parser` utils.
+
+See https://git.fream.pl/hello-poland/hellopoland-react-commons/merge_requests/51 for more info.
+
 ## 0.6.2
 * Added `start` option to `getClosestEventDate` 
 * Changed `getClosestEventDate` to fix issue with incorrect hours

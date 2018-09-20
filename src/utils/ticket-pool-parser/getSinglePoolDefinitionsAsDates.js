@@ -12,8 +12,9 @@ import format from './format';
  * @return {string[]}
  */
 export default function getSinglePoolDefinitionsAsDays(poolDefinitions, options = {}) {
+  const { dateFormat = constants.DAY_FORMAT } = options;
   const result = getSinglePoolDefinitions(poolDefinitions, options)
-    .map(poolDefinition => format(poolDefinition.startDate, constants.DAY_FORMAT))
+    .map(poolDefinition => format(poolDefinition.startDate, dateFormat))
     .sort();
 
   return _uniq(result);
