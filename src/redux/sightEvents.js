@@ -11,14 +11,19 @@ const prefix = `commons/${name}/`;
  * TYPES
  */
 
-const CLEAR_SEARCH_RESULTS = `${prefix}CLEAR_SEARCH_RESULTS`;
+const CLEAR_AVAILABLE_TICKETS = `${prefix}CLEAR_AVAILABLE_TICKETS`;
 const CLEAR_ITEM = `${prefix}CLEAR_ITEM`;
+const CLEAR_SEARCH_RESULTS = `${prefix}CLEAR_SEARCH_RESULTS`;
 const CREATE_ITEM = `${prefix}CREATE_ITEM`;
 const CREATE_ITEM_FAILURE = `${prefix}CREATE_ITEM_FAILURE`;
 const CREATE_ITEM_SUCCESS = `${prefix}CREATE_ITEM_SUCCESS`;
 const DELETE_ITEM = `${prefix}DELETE_ITEM`;
 const DELETE_ITEM_FAILURE = `${prefix}DELETE_ITEM_FAILURE`;
 const DELETE_ITEM_SUCCESS = `${prefix}DELETE_ITEM_SUCCESS`;
+const FETCH_AVAILABLE_TICKETS = `${prefix}FETCH_AVAILABLE_TICKETS`;
+const FETCH_AVAILABLE_TICKETS_CANCEL = `${prefix}FETCH_AVAILABLE_TICKETS_CANCEL`;
+const FETCH_AVAILABLE_TICKETS_FAILURE = `${prefix}FETCH_AVAILABLE_TICKETS_FAILURE`;
+const FETCH_AVAILABLE_TICKETS_SUCCESS = `${prefix}FETCH_AVAILABLE_TICKETS_SUCCESS`;
 const FETCH_ITEM = `${prefix}FETCH_ITEM`;
 const FETCH_ITEM_CANCEL = `${prefix}FETCH_ITEM_CANCEL`;
 const FETCH_ITEM_FAILURE = `${prefix}FETCH_ITEM_FAILURE`;
@@ -36,14 +41,19 @@ const UPDATE_ITEM_FAILURE = `${prefix}UPDATE_ITEM_FAILURE`;
 const UPDATE_ITEM_SUCCESS = `${prefix}UPDATE_ITEM_SUCCESS`;
 
 export const types = {
-  CLEAR_SEARCH_RESULTS,
+  CLEAR_AVAILABLE_TICKETS,
   CLEAR_ITEM,
+  CLEAR_SEARCH_RESULTS,
   CREATE_ITEM,
   CREATE_ITEM_FAILURE,
   CREATE_ITEM_SUCCESS,
   DELETE_ITEM,
   DELETE_ITEM_FAILURE,
   DELETE_ITEM_SUCCESS,
+  FETCH_AVAILABLE_TICKETS,
+  FETCH_AVAILABLE_TICKETS_CANCEL,
+  FETCH_AVAILABLE_TICKETS_FAILURE,
+  FETCH_AVAILABLE_TICKETS_SUCCESS,
   FETCH_ITEM,
   FETCH_ITEM_CANCEL,
   FETCH_ITEM_FAILURE,
@@ -67,13 +77,13 @@ export const types = {
  */
 
 /**
- * Creates action for search results removal.
+ * Creates action for item removal.
  *
  * @method
  * @return {{type: string}}
  */
-const clearSearchResults = () => ({
-  type: CLEAR_SEARCH_RESULTS,
+const clearAvailableTickets = () => ({
+  type: CLEAR_AVAILABLE_TICKETS,
 });
 
 /**
@@ -85,6 +95,17 @@ const clearSearchResults = () => ({
 const clearItem = () => ({
   type: CLEAR_ITEM,
 });
+
+/**
+ * Creates action for search results removal.
+ *
+ * @method
+ * @return {{type: string}}
+ */
+const clearSearchResults = () => ({
+  type: CLEAR_SEARCH_RESULTS,
+});
+
 
 /**
  * Creates action with item creation request details.
@@ -212,6 +233,79 @@ const deleteItemSuccess = () => ({
 });
 
 /**
+ * Creates action with available tickets request details.
+ *
+ * @method
+ * @callback failureCallback
+ * @callback successCallback
+ * @param {number} id - SightEvent id
+ * @param {Object} options - request config
+ * @param {Object} query - URL query string
+ * @param onFailure - failure callback
+ * @param onSuccess - success callback
+ * @return {{
+ *   type: string,
+ *   payload: {url: string, method: string},
+ *   onFailure: failureCallback,
+ *   onSuccess: successCallback
+ * }}
+ */
+const fetchAvailableTickets = ({
+  id, options, onFailure, onSuccess,
+} = {}) => ({
+  type: FETCH_AVAILABLE_TICKETS,
+  payload: {
+    url: `${apiURL}/${id}/available-tickets`,
+    method: 'get',
+    ...options,
+  },
+  sightEventId: id,
+  onFailure,
+  onSuccess,
+});
+
+/**
+ * Creates action for available tickets request cancelling.
+ *
+ * @method
+ * @return {{type: string}}
+ */
+const fetchAvailableTicketsCancel = () => ({
+  type: FETCH_AVAILABLE_TICKETS_CANCEL,
+});
+
+/**
+ * Creates action for available tickets request failing.
+ *
+ * @method
+ * @param data - response body
+ * @param status - response status
+ * @return {{
+ *   type: string,
+ *   error: {data, status: number}
+ * }}
+ */
+const fetchAvailableTicketsFailure = ({ data, status } = {}) => ({
+  type: FETCH_AVAILABLE_TICKETS_FAILURE,
+  error: {
+    data,
+    status,
+  },
+});
+
+/**
+ * Creates action for successful available tickets request.
+ *
+ * @method
+ * @param {Object} data - response body
+ * @return {{type: string, data: *}}
+ */
+const fetchAvailableTicketsSuccess = data => ({
+  type: FETCH_AVAILABLE_TICKETS_SUCCESS,
+  data,
+});
+
+/**
  * Creates action with item request details.
  *
  * @method
@@ -317,7 +411,8 @@ const fetchList = ({
 });
 
 /**
- * Creates action for list request cancelling.
+ * Creates action for list request cancellin
+g.
  *
  * @method
  * @return {{type: string}}
@@ -378,6 +473,7 @@ const fetchListSuccess = data => ({
  */
 const fetchSearchResults = ({
   data, options, onFailure, onSuccess,
+
 } = {}) => ({
   type: FETCH_SEARCH_RESULTS,
   payload: {
@@ -425,6 +521,7 @@ const fetchSearchResultsFailure = ({ data, status } = {}) => ({
  *
  * @method
  * @param {Object} data - response body
+
  * @return {{type: string, data: *}}
  */
 const fetchSearchResultsSuccess = data => ({
@@ -442,7 +539,8 @@ const fetchSearchResultsSuccess = data => ({
  * @param {Object} params.id - item id
  * @param {Object} params.data - request body
  * @param {Object} [params.options] - request config
- * @param {failureCallback} [params.onFailure] - failure callback
+ * @param {failureCallback} [params.onFailure
+] - failure callback
  * @param {successCallback} [params.onSuccess] - success callback
  * @return {{
  *   type: string,
@@ -498,14 +596,19 @@ const updateItemSuccess = data => ({
 });
 
 export const actions = {
-  clearSearchResults,
+  clearAvailableTickets,
   clearItem,
+  clearSearchResults,
   createItem,
   createItemFailure,
   createItemSuccess,
   deleteItem,
   deleteItemFailure,
   deleteItemSuccess,
+  fetchAvailableTickets,
+  fetchAvailableTicketsCancel,
+  fetchAvailableTicketsFailure,
+  fetchAvailableTicketsSuccess,
   fetchItem,
   fetchItemCancel,
   fetchItemFailure,
@@ -578,7 +681,10 @@ const getSightEventById = (state, id) => {
   return _find(list, { id }) || null;
 };
 
+const getAvailableTickets = state => getState(state).availableTickets;
+
 export const selectors = {
+  getAvailableTickets,
   getError,
   getSightEvent,
   getSightEventById,
@@ -671,6 +777,52 @@ const deleteItemLogic = createLogic({
       }
     } catch ({ response }) {
       dispatch(deleteItemFailure(response));
+
+      if (onFailure) {
+        onFailure();
+      }
+    }
+
+    done();
+  },
+});
+
+const fetchAvailableTicketsLogic = createLogic({
+  type: [
+    FETCH_AVAILABLE_TICKETS,
+  ],
+  cancelType: [
+    FETCH_AVAILABLE_TICKETS_CANCEL, CLEAR_AVAILABLE_TICKETS,
+  ],
+  latest: true,
+  async process(
+    {
+      action: {
+        sightEventId, payload, onFailure, onSuccess,
+      }, httpClient, cancelled$,
+    },
+    dispatch,
+    done,
+  ) {
+    try {
+      const response = await httpClient.cancellable(payload, cancelled$);
+      const { data, status } = response;
+
+      if (status === 200 || status === 204) {
+        dispatch(fetchAvailableTicketsSuccess({ ...data, ...payload.params, sightEventId }));
+
+        if (onSuccess) {
+          onSuccess();
+        }
+      } else {
+        dispatch(fetchSearchResultsFailure(response));
+
+        if (onFailure) {
+          onFailure();
+        }
+      }
+    } catch ({ response }) {
+      dispatch(fetchSearchResultsFailure(response));
 
       if (onFailure) {
         onFailure();
@@ -850,6 +1002,7 @@ export const logic = {
   clearSearchResultsLogic,
   createItemLogic,
   deleteItemLogic,
+  fetchAvailableTicketsLogic,
   fetchItemLogic,
   fetchListLogic,
   fetchSearchResultsLogic,
@@ -866,10 +1019,17 @@ export const defaultInitialState = {
   error: null,
   item: {},
   list: [],
+  availableTickets: {},
 };
 
 const reducer = (initialState = defaultInitialState) => (state = initialState, action) => {
   switch (action.type) {
+    case CLEAR_AVAILABLE_TICKETS:
+      return {
+        ...state,
+        error: initialState.error,
+        availableTickets: initialState.availableTickets,
+      };
     case CLEAR_SEARCH_RESULTS:
       return {
         ...state,
@@ -885,6 +1045,7 @@ const reducer = (initialState = defaultInitialState) => (state = initialState, a
     case CREATE_ITEM_FAILURE:
     case DELETE_ITEM_FAILURE:
     case FETCH_ITEM_FAILURE:
+    case FETCH_AVAILABLE_TICKETS_FAILURE:
     case FETCH_LIST_FAILURE:
     case FETCH_SEARCH_RESULTS_FAILURE:
     case UPDATE_ITEM_FAILURE:
@@ -897,6 +1058,13 @@ const reducer = (initialState = defaultInitialState) => (state = initialState, a
       return {
         ...state,
         error: initialState.error,
+      };
+    case FETCH_AVAILABLE_TICKETS_SUCCESS:
+      return {
+        ...state,
+        availableTickets: {
+          ...action.data,
+        },
       };
     case FETCH_ITEM_SUCCESS:
       return {

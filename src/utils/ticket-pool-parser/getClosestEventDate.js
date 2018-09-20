@@ -2,12 +2,14 @@ import addMonths from 'date-fns/add_months';
 import addYears from 'date-fns/add_years';
 import startOfToday from 'date-fns/start_of_today';
 
+import constants from './constants';
 import getSinglePoolDefinitionsAsDates from './getSinglePoolDefinitionsAsDates';
 import getCyclicPoolDefinitionsAsDates from './getCyclicPoolDefinitionsAsDates';
 import validateFnArguments from './validateFnArguments';
 import isPoolDefinitionList from './isPoolDefinitionList';
 
 export default function getClosestEventDate(poolDefinitions, dirtyOptions = {}) {
+  const { dateFormat = constants.DAY_FORMAT } = dirtyOptions;
   validateFnArguments(arguments.length, 1);
 
   if (!isPoolDefinitionList(poolDefinitions)) {
@@ -29,8 +31,8 @@ export default function getClosestEventDate(poolDefinitions, dirtyOptions = {}) 
     }
 
     const dates = [
-      ...getSinglePoolDefinitionsAsDates(poolDefinitions, { start, end }),
-      ...getCyclicPoolDefinitionsAsDates(poolDefinitions, { start, end }),
+      ...getSinglePoolDefinitionsAsDates(poolDefinitions, { start, end, dateFormat }),
+      ...getCyclicPoolDefinitionsAsDates(poolDefinitions, { start, end, dateFormat }),
     ].sort();
 
     result = dates[0] || null;

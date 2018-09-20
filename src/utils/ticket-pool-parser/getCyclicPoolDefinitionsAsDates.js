@@ -26,6 +26,7 @@ function getIntervalDate(date, dateToCompare, compareFn) {
 
 export default function getCyclicPoolDefinitionsAsDates(poolDefinitions, options = {}) {
   const { start, end } = options;
+  const { dateFormat = constants.DAY_FORMAT } = options;
 
   const result = getCyclicPoolDefinitions(poolDefinitions, options)
     .reduce((acc, poolDefinition) => {
@@ -67,7 +68,7 @@ export default function getCyclicPoolDefinitionsAsDates(poolDefinitions, options
         ...dates,
       ];
     }, [])
-    .map(date => format(date, constants.DAY_FORMAT))
+    .map(date => format(date, dateFormat))
     .sort();
 
   return _uniq(result);
