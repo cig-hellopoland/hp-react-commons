@@ -8,6 +8,7 @@ import validateFnArguments from './validateFnArguments';
 import isPoolDefinitionList from './isPoolDefinitionList';
 
 export default function getClosestEventDate(poolDefinitions, dirtyOptions = {}) {
+  const { dateFormat } = dirtyOptions;
   validateFnArguments(arguments.length, 1);
 
   if (!isPoolDefinitionList(poolDefinitions)) {
@@ -29,8 +30,8 @@ export default function getClosestEventDate(poolDefinitions, dirtyOptions = {}) 
     }
 
     const dates = [
-      ...getSinglePoolDefinitionsAsDates(poolDefinitions, { start, end }),
-      ...getCyclicPoolDefinitionsAsDates(poolDefinitions, { start, end }),
+      ...getSinglePoolDefinitionsAsDates(poolDefinitions, { start, end, dateFormat }),
+      ...getCyclicPoolDefinitionsAsDates(poolDefinitions, { start, end, dateFormat }),
     ].sort();
 
     result = dates[0] || null;
