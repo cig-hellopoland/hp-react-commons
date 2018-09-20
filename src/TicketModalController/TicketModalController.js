@@ -6,7 +6,6 @@ import _find from 'lodash/find';
 import _uniqBy from 'lodash/uniqBy';
 import getClosestEventDate from '../utils/ticket-pool-parser/getClosestEventDate';
 import constants from '../utils/ticket-pool-parser/constants';
-import getClosestEventDateWithTimezone from '../utils/ticket-pool-parser/getClosestEventDateWithTimezone';
 import extendDateWithEventTime from '../utils/ticket-pool-parser/extendDateWithEventTime';
 
 class TicketModalController extends Component {
@@ -70,7 +69,7 @@ class TicketModalController extends Component {
       return date;
     }
 
-    return getClosestEventDateWithTimezone(ticketPoolDefinitions);
+    return getClosestEventDate(ticketPoolDefinitions, { dateFormat: constants.DATE_FORMAT });
   };
 
   getInitialEntries = (cartItem) => {
