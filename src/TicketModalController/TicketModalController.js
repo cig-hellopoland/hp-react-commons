@@ -348,9 +348,9 @@ class TicketModalController extends Component {
 
     if (activeStep <= steps - 1) {
       const { availableTickets } = this.props;
-      const isPoolDefinitionSingle = this.isPoolSingle(availableTickets.ticketPools);
+      const isPoolSingle = this.isPoolSingle(availableTickets.ticketPools);
 
-      if (activeStep === 1 && isPoolDefinitionSingle) {
+      if (activeStep === 1 && isPoolSingle) {
         this.setStep(3);
       } else {
         this.nextStep();
@@ -366,9 +366,9 @@ class TicketModalController extends Component {
 
     if (activeStep > 1) {
       const { availableTickets } = this.props;
-      const isPoolDefinitionSingle = this.isPoolSingle(availableTickets.ticketPools);
+      const isPoolSingle = this.isPoolSingle(availableTickets.ticketPools);
 
-      if (activeStep === 3 && isPoolDefinitionSingle) {
+      if (activeStep === 3 && isPoolSingle) {
         this.setStep(1);
       } else {
         this.prevStep();
