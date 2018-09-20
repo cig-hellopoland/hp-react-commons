@@ -1,7 +1,7 @@
 # Changelog
 
 ## 0.7.1
-* Added `TicketModalStoreConnector`, which uses `TicketModalController` internaly and should replace it for end user.
+* Added `TicketModalStoreConnector`, which uses `TicketModalController` internally and should replace it for end user.
 * Patched `TicketModalController`.
 * Changed cart data model, added new actions and selectors.
 * Added available tickets fetching functionality to `sightEvents` duck.
