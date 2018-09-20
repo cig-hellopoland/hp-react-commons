@@ -4,7 +4,7 @@ import startOfToday from 'date-fns/start_of_today';
 
 import constants from './constants';
 import getCyclicPoolDefinitionsAsDates from './getCyclicPoolDefinitionsAsDates';
-import getSinglePoolDefinitionsAsDatesWithTimezone from './getSinglePoolDefinitionsAsDatesWithTimezone';
+import getSinglePoolDefinitionsAsDates from './getSinglePoolDefinitionsAsDates';
 import validateFnArguments from './validateFnArguments';
 import isPoolDefinitionList from './isPoolDefinitionList';
 
@@ -31,7 +31,7 @@ export default function getClosestEventDateWithTimezone(poolDefinitions, dirtyOp
 
     const dates = [
       ...getCyclicPoolDefinitionsAsDates(poolDefinitions, { start, end, dateFormat: constants.DATE_FORMAT }),
-      ...getSinglePoolDefinitionsAsDatesWithTimezone(poolDefinitions, { start, end }),
+      ...getSinglePoolDefinitionsAsDates(poolDefinitions, { start, end, dateFormat: constants.DATE_FORMAT }),
     ].sort();
 
     result = dates[0] || null;
