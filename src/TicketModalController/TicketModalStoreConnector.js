@@ -99,6 +99,7 @@ class TicketModalStoreConnector extends React.Component {
   handleSubmit = (cartItem) => {
     const { addItemToCart, onSubmit } = this.props;
 
+    // TODO: if cartItem was passed - update cart item instead adding new one
     addItemToCart(cartItem);
 
     if (onSubmit) {
