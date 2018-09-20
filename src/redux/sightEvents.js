@@ -251,13 +251,12 @@ const deleteItemSuccess = () => ({
  * }}
  */
 const fetchAvailableTickets = ({
-  id, options, query, onFailure, onSuccess,
+  id, options, onFailure, onSuccess,
 } = {}) => ({
   type: FETCH_AVAILABLE_TICKETS,
   payload: {
     url: `${apiURL}/${id}/available-tickets`,
     method: 'get',
-    params: query,
     ...options,
   },
   sightEventId: id,
