@@ -15,7 +15,7 @@ import TicketModalController from './TicketModalController';
 import FALLBACK_TYPES from './fallbackTypes';
 
 
-class TicketModalStateConnector extends React.Component {
+class TicketModalStoreConnector extends React.Component {
   state = {
     isFetching: false,
     hasCatchError: false,
@@ -140,7 +140,7 @@ class TicketModalStateConnector extends React.Component {
   }
 }
 
-TicketModalStateConnector.propTypes = {
+TicketModalStoreConnector.propTypes = {
   addItemToCart: PropTypes.func.isRequired,
   availableTickets: PropTypes.shape({}),
   cartItem: PropTypes.shape({}),
@@ -156,7 +156,7 @@ TicketModalStateConnector.propTypes = {
   sightEventId: PropTypes.number.isRequired,
 };
 
-TicketModalStateConnector.defaultProps = {
+TicketModalStoreConnector.defaultProps = {
   availableTickets: {},
   onSubmit: null,
   // cartItemId: null,
@@ -181,4 +181,4 @@ const mapDispatchToProps = {
 
 export default compose(
   connect(mapStateToProps, mapDispatchToProps),
-)(TicketModalStateConnector);
+)(TicketModalStoreConnector);
