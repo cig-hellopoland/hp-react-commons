@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.7.2
+* Fix `TicketModalController` to pass proper date to `fetchAvailableTickets` on mounting.
+
 ## 0.7.1
 * Added `TicketModalStoreConnector`, which uses `TicketModalController` internally and should replace it for end user.
 * Patched `TicketModalController`.

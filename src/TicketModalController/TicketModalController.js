@@ -27,8 +27,7 @@ class TicketModalController extends Component {
     const { sightEvent } = this.props;
 
     if (sightEvent && sightEvent.id) {
-      const date = getClosestEventDate(sightEvent.ticketPoolDefinitions);
-
+      const { date } = this.state;
       this.fetchAvailableTickets(date);
     }
   }
