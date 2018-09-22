@@ -273,14 +273,15 @@ class TicketModalController extends Component {
     const { fetchAvailableTicketsByDate, sightEvent } = this.props;
     const data = {
       id: sightEvent.id,
-      onError: this.handleFetchError,
+      onFailure: this.handleFetchError,
       onSuccess: this.handleFetchSuccess,
       options: {},
     };
 
     if (date) {
       data.options.params = {
-        date: format(date, constants.DATE_FORMAT),
+        // TODO: get rid of Z on the end?
+        date: `${format(date, constants.DAY_FORMAT)}Z`,
       };
 
       fetchAvailableTicketsByDate(data);
