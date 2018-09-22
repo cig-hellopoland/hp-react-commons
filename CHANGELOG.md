@@ -2,6 +2,7 @@
 
 ## 0.7.3
 * Fix `TicketModalController` to pass date wihtout hours when calling  `fetchAvailableTickets`.
+* Fix `TicketModalController` to set `isFetching` to false on `fetchAvailableTickets` failure. 
 
 ## 0.7.2
 * Fix `TicketModalController` to pass proper date to `fetchAvailableTickets` on mounting.
