@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.7.7
+* Refactor `getCyclicPoolDefinitionsAsDates`.
+* Add `isDateAvailableInPool` to ticket-pool-parser.
+
 ## 0.7.6
 * Fix `TicketModalController` logic for single ticket pool instance with no available tickets.
 
