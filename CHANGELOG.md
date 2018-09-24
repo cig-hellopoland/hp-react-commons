@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.7.4
+* Fix `sightEvents` duck to reset `availableTickets` property after fetching other sightEvent item. 
+
 ## 0.7.3
 * Fix `TicketModalController` to pass date wihtout hours when calling  `fetchAvailableTickets`.
 * Fix `TicketModalController` to set `isFetching` to false on `fetchAvailableTickets` failure. 

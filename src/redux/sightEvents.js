@@ -1071,6 +1071,7 @@ const reducer = (initialState = defaultInitialState) => (state = initialState, a
         ...state,
         error: initialState.error,
         item: action.data,
+        availableTickets: initialState.availableTickets,
       };
     case FETCH_LIST_SUCCESS:
       return {
