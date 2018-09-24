@@ -60,6 +60,8 @@ describe('Ticket Pool Parser', () => {
       data.push({
         ...singlePoolDefinition,
         frequencyData: {
+          frequency: 1,
+          frequencyType: 'DAILY',
           endDate: format(new Date(2003, 7, 15)),
         },
       });
