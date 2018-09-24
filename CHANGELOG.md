@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.7.5
+* Fix `TicketModalController` logic for single ticket pool instance with no available tickets.
+
 ## 0.7.4
 * Fix `sightEvents` duck to reset `availableTickets` property after fetching other sightEvent item. 
 
