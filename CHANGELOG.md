@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.7.5
+* Fix `getPoolDefinitionsAsDates` is passing options to `getSinglePoolDefinitionsAsDates` and `getCyclicPoolDefinitionsAsDates`.
+
 ## 0.7.4
 * Fix `sightEvents` duck to reset `availableTickets` property after fetching other sightEvent item. 
 
