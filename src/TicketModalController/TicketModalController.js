@@ -179,7 +179,8 @@ class TicketModalController extends Component {
     const { activeStep, date, poolId } = this.state;
     const { sightEvent: { ticketPoolDefinitions } } = this.props;
     const isPoolDefinitionSingle = this.isPoolSingle(ticketPoolDefinitions);
-    const hasAvailableTickets = !!(ticketPools && ticketPools.length);
+    const isPoolInstanceSingle = this.isPoolSingle(ticketPools);
+    const hasAvailableTickets = this.hasAvailableTickets(ticketPools);
 
     if (activeStep === 3 && isPoolDefinitionSingle && hasAvailableTickets) {
       const { id, startDate } = ticketPools[0];
@@ -199,6 +200,8 @@ class TicketModalController extends Component {
       }
 
       this.setState(nextState);
+    } else if (activeStep === 3 && isPoolInstanceSingle && !hasAvailableTickets) {
+      this.setState({ activeStep: 2 });
     }
   };
 
@@ -224,6 +227,9 @@ class TicketModalController extends Component {
       return true;
     });
   };
+
+  hasAvailableTickets = ticketPools => !!(ticketPools && ticketPools.length && ticketPools
+    .some(({ availableTicketsNumber }) => availableTicketsNumber !== 0));
 
   isDateValid = date => date != null;
 
@@ -265,8 +271,9 @@ class TicketModalController extends Component {
     const isPoolDefinitionSingle = this.isPoolSingle(ticketPoolDefinitions);
     const isPoolInstanceCyclic = this.isPoolCyclic(ticketPools, poolId);
     const hasMultiplePools = !isPoolDefinitionSingle || isPoolInstanceCyclic;
+    const hasAvailableTickets = this.hasAvailableTickets(ticketPools);
 
-    return activeStep !== 1 && hasMultiplePools;
+    return activeStep !== 1 && (hasMultiplePools || !hasAvailableTickets);
   };
 
   fetchAvailableTickets = (date) => {
@@ -348,8 +355,9 @@ class TicketModalController extends Component {
     if (activeStep <= steps - 1) {
       const { availableTickets } = this.props;
       const isPoolSingle = this.isPoolSingle(availableTickets.ticketPools);
+      const hasAvailableTickets = this.hasAvailableTickets(availableTickets.ticketPools);
 
-      if (activeStep === 1 && isPoolSingle) {
+      if (activeStep === 1 && isPoolSingle && hasAvailableTickets) {
         this.setStep(3);
       } else {
         this.nextStep();

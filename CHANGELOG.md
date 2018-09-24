@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.7.6
+* Fix `TicketModalController` logic for single ticket pool instance with no available tickets.
+
 ## 0.7.5
 * Fix `getPoolDefinitionsAsDates` is passing options to `getSinglePoolDefinitionsAsDates` and `getCyclicPoolDefinitionsAsDates`.
 
