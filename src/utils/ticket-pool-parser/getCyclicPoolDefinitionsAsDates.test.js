@@ -29,12 +29,6 @@ describe('Ticket Pool Parser', () => {
       expect(getCyclicPoolDefinitionsAsDates(data)).toEqual(expectedValue);
     });
 
-    it('should throw if interval end date is not defined', () => {
-      const data = [cyclicPoolDefinition];
-
-      expect(() => getCyclicPoolDefinitionsAsDates(data)).toThrow();
-    });
-
     it('should return dates starting from first event occurrence if start date is not defined', () => {
       const data = [
         {
@@ -92,14 +86,32 @@ describe('Ticket Pool Parser', () => {
         },
       ];
       const expectedValue = [
-        format(new Date(2001, 9, 16), constants.DAY_FORMAT),
-        format(new Date(2001, 11, 16), constants.DAY_FORMAT),
-        format(new Date(2002, 1, 16), constants.DAY_FORMAT),
-        format(new Date(2002, 3, 16), constants.DAY_FORMAT),
-
+        format(new Date(2001, 10, 13), constants.DAY_FORMAT),
+        format(new Date(2002, 0, 13), constants.DAY_FORMAT),
+        format(new Date(2002, 2, 13), constants.DAY_FORMAT),
+        format(new Date(2002, 4, 13), constants.DAY_FORMAT),
       ];
       const start = format(new Date(2001, 9, 16));
       const end = format(new Date(2002, 4, 20));
+
+      expect(getCyclicPoolDefinitionsAsDates(data, { start, end })).toEqual(expectedValue);
+    });
+
+    it('should return dates with monthly interval - real test case', () => {
+      const data = [
+        {
+          ...singlePoolDefinition,
+          frequencyData: {
+            frequency: 1,
+            frequencyType: 'MONTHLY',
+          },
+        },
+      ];
+      const expectedValue = [
+        format(new Date(2001, 11, 13), constants.DAY_FORMAT),
+      ];
+      const start = format(new Date(2001, 11, 1));
+      const end = format(new Date(2001, 11, 31));
 
       expect(getCyclicPoolDefinitionsAsDates(data, { start, end })).toEqual(expectedValue);
     });
@@ -116,12 +128,13 @@ describe('Ticket Pool Parser', () => {
         },
       ];
       const expectedValue = [
-        format(new Date(2001, 9, 16), constants.DAY_FORMAT),
-        format(new Date(2001, 9, 20), constants.DAY_FORMAT),
-        format(new Date(2001, 9, 30), constants.DAY_FORMAT),
+        format(new Date(2001, 9, 9), constants.DAY_FORMAT),
+        format(new Date(2001, 9, 13), constants.DAY_FORMAT),
+        format(new Date(2001, 9, 23), constants.DAY_FORMAT),
+        format(new Date(2001, 9, 27), constants.DAY_FORMAT),
 
       ];
-      const start = format(new Date(2001, 9, 16));
+      const start = format(new Date(2001, 9, 3));
       const end = format(new Date(2001, 9, 31));
 
       expect(getCyclicPoolDefinitionsAsDates(data, { start, end })).toEqual(expectedValue);
