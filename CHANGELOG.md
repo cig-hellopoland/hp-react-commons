@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.7.8
+* Fixed incorrect time passed to cyclic events in TicketModalController
+
 ## 0.7.7
 * Refactor `getCyclicPoolDefinitionsAsDates`.
 * Add `isDateAvailableInPool` to ticket-pool-parser.
