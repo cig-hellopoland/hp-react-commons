@@ -189,15 +189,12 @@ class TicketModalController extends Component {
         return;
       }
 
-      const isPoolInstanceCyclic = this.isPoolCyclic(ticketPools, id);
-
       const nextState = {
         poolId: id,
       };
 
-      if (isPoolInstanceCyclic) {
-        nextState.date = extendDateWithEventTime(date, startDate);
-      }
+      // TODO: Set time only for cyclic pools (isCyclic is required after all)
+      nextState.date = extendDateWithEventTime(date, startDate);
 
       this.setState(nextState);
     } else if (activeStep === 3 && isPoolInstanceSingle && !hasAvailableTickets) {
