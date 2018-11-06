@@ -118,6 +118,75 @@ describe('actions', () => {
     expect(createItemSuccess(data)).toEqual(expectedValue);
   });
 
+  it('should create an action to make main image create request', () => {
+    const { createMainImage } = actions;
+    const { CREATE_MAIN_IMAGE } = types;
+    const id = 1;
+    const data = 'omfrefiywuyuwef';
+    const options = {
+      a: 1,
+      headers: {
+        b: 2,
+      },
+    };
+    const expectedValue = {
+      type: CREATE_MAIN_IMAGE,
+      payload: {
+        url: `${apiURL}/${id}/mainImage`,
+        method: 'put',
+        headers: {
+          'content-type': 'image/jpeg',
+        },
+        data,
+      },
+    };
+
+    expect(createMainImage({ id, data })).toEqual(expectedValue);
+
+    expectedValue.payload = {
+      ...expectedValue.payload,
+      ...options,
+      headers: {
+        ...expectedValue.payload.headers,
+        ...options.headers,
+      },
+    };
+
+    expect(createMainImage({ id, data, options })).toEqual(expectedValue);
+
+    expectedValue.onFailure = onFailure;
+    expectedValue.onSuccess = onSuccess;
+
+    expect(createMainImage({
+      id, data, options, onFailure, onSuccess,
+    })).toEqual(expectedValue);
+  });
+
+  it('should create an action to fail main image create request', () => {
+    const { createMainImageFailure } = actions;
+    const { CREATE_MAIN_IMAGE_FAILURE } = types;
+    const expectedValue = {
+      type: CREATE_MAIN_IMAGE_FAILURE,
+      error: {},
+    };
+
+    expect(createMainImageFailure()).toEqual(expectedValue);
+
+    expectedValue.error = axiosResponseError;
+
+    expect(createMainImageFailure(axiosResponseError)).toEqual(expectedValue);
+  });
+
+  it('should create an action to succeed main image request', () => {
+    const { createMainImageSuccess } = actions;
+    const { CREATE_MAIN_IMAGE_SUCCESS } = types;
+    const expectedValue = {
+      type: CREATE_MAIN_IMAGE_SUCCESS,
+    };
+
+    expect(createMainImageSuccess()).toEqual(expectedValue);
+  });
+
   it('should create an action to make item delete request', () => {
     const { deleteItem } = actions;
     const { DELETE_ITEM } = types;
@@ -584,6 +653,21 @@ describe('reducer', () => {
     expect(reducer()(defaultInitialState, action)).toEqual(expectedValue);
   });
 
+  it('should handle CREATE_MAIN_IMAGE_FAILURE', () => {
+    let action = actions.createMainImageFailure();
+    const expectedValue = {
+      ...defaultInitialState,
+      error: {},
+    };
+
+    expect(reducer()(defaultInitialState, action)).toEqual(expectedValue);
+
+    action = actions.createMainImageFailure(axiosResponseError);
+    expectedValue.error = axiosResponseError;
+
+    expect(reducer()(defaultInitialState, action)).toEqual(expectedValue);
+  });
+
   it('should handle DELETE_ITEM_FAILURE', () => {
     let action = actions.deleteItemFailure();
     const expectedValue = {
@@ -662,6 +746,16 @@ describe('reducer', () => {
   it('should handle CREATE_ITEM_SUCCESS', () => {
     const data = { id: 1 };
     const action = actions.createItemSuccess(data);
+    const expectedValue = {
+      ...defaultInitialState,
+    };
+
+    expect(reducer()(defaultInitialState, action)).toEqual(expectedValue);
+  });
+
+  it('should handle CREATE_MAIN_IMAGE_SUCCESS', () => {
+    const data = { id: 1 };
+    const action = actions.createMainImageSuccess(data);
     const expectedValue = {
       ...defaultInitialState,
     };
