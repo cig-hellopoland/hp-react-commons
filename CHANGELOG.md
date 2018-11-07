@@ -1,7 +1,10 @@
 # Changelog
 
+## 0.9.0
+* Added PDF uplaod actions in `sightEvents` reducer.
+
 ## 0.8.0
-* Add main image actions in `sights` and `sightEvents` reducers.
+* Added main image actions in `sights` and `sightEvents` reducers.
 
 ## 0.7.8
 * Fixed incorrect time passed to cyclic events in TicketModalController
