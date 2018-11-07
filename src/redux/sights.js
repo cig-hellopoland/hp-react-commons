@@ -13,6 +13,9 @@ const prefix = `commons/${name}/`;
 
 const CLEAR_SEARCH_RESULTS = `${prefix}CLEAR_SEARCH_RESULTS`;
 const CLEAR_ITEM = `${prefix}CLEAR_ITEM`;
+const CREATE_MAIN_IMAGE = `${prefix}CREATE_MAIN_IMAGE`;
+const CREATE_MAIN_IMAGE_FAILURE = `${prefix}CREATE_MAIN_IMAGE_FAILURE`;
+const CREATE_MAIN_IMAGE_SUCCESS = `${prefix}CREATE_MAIN_IMAGE_SUCCESS`;
 const CREATE_ITEM = `${prefix}CREATE_ITEM`;
 const CREATE_ITEM_FAILURE = `${prefix}CREATE_ITEM_FAILURE`;
 const CREATE_ITEM_SUCCESS = `${prefix}CREATE_ITEM_SUCCESS`;
@@ -38,6 +41,9 @@ const UPDATE_ITEM_SUCCESS = `${prefix}UPDATE_ITEM_SUCCESS`;
 export const types = {
   CLEAR_SEARCH_RESULTS,
   CLEAR_ITEM,
+  CREATE_MAIN_IMAGE,
+  CREATE_MAIN_IMAGE_FAILURE,
+  CREATE_MAIN_IMAGE_SUCCESS,
   CREATE_ITEM,
   CREATE_ITEM_FAILURE,
   CREATE_ITEM_SUCCESS,
@@ -84,6 +90,74 @@ const clearSearchResults = () => ({
  */
 const clearItem = () => ({
   type: CLEAR_ITEM,
+});
+
+/**
+ * Creates action with main image creation request details.
+ *
+ * @method
+ * @callback failureCallback
+ * @callback successCallback
+ * @param {number} id - item id
+ * @param {Object} data - request data
+ * @param {Object} [options] - request config
+ * @param {failureCallback} [onFailure] - failure callback
+ * @param {successCallback} [onSuccess] - success callback
+ * @return {{
+ *   type: string,
+ *   payload: {url: string, method: string, data: *, options: *},
+ *   onFailure: failureCallback,
+ *   onSuccess: successCallback
+ * }}
+ */
+const createMainImage = ({
+  id, data, options = {}, onFailure, onSuccess,
+}) => ({
+  type: CREATE_MAIN_IMAGE,
+  payload: {
+    url: `${apiURL}/${id}/mainImage`,
+    method: 'put',
+    ...options,
+    headers: {
+      'content-type': 'image/jpeg',
+      ...options.headers,
+    },
+    data,
+  },
+  onFailure,
+  onSuccess,
+});
+
+/**
+ * Creates action for main image creation request failing.
+ *
+ * @method
+ * @param {Object} params - axios response schema
+ * @param params.data - response body
+ * @param params.status - response status
+ * @return {{
+ *   type: string,
+ *   error: {data, status: number}
+ * }}
+ */
+const createMainImageFailure = ({ data, status } = {}) => ({
+  type: CREATE_MAIN_IMAGE_FAILURE,
+  error: {
+    data,
+    status,
+  },
+});
+
+/**
+ * Creates action for successful main image creation request.
+ *
+ * @method
+ * @param {Object} data - response body
+ * @return {{type: string, data: *}}
+ */
+const createMainImageSuccess = data => ({
+  type: CREATE_MAIN_IMAGE_SUCCESS,
+  data,
 });
 
 /**
@@ -500,6 +574,9 @@ const updateItemSuccess = data => ({
 export const actions = {
   clearSearchResults,
   clearItem,
+  createMainImage,
+  createMainImageFailure,
+  createMainImageSuccess,
   createItem,
   createItemFailure,
   createItemSuccess,
@@ -632,6 +709,45 @@ const createItemLogic = createLogic({
       }
     } catch ({ response }) {
       dispatch(createItemFailure(response));
+
+      if (onFailure) {
+        onFailure();
+      }
+    }
+
+    done();
+  },
+});
+
+const createMainImageLogic = createLogic({
+  type: [
+    CREATE_MAIN_IMAGE,
+  ],
+  latest: true,
+  async process(
+    { action: { payload, onFailure, onSuccess }, httpClient, cancelled$ },
+    dispatch,
+    done,
+  ) {
+    try {
+      const response = await httpClient.cancellable(payload, cancelled$);
+      const { data, status } = response;
+
+      if (status === 200 || status === 204) {
+        dispatch(createMainImageSuccess(data));
+
+        if (onSuccess) {
+          onSuccess();
+        }
+      } else {
+        dispatch(createMainImageFailure(response));
+
+        if (onFailure) {
+          onFailure();
+        }
+      }
+    } catch ({ response }) {
+      dispatch(createMainImageFailure(response));
 
       if (onFailure) {
         onFailure();
@@ -849,6 +965,7 @@ const updateItemLogic = createLogic({
 export const logic = {
   clearSearchResultsLogic,
   createItemLogic,
+  createMainImageLogic,
   deleteItemLogic,
   fetchItemLogic,
   fetchListLogic,
@@ -882,6 +999,7 @@ const reducer = (initialState = defaultInitialState) => (state = initialState, a
         item: initialState.item,
       };
     case CREATE_ITEM_FAILURE:
+    case CREATE_MAIN_IMAGE_FAILURE:
     case DELETE_ITEM_FAILURE:
     case FETCH_ITEM_FAILURE:
     case FETCH_LIST_FAILURE:
@@ -892,6 +1010,7 @@ const reducer = (initialState = defaultInitialState) => (state = initialState, a
         error: action.error,
       };
     case CREATE_ITEM_SUCCESS:
+    case CREATE_MAIN_IMAGE_SUCCESS:
     case UPDATE_ITEM_SUCCESS:
       return {
         ...state,

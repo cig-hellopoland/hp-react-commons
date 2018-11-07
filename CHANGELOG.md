@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.8.0
+* Add main image actions in `sights` and `sightEvents` reducers.
+
 ## 0.7.8
 * Fixed incorrect time passed to cyclic events in TicketModalController
 
