@@ -93,6 +93,71 @@ const clearItem = () => ({
 });
 
 /**
+ * Creates action with item creation request details.
+ *
+ * @method
+ * @callback failureCallback
+ * @callback successCallback
+ * @param {Object} params
+ * @param {Object} params.data - request data
+ * @param {Object} [params.options] - request config
+ * @param {failureCallback} [params.onFailure] - failure callback
+ * @param {successCallback} [params.onSuccess] - success callback
+ * @return {{
+ *   type: string,
+ *   payload: {url: string, method: string, data: *, options: *},
+ *   onFailure: failureCallback,
+ *   onSuccess: successCallback
+ * }}
+ */
+const createItem = ({
+  data, options, onFailure, onSuccess,
+} = {}) => ({
+  type: CREATE_ITEM,
+  payload: {
+    url: apiURL,
+    method: 'post',
+    ...options,
+    data,
+  },
+  onFailure,
+  onSuccess,
+});
+
+/**
+ * Creates action for item creation request failing.
+ *
+ * @method
+ * @param {Object} params - axios response schema
+ * @param params.data - response body
+ * @param params.status - response status
+ * @return {{
+ *   type: string,
+ *   error: {data, status: number}
+ * }}
+ */
+const createItemFailure = ({ data, status } = {}) => ({
+  type: CREATE_ITEM_FAILURE,
+  error: {
+    data,
+    status,
+  },
+});
+
+/**
+ * Creates action for successful item creation request.
+ *
+ * @method
+ * @param {Object} data - response body
+ * @return {{type: string, data: *}}
+ */
+const createItemSuccess = data => ({
+  type: CREATE_ITEM_SUCCESS,
+  data,
+});
+
+
+/**
  * Creates action with main image creation request details.
  *
  * @method
@@ -157,70 +222,6 @@ const createMainImageFailure = ({ data, status } = {}) => ({
  */
 const createMainImageSuccess = data => ({
   type: CREATE_MAIN_IMAGE_SUCCESS,
-  data,
-});
-
-/**
- * Creates action with item creation request details.
- *
- * @method
- * @callback failureCallback
- * @callback successCallback
- * @param {Object} params
- * @param {Object} params.data - request data
- * @param {Object} [params.options] - request config
- * @param {failureCallback} [params.onFailure] - failure callback
- * @param {successCallback} [params.onSuccess] - success callback
- * @return {{
- *   type: string,
- *   payload: {url: string, method: string, data: *, options: *},
- *   onFailure: failureCallback,
- *   onSuccess: successCallback
- * }}
- */
-const createItem = ({
-  data, options, onFailure, onSuccess,
-} = {}) => ({
-  type: CREATE_ITEM,
-  payload: {
-    url: apiURL,
-    method: 'post',
-    ...options,
-    data,
-  },
-  onFailure,
-  onSuccess,
-});
-
-/**
- * Creates action for item creation request failing.
- *
- * @method
- * @param {Object} params - axios response schema
- * @param params.data - response body
- * @param params.status - response status
- * @return {{
- *   type: string,
- *   error: {data, status: number}
- * }}
- */
-const createItemFailure = ({ data, status } = {}) => ({
-  type: CREATE_ITEM_FAILURE,
-  error: {
-    data,
-    status,
-  },
-});
-
-/**
- * Creates action for successful item creation request.
- *
- * @method
- * @param {Object} data - response body
- * @return {{type: string, data: *}}
- */
-const createItemSuccess = data => ({
-  type: CREATE_ITEM_SUCCESS,
   data,
 });
 

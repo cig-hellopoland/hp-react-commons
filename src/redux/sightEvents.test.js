@@ -189,6 +189,75 @@ describe('actions', () => {
     expect(createMainImageSuccess()).toEqual(expectedValue);
   });
 
+  it('should create an action to make pdf create request', () => {
+    const { createPDF } = actions;
+    const { CREATE_PDF } = types;
+    const id = 1;
+    const data = 'omfrefiywuyuwef';
+    const options = {
+      a: 1,
+      headers: {
+        b: 2,
+      },
+    };
+    const expectedValue = {
+      type: CREATE_PDF,
+      payload: {
+        url: `${apiURL}/${id}/pdf`,
+        method: 'post',
+        headers: {
+          'content-type': 'application/pdf',
+        },
+        data,
+      },
+    };
+
+    expect(createPDF({ id, data })).toEqual(expectedValue);
+
+    expectedValue.payload = {
+      ...expectedValue.payload,
+      ...options,
+      headers: {
+        ...expectedValue.payload.headers,
+        ...options.headers,
+      },
+    };
+
+    expect(createPDF({ id, data, options })).toEqual(expectedValue);
+
+    expectedValue.onFailure = onFailure;
+    expectedValue.onSuccess = onSuccess;
+
+    expect(createPDF({
+      id, data, options, onFailure, onSuccess,
+    })).toEqual(expectedValue);
+  });
+
+  it('should create an action to fail PDF create request', () => {
+    const { createPDFFailure } = actions;
+    const { CREATE_PDF_FAILURE } = types;
+    const expectedValue = {
+      type: CREATE_PDF_FAILURE,
+      error: {},
+    };
+
+    expect(createPDFFailure()).toEqual(expectedValue);
+
+    expectedValue.error = axiosResponseError;
+
+    expect(createPDFFailure(axiosResponseError)).toEqual(expectedValue);
+  });
+
+  it('should create an action to succeed PDF request', () => {
+    const { createPDFSuccess } = actions;
+    const { CREATE_PDF_SUCCESS } = types;
+    const expectedValue = {
+      type: CREATE_PDF_SUCCESS,
+    };
+
+    expect(createPDFSuccess()).toEqual(expectedValue);
+  });
+
   it('should create an action to make item delete request', () => {
     const { deleteItem } = actions;
     const { DELETE_ITEM } = types;
@@ -775,6 +844,21 @@ describe('reducer', () => {
     expect(reducer()(defaultInitialState, action)).toEqual(expectedValue);
   });
 
+  it('should handle CREATE_PDF_FAILURE', () => {
+    let action = actions.createPDFFailure();
+    const expectedValue = {
+      ...defaultInitialState,
+      error: {},
+    };
+
+    expect(reducer()(defaultInitialState, action)).toEqual(expectedValue);
+
+    action = actions.createPDFFailure(axiosResponseError);
+    expectedValue.error = axiosResponseError;
+
+    expect(reducer()(defaultInitialState, action)).toEqual(expectedValue);
+  });
+
   it('should handle DELETE_ITEM_FAILURE', () => {
     let action = actions.deleteItemFailure();
     const expectedValue = {
@@ -868,6 +952,26 @@ describe('reducer', () => {
   it('should handle CREATE_ITEM_SUCCESS', () => {
     const data = { id: 1 };
     const action = actions.createItemSuccess(data);
+    const expectedValue = {
+      ...defaultInitialState,
+    };
+
+    expect(reducer()(defaultInitialState, action)).toEqual(expectedValue);
+  });
+
+  it('should handle CREATE_MAIN_IMAGE_SUCCESS', () => {
+    const data = { id: 1 };
+    const action = actions.createMainImageSuccess(data);
+    const expectedValue = {
+      ...defaultInitialState,
+    };
+
+    expect(reducer()(defaultInitialState, action)).toEqual(expectedValue);
+  });
+
+  it('should handle CREATE_PDF_SUCCESS', () => {
+    const data = { id: 1 };
+    const action = actions.createPDFSuccess(data);
     const expectedValue = {
       ...defaultInitialState,
     };
