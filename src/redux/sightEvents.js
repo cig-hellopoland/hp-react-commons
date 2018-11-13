@@ -14,12 +14,15 @@ const prefix = `commons/${name}/`;
 const CLEAR_AVAILABLE_TICKETS = `${prefix}CLEAR_AVAILABLE_TICKETS`;
 const CLEAR_ITEM = `${prefix}CLEAR_ITEM`;
 const CLEAR_SEARCH_RESULTS = `${prefix}CLEAR_SEARCH_RESULTS`;
-const CREATE_MAIN_IMAGE = `${prefix}CREATE_MAIN_IMAGE`;
-const CREATE_MAIN_IMAGE_FAILURE = `${prefix}CREATE_MAIN_IMAGE_FAILURE`;
-const CREATE_MAIN_IMAGE_SUCCESS = `${prefix}CREATE_MAIN_IMAGE_SUCCESS`;
 const CREATE_ITEM = `${prefix}CREATE_ITEM`;
 const CREATE_ITEM_FAILURE = `${prefix}CREATE_ITEM_FAILURE`;
 const CREATE_ITEM_SUCCESS = `${prefix}CREATE_ITEM_SUCCESS`;
+const CREATE_MAIN_IMAGE = `${prefix}CREATE_MAIN_IMAGE`;
+const CREATE_MAIN_IMAGE_FAILURE = `${prefix}CREATE_MAIN_IMAGE_FAILURE`;
+const CREATE_MAIN_IMAGE_SUCCESS = `${prefix}CREATE_MAIN_IMAGE_SUCCESS`;
+const CREATE_PDF = `${prefix}CREATE_PDF`;
+const CREATE_PDF_FAILURE = `${prefix}CREATE_PDF_FAILURE`;
+const CREATE_PDF_SUCCESS = `${prefix}CREATE_PDF_SUCCESS`;
 const DELETE_ITEM = `${prefix}DELETE_ITEM`;
 const DELETE_ITEM_FAILURE = `${prefix}DELETE_ITEM_FAILURE`;
 const DELETE_ITEM_SUCCESS = `${prefix}DELETE_ITEM_SUCCESS`;
@@ -47,12 +50,15 @@ export const types = {
   CLEAR_AVAILABLE_TICKETS,
   CLEAR_ITEM,
   CLEAR_SEARCH_RESULTS,
-  CREATE_MAIN_IMAGE,
-  CREATE_MAIN_IMAGE_FAILURE,
-  CREATE_MAIN_IMAGE_SUCCESS,
   CREATE_ITEM,
   CREATE_ITEM_FAILURE,
   CREATE_ITEM_SUCCESS,
+  CREATE_MAIN_IMAGE,
+  CREATE_MAIN_IMAGE_FAILURE,
+  CREATE_MAIN_IMAGE_SUCCESS,
+  CREATE_PDF,
+  CREATE_PDF_FAILURE,
+  CREATE_PDF_SUCCESS,
   DELETE_ITEM,
   DELETE_ITEM_FAILURE,
   DELETE_ITEM_SUCCESS,
@@ -112,6 +118,69 @@ const clearSearchResults = () => ({
   type: CLEAR_SEARCH_RESULTS,
 });
 
+/**
+ * Creates action with item creation request details.
+ *
+ * @method
+ * @callback failureCallback
+ * @callback successCallback
+ * @param {Object} params
+ * @param {Object} params.data - request data
+ * @param {Object} [params.options] - request config
+ * @param {failureCallback} [params.onFailure] - failure callback
+ * @param {successCallback} [params.onSuccess] - success callback
+ * @return {{
+ *   type: string,
+ *   payload: {url: string, method: string, data: *, options: *},
+ *   onFailure: failureCallback,
+ *   onSuccess: successCallback
+ * }}
+ */
+const createItem = ({
+  data, options, onFailure, onSuccess,
+} = {}) => ({
+  type: CREATE_ITEM,
+  payload: {
+    url: apiURL,
+    method: 'post',
+    ...options,
+    data,
+  },
+  onFailure,
+  onSuccess,
+});
+
+/**
+ * Creates action for item creation request failing.
+ *
+ * @method
+ * @param {Object} params - axios response schema
+ * @param params.data - response body
+ * @param params.status - response status
+ * @return {{
+ *   type: string,
+ *   error: {data, status: number}
+ * }}
+ */
+const createItemFailure = ({ data, status } = {}) => ({
+  type: CREATE_ITEM_FAILURE,
+  error: {
+    data,
+    status,
+  },
+});
+
+/**
+ * Creates action for successful item creation request.
+ *
+ * @method
+ * @param {Object} data - response body
+ * @return {{type: string, data: *}}
+ */
+const createItemSuccess = data => ({
+  type: CREATE_ITEM_SUCCESS,
+  data,
+});
 
 /**
  * Creates action with main image creation request details.
@@ -182,16 +251,16 @@ const createMainImageSuccess = data => ({
 });
 
 /**
- * Creates action with item creation request details.
+ * Creates action with main image creation request details.
  *
  * @method
  * @callback failureCallback
  * @callback successCallback
- * @param {Object} params
- * @param {Object} params.data - request data
- * @param {Object} [params.options] - request config
- * @param {failureCallback} [params.onFailure] - failure callback
- * @param {successCallback} [params.onSuccess] - success callback
+ * @param {number} id - item id
+ * @param {Object} data - request data
+ * @param {Object} [options] - request config
+ * @param {failureCallback} [onFailure] - failure callback
+ * @param {successCallback} [onSuccess] - success callback
  * @return {{
  *   type: string,
  *   payload: {url: string, method: string, data: *, options: *},
@@ -199,14 +268,18 @@ const createMainImageSuccess = data => ({
  *   onSuccess: successCallback
  * }}
  */
-const createItem = ({
-  data, options, onFailure, onSuccess,
-} = {}) => ({
-  type: CREATE_ITEM,
+const createPDF = ({
+  id, data, options = {}, onFailure, onSuccess,
+}) => ({
+  type: CREATE_PDF,
   payload: {
-    url: apiURL,
+    url: `${apiURL}/${id}/pdf`,
     method: 'post',
     ...options,
+    headers: {
+      'content-type': 'application/pdf',
+      ...options.headers,
+    },
     data,
   },
   onFailure,
@@ -214,7 +287,7 @@ const createItem = ({
 });
 
 /**
- * Creates action for item creation request failing.
+ * Creates action for main image creation request failing.
  *
  * @method
  * @param {Object} params - axios response schema
@@ -225,8 +298,8 @@ const createItem = ({
  *   error: {data, status: number}
  * }}
  */
-const createItemFailure = ({ data, status } = {}) => ({
-  type: CREATE_ITEM_FAILURE,
+const createPDFFailure = ({ data, status } = {}) => ({
+  type: CREATE_PDF_FAILURE,
   error: {
     data,
     status,
@@ -234,14 +307,14 @@ const createItemFailure = ({ data, status } = {}) => ({
 });
 
 /**
- * Creates action for successful item creation request.
+ * Creates action for successful main image creation request.
  *
  * @method
  * @param {Object} data - response body
  * @return {{type: string, data: *}}
  */
-const createItemSuccess = data => ({
-  type: CREATE_ITEM_SUCCESS,
+const createPDFSuccess = data => ({
+  type: CREATE_PDF_SUCCESS,
   data,
 });
 
@@ -673,12 +746,15 @@ export const actions = {
   clearAvailableTickets,
   clearItem,
   clearSearchResults,
-  createMainImage,
-  createMainImageFailure,
-  createMainImageSuccess,
   createItem,
   createItemFailure,
   createItemSuccess,
+  createMainImage,
+  createMainImageFailure,
+  createMainImageSuccess,
+  createPDF,
+  createPDFFailure,
+  createPDFSuccess,
   deleteItem,
   deleteItemFailure,
   deleteItemSuccess,
@@ -855,6 +931,45 @@ const createMainImageLogic = createLogic({
       }
     } catch ({ response }) {
       dispatch(createMainImageFailure(response));
+
+      if (onFailure) {
+        onFailure();
+      }
+    }
+
+    done();
+  },
+});
+
+const createPDFLogic = createLogic({
+  type: [
+    CREATE_PDF,
+  ],
+  latest: true,
+  async process(
+    { action: { payload, onFailure, onSuccess }, httpClient, cancelled$ },
+    dispatch,
+    done,
+  ) {
+    try {
+      const response = await httpClient.cancellable(payload, cancelled$);
+      const { data, status } = response;
+
+      if (status === 200 || status === 204) {
+        dispatch(createPDFSuccess(data));
+
+        if (onSuccess) {
+          onSuccess();
+        }
+      } else {
+        dispatch(createPDFFailure(response));
+
+        if (onFailure) {
+          onFailure();
+        }
+      }
+    } catch ({ response }) {
+      dispatch(createPDFFailure(response));
 
       if (onFailure) {
         onFailure();
@@ -1119,6 +1234,7 @@ export const logic = {
   clearSearchResultsLogic,
   createItemLogic,
   createMainImageLogic,
+  createPDFLogic,
   deleteItemLogic,
   fetchAvailableTicketsLogic,
   fetchItemLogic,
@@ -1162,6 +1278,7 @@ const reducer = (initialState = defaultInitialState) => (state = initialState, a
       };
     case CREATE_ITEM_FAILURE:
     case CREATE_MAIN_IMAGE_FAILURE:
+    case CREATE_PDF_FAILURE:
     case DELETE_ITEM_FAILURE:
     case FETCH_ITEM_FAILURE:
     case FETCH_AVAILABLE_TICKETS_FAILURE:
