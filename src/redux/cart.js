@@ -9,6 +9,7 @@ const prefix = `commons/${name}/`;
 /*
  * TYPES
  */
+
 const CART_CLEAR = `${prefix}CART_CLEAR`;
 const ITEM_ADD = `${prefix}ITEM_ADD`;
 const ITEM_REMOVE = `${prefix}ITEM_REMOVE`;
@@ -94,7 +95,6 @@ const updateItem = ({ entries, ...rest } = {}) => ({
     ...rest,
   },
 });
-
 
 export const actions = {
   clear,
@@ -226,7 +226,7 @@ const getTotalItems = state => getState(state).items.length;
 const getTotalPrice = (state) => {
   const { entries } = getState(state);
 
-  return entries.reduce((acc, { price = 0, quantity = 1 }) => acc + price * quantity, 0);
+  return entries.reduce((acc, { price = 0, quantity = 0 }) => acc + price * quantity, 0);
 };
 
 export const selectors = {
@@ -243,6 +243,7 @@ export const selectors = {
 /*
  * LOGIC
  */
+
 const clearCartLogic = createLogic({
   type: [
     profileActions.LOGOUT_SUCCESS,
