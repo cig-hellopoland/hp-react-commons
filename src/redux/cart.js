@@ -1,6 +1,7 @@
 import { createLogic } from 'redux-logic';
 import _isEqual from 'lodash/isEqual';
 import _uniq from 'lodash/uniq';
+import { profileActions } from './index';
 
 export const name = 'cart';
 const prefix = `commons/${name}/`;
@@ -111,22 +112,148 @@ export const actions = {
  * Returns current state.
  *
  * @method
- * @param {object} state
+ * @param {object} state - redux state
  * @return {*}
  */
 const getState = state => state[name];
 
+/**
+ * Returns all available entries
+ *
+ * @method
+ * @param {object} state - redux state
+ * @return {{
+ *   entryId: number,
+ *   price: number,
+ *   quantity: number,
+ *   ...rest: {...}
+ * }}
+ */
+const getEntries = state => getState(state).entries;
+
+/**
+ * Returns all available entries reduced by provided keys
+ *
+ * @method
+ * @param {object} state - redux state
+ * @return {*}
+ */
+const getEntriesByKeys = state => (keys) => {
+  const { entries } = getState(state);
+
+  if (!entries.length || !keys || !keys.length) {
+    return [];
+  }
+
+  return entries.reduce((acc, entry) => {
+    const nextEntry = keys.reduce((acu, key) => ({ ...acu, [key]: entry[key] }), {});
+
+    return [...acc, nextEntry];
+  }, []);
+};
+
+/**
+ * Get item with specified id
+ *
+ * @method
+ * @param {object} state - redux state
+ * @param {number} itemId - id of cart's item
+ * @return {{
+ *   entries: object[],
+ *   itemId: number
+ *   ...rest: {...}
+ * }}
+ */
+const getItem = (state, itemId) => {
+  const { entries: stateEntries, items: stateItems } = getState(state);
+
+  const stateItem = stateItems.find(i => i.itemId === itemId);
+
+  if (!stateItem) {
+    return stateItem;
+  }
+
+  const { entryIds, ...item } = stateItem;
+  const entries = stateEntries.reduce((acc, entry) => {
+    const next = [...acc];
+    const hasEntry = entryIds.some(entryId => entryId === entry.entryId);
+
+    if (hasEntry) {
+      next.push(entry);
+    }
+
+    return next;
+  }, []);
+
+  return {
+    ...item,
+    entries,
+  };
+};
+
+/**
+ * Get all available items
+ *
+ * @param {object} state - redux state
+ * @return {{
+ *   entries: object[],
+ *   itemId: number
+ *   ...rest: {...}
+ * }[]}
+ */
+const getItems = (state) => {
+  const { items } = getState(state);
+
+  return items.map(({ itemId }) => getItem(state, itemId));
+};
+
+/**
+ * Get number of total items in cart
+ *
+ * @method
+ * @param {object} state - redux state
+ * @return {number}
+ */
+const getTotalItems = state => getState(state).items.length;
+
+/**
+ * Get total price of items in cart
+ *
+ * @method
+ * @param {object} state - redux state
+ * @return {number}
+ */
+const getTotalPrice = (state) => {
+  const { entries } = getState(state);
+
+  return entries.reduce((acc, { price = 0, quantity = 1 }) => acc + price * quantity, 0);
+};
+
 export const selectors = {
+  getEntries,
+  getEntriesByKeys,
+  getItem,
+  getItems,
   getState,
+  getTotalItems,
+  getTotalPrice,
 };
 
 
 /*
  * LOGIC
  */
-
+const clearCartLogic = createLogic({
+  type: [
+    profileActions.LOGOUT_SUCCESS,
+  ],
+  process() {
+    return clear();
+  },
+});
 
 export const logic = {
+  clearCartLogic,
 };
 
 

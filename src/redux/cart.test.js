@@ -6,9 +6,6 @@ import reducer, {
   defaultInitialState,
 } from './cart';
 
-
-// TODO: TEST HELPERS
-
 describe('actions', () => {
   describe('using clear', () => {
     const { clear } = actions;
@@ -149,6 +146,261 @@ describe('selectors', () => {
         [name]: defaultInitialState,
       };
       expect(getState(appState)).toEqual(defaultInitialState);
+    });
+  });
+
+  describe('using getEntries', () => {
+    const { getEntries } = selectors;
+    const state = {
+      [name]: {
+        items: [
+          { itemId: 1, entryIds: [1, 2], name: 'Lorem ipsum dolor' },
+          { itemId: 5, entryIds: [7] },
+        ],
+        entries: [
+          {
+            entryId: 1, id: 1, name: 'Example product 1', price: 100, quantity: 1,
+          },
+          {
+            entryId: 2, id: 2, name: 'Example product 2', price: 200, quantity: 2,
+          },
+          {
+            entryId: 7, id: 7, name: 'Example product 7', price: 700, quantity: 7,
+          },
+        ],
+      },
+    };
+
+    it('should return empty array if no entries are present', () => {
+      const appState = {
+        [name]: defaultInitialState,
+      };
+      const expectedValue = [];
+
+      expect(getEntries(appState)).toEqual(expectedValue);
+    });
+
+    it('should return all entries from state', () => {
+      const expectedValue = [
+        ...state[name].entries,
+      ];
+
+      expect(getEntries(state)).toEqual(expectedValue);
+    });
+  });
+
+  describe('using getEntriesByKeys', () => {
+    const { getEntriesByKeys } = selectors;
+    const state = {
+      [name]: {
+        items: [
+          { itemId: 1, entryIds: [1, 2], name: 'Lorem ipsum dolor' },
+          { itemId: 5, entryIds: [7] },
+        ],
+        entries: [
+          {
+            entryId: 1, id: 1, name: 'Example product 1', price: 100, quantity: 1,
+          },
+          {
+            entryId: 2, id: 2, name: 'Example product 2', price: 200, quantity: 2,
+          },
+          {
+            entryId: 7, id: 7, name: 'Example product 7', price: 700, quantity: 7,
+          },
+        ],
+      },
+    };
+
+    it('should return empty array if no entries are present', () => {
+      const keys = ['id'];
+      const appState = {
+        [name]: defaultInitialState,
+      };
+      const expectedValue = [];
+
+      expect(getEntriesByKeys(appState)(keys)).toEqual(expectedValue);
+    });
+
+    it('should return empty array if keys are missing', () => {
+      const keys = [];
+      const expectedValue = [];
+
+      expect(getEntriesByKeys(state)(keys)).toEqual(expectedValue);
+    });
+
+    it('should return all entries with specified keys from state', () => {
+      const keys = ['id', 'quantity'];
+      const expectedValue = state[name].entries.map(({ id, quantity }) => ({ id, quantity }));
+
+      expect(getEntriesByKeys(state)(keys)).toEqual(expectedValue);
+    });
+  });
+
+  describe('using getItem', () => {
+    const { getItem } = selectors;
+    const state = {
+      [name]: {
+        items: [
+          { itemId: 1, entryIds: [1, 2], name: 'Lorem ipsum dolor' },
+          { itemId: 5, entryIds: [7] },
+        ],
+        entries: [
+          {
+            entryId: 1, id: 1, name: 'Example product 1', price: 100, quantity: 1,
+          },
+          {
+            entryId: 2, id: 2, name: 'Example product 2', price: 200, quantity: 2,
+          },
+          {
+            entryId: 7, id: 7, name: 'Example product 7', price: 700, quantity: 7,
+          },
+        ],
+      },
+    };
+
+    it('should return undefined if no item was found', () => {
+      const itemId = 1234567890;
+      const expectedValue = undefined;
+
+      expect(getItem(state, itemId)).toEqual(expectedValue);
+    });
+
+    it('should return item with associated entries', () => {
+      const itemId = 1;
+      const expectedValue = {
+        itemId: 1,
+        name: 'Lorem ipsum dolor',
+        entries: [
+          state[name].entries[0],
+          state[name].entries[1],
+        ],
+      };
+
+      expect(getItem(state, itemId)).toEqual(expectedValue);
+    });
+  });
+
+  describe('using getItems', () => {
+    const { getItems } = selectors;
+
+    it('should return empty array if no items are present', () => {
+      const state = {
+        [name]: defaultInitialState,
+      };
+      const expectedValue = [];
+
+      expect(getItems(state)).toEqual(expectedValue);
+    });
+
+    it('should return items with associated entries', () => {
+      const state = {
+        [name]: {
+          items: [
+            { itemId: 1, entryIds: [1, 2], name: 'Lorem ipsum dolor' },
+            { itemId: 5, entryIds: [7] },
+          ],
+          entries: [
+            {
+              entryId: 1, id: 1, name: 'Example product 1', price: 100, quantity: 1,
+            },
+            {
+              entryId: 2, id: 2, name: 'Example product 2', price: 200, quantity: 2,
+            },
+            {
+              entryId: 7, id: 7, name: 'Example product 7', price: 700, quantity: 7,
+            },
+          ],
+        },
+      };
+      const expectedValue = [
+        {
+          itemId: 1,
+          name: 'Lorem ipsum dolor',
+          entries: [state[name].entries[0], state[name].entries[1]],
+        },
+        {
+          itemId: 5,
+          entries: [state[name].entries[2]],
+        },
+      ];
+
+      expect(getItems(state)).toEqual(expectedValue);
+    });
+  });
+
+  describe('using getTotalItems', () => {
+    const { getTotalItems } = selectors;
+
+    it('should return 0 if no items are present', () => {
+      const state = {
+        [name]: defaultInitialState,
+      };
+      const expectedValue = 0;
+
+      expect(getTotalItems(state)).toEqual(expectedValue);
+    });
+
+    it('should return number of items present in cart', () => {
+      const state = {
+        [name]: {
+          items: [
+            { itemId: 1, entryIds: [1, 2], name: 'Lorem ipsum dolor' },
+            { itemId: 5, entryIds: [7] },
+          ],
+          entries: [
+            {
+              entryId: 1, id: 1, name: 'Example product 1', price: 100, quantity: 1,
+            },
+            {
+              entryId: 2, id: 2, name: 'Example product 2', price: 200, quantity: 2,
+            },
+            {
+              entryId: 7, id: 7, name: 'Example product 7', price: 700, quantity: 7,
+            },
+          ],
+        },
+      };
+      const expectedValue = state[name].items.length;
+
+      expect(getTotalItems(state)).toEqual(expectedValue);
+    });
+  });
+
+  describe('using getTotalPrice', () => {
+    const { getTotalPrice } = selectors;
+
+    it('should return 0 if no items are present', () => {
+      const state = {
+        [name]: defaultInitialState,
+      };
+      const expectedValue = 0;
+
+      expect(getTotalPrice(state)).toEqual(expectedValue);
+    });
+
+    it('should return total cost of entries present in cart', () => {
+      const state = {
+        [name]: {
+          items: [
+            { itemId: 1, entryIds: [1, 2], name: 'Lorem ipsum dolor' },
+            { itemId: 5, entryIds: [7] },
+          ],
+          entries: [
+            {
+              entryId: 1, id: 1, name: 'Example product 1', price: 100, quantity: 1,
+            },
+            {
+              entryId: 2, id: 2, name: 'Example product 2', price: 200, quantity: 2,
+            },
+            {
+              entryId: 7, id: 7, name: 'Example product 7', price: 700, quantity: 7,
+            },
+          ],
+        },
+      };
+      const expectedValue = 5400;
+
+      expect(getTotalPrice(state)).toEqual(expectedValue);
     });
   });
 });
