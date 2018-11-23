@@ -1,7 +1,7 @@
 import { createLogic } from 'redux-logic';
 import _isEqual from 'lodash/isEqual';
 import _uniq from 'lodash/uniq';
-import { profileActions } from './index';
+import { actions as profileActions } from './profile';
 
 export const name = 'cart';
 const prefix = `commons/${name}/`;
