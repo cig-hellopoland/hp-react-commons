@@ -1,261 +1,154 @@
 import reducer, {
   actions,
-  helpers,
   name,
   selectors,
   types,
   defaultInitialState,
 } from './cart';
 
-/*
- * Initial state
- */
 
-const initialState = {
-  items: [],
-  details: {},
-  entries: [],
-  products: [],
-  merchants: [],
-};
-
-const appState = {
-  config: {},
-  [name]: initialState,
-};
-
-const dirtyState = {
-  items: [
-    { id: 1, entries: [1, 5] },
-    { id: 2, entries: [13] },
-    { id: 3, entries: [33] },
-    { id: 7, entries: [2] },
-  ],
-  details: {
-    1: {
-      price: 1000,
-      currency: 'PLN',
-      name: 'Soft cover',
-    },
-    2: {
-      price: 2000,
-      currency: 'PLN',
-    },
-    5: {
-      price: 5000,
-      currency: 'PLN',
-      name: 'Hard cover',
-    },
-    33: {
-      price: 33000,
-      currency: 'PLN',
-      name: 'Bumper sticker',
-    },
-  },
-  entries: [
-    { id: 1, quantity: 2 },
-    { id: 2, quantity: 1 },
-    { id: 5, quantity: 1 },
-    { id: 13, quantity: 20 },
-    { id: 33, quantity: 1 },
-  ],
-  products: [
-    {
-      id: 79,
-      name: 'Incredible book',
-      description: 'Lorem ipsum dolor',
-      entries: [1, 5],
-      merchantId: 99,
-    },
-    {
-      id: 12,
-      name: 'Random plush toy',
-      description: 'Hug it hard',
-      entries: [2],
-      merchantId: undefined,
-    },
-    {
-      id: 334,
-      name: 'Hello World bumper sticker',
-      entries: [33],
-      merchantId: 231,
-    },
-  ],
-  merchants: [
-    {
-      id: 44,
-      name: 'Book Publishing Inc.',
-      products: [79],
-    },
-    {
-      id: 231,
-      name: 'Sticker producer',
-      products: [334],
-    },
-  ],
-};
-
-// TEST HELPERS
+// TODO: TEST HELPERS
 
 describe('actions', () => {
-  it('should create an action to add new cart item', () => {
-    const { cartItemAdd } = actions;
-    const { CART_ITEM_ADD } = types;
-    const data = {
-      details: {
-        1: { price: 1000, currency: 'PLN' },
-      },
-      entries: [{ id: 1, quantity: 1 }],
-      product: { id: 123, name: 'Paper book' },
-      merchant: { id: 323, name: 'Book shop or editor' },
-    };
-    const expectedValue = {
-      type: CART_ITEM_ADD,
-      data,
-    };
+  describe('using clear', () => {
+    const { clear } = actions;
+    const { CART_CLEAR } = types;
 
-    expect(cartItemAdd(data)).toEqual(expectedValue);
+    it('should create action for clearing cart', () => {
+      const expectedValue = {
+        type: CART_CLEAR,
+      };
+
+      expect(clear()).toEqual(expectedValue);
+    });
+  });
+  describe('using addItem', () => {
+    const { addItem } = actions;
+    const { ITEM_ADD } = types;
+
+    it('should create details for item', () => {
+      const data = {
+        name: 'Lorem ipsum dolor',
+        entries: [],
+      };
+      const expectedValue = {
+        type: ITEM_ADD,
+        data,
+      };
+
+      expect(addItem(data)).toEqual(expectedValue);
+    });
+
+    it('should create details for single entry', () => {
+      const data = {
+        entries: [{ id: 1, price: 100, quantity: 1 }],
+      };
+      const expectedValue = {
+        type: ITEM_ADD,
+        data,
+      };
+
+      expect(addItem(data)).toEqual(expectedValue);
+    });
+
+    it('should create details for multiple entries', () => {
+      const data = {
+        entries: [
+          { id: 1, price: 100, quantity: 1 },
+          { id: 2, price: 200, quantity: 2 },
+        ],
+      };
+      const expectedValue = {
+        type: ITEM_ADD,
+        data,
+      };
+
+      expect(addItem(data)).toEqual(expectedValue);
+    });
   });
 
-  it('should create an action to delete cart item', () => {
-    const { cartItemDelete } = actions;
-    const { CART_ITEM_DELETE } = types;
-    const data = 3;
-    const expectedValue = {
-      type: CART_ITEM_DELETE,
-      data: {
-        id: 3,
-      },
-    };
+  describe('using removeItem', () => {
+    const { removeItem } = actions;
+    const { ITEM_REMOVE } = types;
 
-    expect(cartItemDelete(data)).toEqual(expectedValue);
+    it('should create details for item removal', () => {
+      const data = 1;
+      const expectedValue = {
+        type: ITEM_REMOVE,
+        itemId: data,
+      };
+
+      expect(removeItem(data)).toEqual(expectedValue);
+    });
   });
 
-  it('should create an action to update cart item', () => {
-    const { cartItemUpdate } = actions;
-    const { CART_ITEM_UPDATE } = types;
-    const data = {
-      id: 123,
-      details: {
-        1: { price: 1000, currency: 'USD' },
-      },
-      entries: [{ id: 1, quantity: 2 }],
-    };
-    const expectedValue = {
-      type: CART_ITEM_UPDATE,
-      data,
-    };
+  describe('using updateItem', () => {
+    const { updateItem } = actions;
+    const { ITEM_UPDATE } = types;
 
-    expect(cartItemUpdate(data)).toEqual(expectedValue);
-  });
+    it('should create details for item', () => {
+      const data = {
+        itemId: 1,
+        name: 'Lorem ipsum dolor',
+        entries: [],
+      };
+      const expectedValue = {
+        type: ITEM_UPDATE,
+        data,
+      };
 
-  it('should create an action to clear cart', () => {
-    const { clearCart } = actions;
-    const { CLEAR_CART } = types;
-    const expectedValue = {
-      type: CLEAR_CART,
-    };
+      expect(updateItem(data)).toEqual(expectedValue);
+    });
 
-    expect(clearCart()).toEqual(expectedValue);
+    it('should create details for single entry', () => {
+      const data = {
+        itemId: 1,
+        entries: [
+          {
+            entryId: 1, id: 1, price: 100, quantity: 1,
+          },
+        ],
+      };
+      const expectedValue = {
+        type: ITEM_UPDATE,
+        data,
+      };
+
+      expect(updateItem(data)).toEqual(expectedValue);
+    });
+
+    it('should create details for multiple entries', () => {
+      const data = {
+        itemId: 1,
+        entries: [
+          {
+            entryId: 1, id: 1, price: 100, quantity: 1,
+          },
+          {
+            entryId: 2, id: 2, price: 200, quantity: 2,
+          },
+        ],
+      };
+      const expectedValue = {
+        type: ITEM_UPDATE,
+        data,
+      };
+
+      expect(updateItem(data)).toEqual(expectedValue);
+    });
   });
 });
 
 describe('selectors', () => {
   describe('using getState', () => {
+    const { getState } = selectors;
+
     it(`should return ${name} state`, () => {
-      const { getState } = selectors;
-
-      expect(getState(appState)).toEqual(initialState);
-    });
-  });
-
-  describe('using getCartItem', () => {
-    it('should return undefined if no item was found', () => {
-      const { getCartItem } = selectors;
-      const cartItemId = 42;
-      const expectedValue = undefined;
-
-      expect(getCartItem(appState, cartItemId)).toEqual(expectedValue);
-    });
-
-    it('should return cart item', () => {
-      const { getCartItem } = selectors;
-      const cartItemId = 1;
-      const cartItem = dirtyState.items.filter(item => item.id === cartItemId)[0];
-      const state = {
-        ...appState,
-        [name]: dirtyState,
+      const appState = {
+        config: {},
+        [name]: defaultInitialState,
       };
-      const product = helpers.getProductFromState(dirtyState, cartItem.entries);
-      const expectedValue = {
-        id: cartItemId,
-        entries: helpers.getEntriesFromState(dirtyState, cartItem.entries),
-        details: helpers.getDetailsFromState(dirtyState, cartItem.entries),
-        merchant: helpers.getMerchantFromState(dirtyState, product.merchantId),
-        product,
-      };
-
-      expect(getCartItem(state, cartItemId)).toEqual(expectedValue);
-    });
-
-    // TODO: should return cart item when multiple products are found
-
-    // TODO: should return cart item when multiple merchants are found
-  });
-
-  describe('using getCartItems', () => {
-    it('should return empty list if no items were found', () => {
-      const { getCartItems } = selectors;
-      const expectedValue = [];
-
-      expect(getCartItems(appState)).toEqual(expectedValue);
-    });
-
-    it('should return list of all cart items', () => {
-      const { getCartItem, getCartItems } = selectors;
-      const state = {
-        ...appState,
-        [name]: dirtyState,
-      };
-      const expectedValue = dirtyState.items.map(item => getCartItem(state, item.id));
-
-      expect(getCartItems(state)).toEqual(expectedValue);
-    });
-  });
-
-  describe('using getTotalItems', () => {
-    it('should return the length of items array', () => {
-      const { getTotalItems } = selectors;
-      let expectedValue = 0;
-
-      expect(getTotalItems(appState)).toEqual(expectedValue);
-
-      const state = {
-        ...appState,
-        [name]: dirtyState,
-      };
-
-      expectedValue = 4;
-
-      expect(getTotalItems(state)).toEqual(expectedValue);
-    });
-  });
-
-  describe('using getTotalPrice', () => {
-    it('should return total price of cart items', () => {
-      const { getTotalPrice } = selectors;
-      let expectedValue = 0;
-
-      expect(getTotalPrice(appState)).toEqual(expectedValue);
-
-      const state = {
-        ...appState,
-        [name]: dirtyState,
-      };
-
-      expectedValue = 42000;
-
-      expect(getTotalPrice(state)).toEqual(expectedValue);
+      expect(getState(appState)).toEqual(defaultInitialState);
     });
   });
 });
@@ -266,6 +159,11 @@ describe('reducer', () => {
   });
 
   it('should return custom initial state', () => {
+    const initialState = {
+      items: [],
+      entries: [],
+    };
+
     expect(reducer(initialState)(undefined, {})).toEqual(initialState);
   });
 
@@ -273,173 +171,775 @@ describe('reducer', () => {
     expect(reducer()(undefined, { type: 'INVALID_TYPE' })).toEqual(defaultInitialState);
   });
 
-  describe('using CART_ITEM_ADD', () => {
-    const newCartItem = {
-      entries: [
-        { id: 999, quantity: 1 },
-      ],
-      details: {
-        999: {
-          price: 999000,
-          currency: 'PLN',
-          name: 'Hard cover',
-        },
-      },
-      product: {
-        id: 912,
-        name: 'Oldschool book',
-      },
-      merchant: {
-        id: 934,
-        name: 'Book Publishing Ltd.',
-      },
-    };
-
-    it('should handle adding first cart item', () => {
-      const data = newCartItem;
-      const action = actions.cartItemAdd(data);
+  describe('using ITEM_ADD', () => {
+    it('should handle adding item details', () => {
+      const data = {
+        entries: [
+          {
+            id: 1, name: 'Example product', price: 100, quantity: 1,
+          },
+        ],
+        name: 'Lorem ipsum dolor',
+      };
+      const action = actions.addItem(data);
       const expectedValue = {
-        ...defaultInitialState,
         items: [
-          { id: 1, entries: data.entries.map(entry => entry.id) },
+          { itemId: 1, entryIds: [1], name: 'Lorem ipsum dolor' },
         ],
-        details: data.details,
-        entries: data.entries,
-        products: [
-          { ...data.product, entries: [data.entries[0].id], merchantId: data.merchant.id },
-        ],
-        merchants: [
-          { ...data.merchant, products: [data.product.id] },
-        ],
+        entries: data.entries.map((entry, index) => ({ entryId: index + 1, ...entry })),
       };
 
       expect(reducer()(defaultInitialState, action)).toEqual(expectedValue);
     });
 
-    it('should handle adding unique cart item to dirty cart', () => {
-      const data = newCartItem;
-      const action = actions.cartItemAdd(data);
-      const latestCartItemId = dirtyState.items[dirtyState.items.length - 1].id;
+    it('should handle adding first cart item with single entry', () => {
+      const data = {
+        entries: [
+          {
+            id: 1, name: 'Example product', price: 100, quantity: 1,
+          },
+        ],
+      };
+      const action = actions.addItem(data);
       const expectedValue = {
         items: [
-          ...dirtyState.items,
-          { id: latestCartItemId + 1, entries: data.entries.map(entry => entry.id) },
+          { itemId: 1, entryIds: [1] },
         ],
-        details: {
-          ...dirtyState.details,
-          ...data.details,
-        },
+        entries: data.entries.map((entry, index) => ({ entryId: index + 1, ...entry })),
+      };
+
+      expect(reducer()(defaultInitialState, action)).toEqual(expectedValue);
+    });
+
+    it('should handle adding first cart item with multiple entries', () => {
+      const data = {
         entries: [
-          ...dirtyState.entries,
+          {
+            id: 1, name: 'Example product 1', price: 100, quantity: 1,
+          },
+          {
+            id: 2, name: 'Example product 2', price: 200, quantity: 2,
+          },
+        ],
+      };
+      const action = actions.addItem(data);
+      const expectedValue = {
+        items: [
+          { itemId: 1, entryIds: [1, 2] },
+        ],
+        entries: data.entries.map((entry, index) => ({ entryId: index + 1, ...entry })),
+      };
+
+      expect(reducer()(defaultInitialState, action)).toEqual(expectedValue);
+    });
+
+    it('should handle adding cart item with unique single entry and dirty cart', () => {
+      const initialState = {
+        items: [
+          { itemId: 1, entryIds: [1] },
+        ],
+        entries: [
+          {
+            entryId: 1, id: 1, name: 'Example product 1', price: 100, quantity: 1,
+          },
+        ],
+      };
+      const data = {
+        entries: [
+          {
+            id: 2, name: 'Example product 2', price: 200, quantity: 2,
+          },
+        ],
+      };
+      const action = actions.addItem(data);
+      const expectedValue = {
+        items: [
+          ...initialState.items,
+          { itemId: 2, entryIds: [2] },
+        ],
+        entries: [
+          ...initialState.entries,
+          ...data.entries.map((entry, index) => ({ entryId: index + 2, ...entry })),
+        ],
+      };
+
+      expect(reducer()(initialState, action)).toEqual(expectedValue);
+    });
+
+    it('should handle adding cart item with unique multiple entries and dirty cart', () => {
+      const initialState = {
+        items: [
+          { itemId: 1, entryIds: [1, 2] },
+        ],
+        entries: [
+          {
+            entryId: 1, id: 1, name: 'Example product 1', price: 100, quantity: 1,
+          },
+          {
+            entryId: 2, id: 2, name: 'Example product 2', price: 200, quantity: 2,
+          },
+        ],
+      };
+      const data = {
+        entries: [
+          {
+            id: 3, name: 'Example product 3', price: 300, quantity: 3,
+          },
+          {
+            id: 4, name: 'Example product 4', price: 400, quantity: 4,
+          },
+        ],
+      };
+      const action = actions.addItem(data);
+      const expectedValue = {
+        items: [
+          ...initialState.items,
+          { itemId: 2, entryIds: [3, 4] },
+        ],
+        entries: [
+          ...initialState.entries,
+          ...data.entries.map((entry, index) => ({ entryId: index + 3, ...entry })),
+        ],
+      };
+
+      expect(reducer()(initialState, action)).toEqual(expectedValue);
+    });
+
+    it('should handle adding cart item with unique single entry and dirty cart for non-linear internal id\'s', () => {
+      const initialState = {
+        items: [
+          { itemId: 1, entryIds: [1, 2] },
+          { itemId: 5, entryIds: [7] },
+        ],
+        entries: [
+          {
+            entryId: 1, id: 1, name: 'Example product 1', price: 100, quantity: 1,
+          },
+          {
+            entryId: 2, id: 2, name: 'Example product 2', price: 200, quantity: 2,
+          },
+          {
+            entryId: 7, id: 7, name: 'Example product 7', price: 700, quantity: 7,
+          },
+        ],
+      };
+      const data = {
+        entries: [
+          {
+            id: 3, name: 'Example product 3', price: 300, quantity: 3,
+          },
+        ],
+      };
+      const action = actions.addItem(data);
+      const expectedValue = {
+        items: [
+          ...initialState.items,
+          { itemId: 6, entryIds: [8] },
+        ],
+        entries: [
+          ...initialState.entries,
+          ...data.entries.map((entry, index) => ({ entryId: index + 8, ...entry })),
+        ],
+      };
+
+      expect(reducer()(initialState, action)).toEqual(expectedValue);
+    });
+
+    it('should handle adding cart item with unique multiple entries and dirty cart for non-linear internal id\'s', () => {
+      const initialState = {
+        items: [
+          { itemId: 1, entryIds: [1, 2] },
+          { itemId: 5, entryIds: [7] },
+        ],
+        entries: [
+          {
+            entryId: 1, id: 1, name: 'Example product 1', price: 100, quantity: 1,
+          },
+          {
+            entryId: 2, id: 2, name: 'Example product 2', price: 200, quantity: 2,
+          },
+          {
+            entryId: 7, id: 7, name: 'Example product 7', price: 700, quantity: 7,
+          },
+        ],
+      };
+      const data = {
+        entries: [
+          {
+            id: 3, name: 'Example product 3', price: 300, quantity: 3,
+          },
+          {
+            id: 9, name: 'Example product 9', price: 900, quantity: 9,
+          },
+        ],
+      };
+      const action = actions.addItem(data);
+      const expectedValue = {
+        items: [
+          ...initialState.items,
+          { itemId: 6, entryIds: [8, 9] },
+        ],
+        entries: [
+          ...initialState.entries,
+          ...data.entries.map((entry, index) => ({ entryId: index + 8, ...entry })),
+        ],
+      };
+
+      expect(reducer()(initialState, action)).toEqual(expectedValue);
+    });
+
+    it('should handle adding cart item with known single entry and dirty cart', () => {
+      const initialState = {
+        items: [
+          { itemId: 1, entryIds: [1] },
+        ],
+        entries: [
+          {
+            entryId: 1, id: 1, name: 'Example product 1', price: 100, quantity: 1,
+          },
+        ],
+      };
+      const data = {
+        entries: [
+          {
+            entryId: 1, id: 1, name: 'Example product 1', price: 100, quantity: 3,
+          },
+        ],
+      };
+      const action = actions.addItem(data);
+      const expectedValue = {
+        items: [
+          ...initialState.items,
+        ],
+        entries: [
+          { ...initialState.entries[0], quantity: 4 },
+        ],
+      };
+
+      expect(reducer()(initialState, action)).toEqual(expectedValue);
+    });
+
+    it('should handle adding cart item with known multiple entries and dirty cart', () => {
+      const initialState = {
+        items: [
+          { itemId: 1, entryIds: [1, 2] },
+        ],
+        entries: [
+          {
+            entryId: 1, id: 1, name: 'Example product 1', price: 100, quantity: 1,
+          },
+          {
+            entryId: 2, id: 2, name: 'Example product 2', price: 200, quantity: 2,
+          },
+        ],
+      };
+      const data = {
+        entries: [
+          {
+            entryId: 1, id: 1, name: 'Example product 1', price: 100, quantity: 3,
+          },
+          {
+            entryId: 2, id: 2, name: 'Example product 2', price: 200, quantity: 1,
+          },
+        ],
+      };
+      const action = actions.addItem(data);
+      const expectedValue = {
+        items: [
+          ...initialState.items,
+        ],
+        entries: [
+          { ...initialState.entries[0], quantity: 4 },
+          { ...initialState.entries[1], quantity: 3 },
+        ],
+      };
+
+      expect(reducer()(initialState, action)).toEqual(expectedValue);
+    });
+
+    it('should handle adding cart item with existing single entry and dirty cart', () => {
+      const initialState = {
+        items: [
+          { itemId: 1, entryIds: [1] },
+        ],
+        entries: [
+          {
+            entryId: 1, id: 1, name: 'Example product 1', price: 100, quantity: 1,
+          },
+        ],
+      };
+      const data = {
+        entries: [
+          {
+            id: 1, name: 'Example product 1', price: 100, quantity: 3,
+          },
+        ],
+      };
+      const action = actions.addItem(data);
+      const expectedValue = {
+        items: [
+          ...initialState.items,
+        ],
+        entries: [
+          { ...initialState.entries[0], quantity: 4 },
+        ],
+      };
+
+      expect(reducer()(initialState, action)).toEqual(expectedValue);
+    });
+
+    it('should handle adding cart item with existing multiple entries and dirty cart', () => {
+      const initialState = {
+        items: [
+          { itemId: 1, entryIds: [1, 2] },
+        ],
+        entries: [
+          {
+            entryId: 1, id: 1, name: 'Example product 1', price: 100, quantity: 1,
+          },
+          {
+            entryId: 2, id: 2, name: 'Example product 2', price: 200, quantity: 2,
+          },
+        ],
+      };
+      const data = {
+        entries: [
+          {
+            id: 1, name: 'Example product 1', price: 100, quantity: 3,
+          },
+          {
+            id: 2, name: 'Example product 2', price: 200, quantity: 1,
+          },
+        ],
+      };
+      const action = actions.addItem(data);
+      const expectedValue = {
+        items: [
+          ...initialState.items,
+        ],
+        entries: [
+          { ...initialState.entries[0], quantity: 4 },
+          { ...initialState.entries[1], quantity: 3 },
+        ],
+      };
+
+      expect(reducer()(initialState, action)).toEqual(expectedValue);
+    });
+
+    it('should handle adding cart item with mixed multiple entries and dirty cart', () => {
+      const initialState = {
+        items: [
+          { itemId: 1, entryIds: [1, 2] },
+        ],
+        entries: [
+          {
+            entryId: 1, id: 1, name: 'Example product 1', price: 100, quantity: 1,
+          },
+          {
+            entryId: 2, id: 2, name: 'Example product 2', price: 200, quantity: 2,
+          },
+        ],
+      };
+      const data = {
+        entries: [
+          {
+            id: 1, name: 'Example product 1', price: 100, quantity: 3,
+          },
+          {
+            id: 3, name: 'Example product 3', price: 300, quantity: 3,
+          },
+        ],
+      };
+      const action = actions.addItem(data);
+      const expectedValue = {
+        items: [
+          { ...initialState.items[0], entryIds: [1, 2, 3] },
+        ],
+        entries: [
+          { ...initialState.entries[0], quantity: 4 },
+          initialState.entries[1],
+          { entryId: 3, ...data.entries[1] },
+        ],
+      };
+
+      expect(reducer()(initialState, action)).toEqual(expectedValue);
+    });
+  });
+
+  describe('using ITEM_UPDATE', () => {
+    it('should do nothing if itemId was not provided', () => {
+      const data = {
+        entries: [
+          {
+            entryId: 1, id: 1, name: 'Example product 1', price: 100, quantity: 1,
+          },
+        ],
+        name: 'Lorem ipsum dolor',
+      };
+      const action = actions.updateItem(data);
+      const expectedValue = {
+        ...defaultInitialState,
+      };
+
+      expect(reducer()(defaultInitialState, action)).toEqual(expectedValue);
+    });
+
+    it('should do nothing if item with specified id was not found', () => {
+      const data = {
+        entries: [
+          {
+            entryId: 1, id: 1, name: 'Example product 1', price: 100, quantity: 1,
+          },
+        ],
+        itemId: 1,
+        name: 'Lorem ipsum dolor',
+      };
+      const action = actions.updateItem(data);
+      const expectedValue = {
+        ...defaultInitialState,
+      };
+
+      expect(reducer()(defaultInitialState, action)).toEqual(expectedValue);
+    });
+
+    it('should handle updating item details', () => {
+      const initialState = {
+        items: [
+          { itemId: 1, entryIds: [1, 2], name: 'Lorem ipsum dolor' },
+        ],
+        entries: [
+          {
+            entryId: 1, id: 1, name: 'Example product 1', price: 100, quantity: 1,
+          },
+          {
+            entryId: 2, id: 2, name: 'Example product 2', price: 200, quantity: 2,
+          },
+        ],
+      };
+      const data = {
+        entries: [
+          ...initialState.entries,
+        ],
+        id: 7,
+        itemId: 1,
+        name: 'Lorem ipsum dolor updated',
+      };
+      const action = actions.updateItem(data);
+      const expectedValue = {
+        items: [
+          {
+            itemId: 1, entryIds: [1, 2], id: 7, name: 'Lorem ipsum dolor updated',
+          },
+        ],
+        entries: [
+          ...initialState.entries,
+        ],
+      };
+
+      expect(reducer()(initialState, action)).toEqual(expectedValue);
+    });
+
+    it('should handle updating single known entry in existing item', () => {
+      const initialState = {
+        items: [
+          { itemId: 1, entryIds: [1, 2], name: 'Lorem ipsum dolor' },
+        ],
+        entries: [
+          {
+            entryId: 1, id: 1, name: 'Example product 1', price: 100, quantity: 1,
+          },
+          {
+            entryId: 2, id: 2, name: 'Example product 2', price: 200, quantity: 2,
+          },
+        ],
+      };
+      const data = {
+        entries: [
+          {
+            entryId: 1, id: 1, name: 'Example product 1 updated', price: 100, quantity: 3,
+          },
+          initialState.entries[1],
+        ],
+        itemId: 1,
+      };
+      const action = actions.updateItem(data);
+      const expectedValue = {
+        items: [
+          {
+            ...initialState.items[0],
+          },
+        ],
+        entries: [
           ...data.entries,
         ],
-        products: [
-          ...dirtyState.products,
-          { ...data.product, entries: [data.entries[0].id], merchantId: data.merchant.id },
-        ],
-        merchants: [
-          ...dirtyState.merchants,
-          { ...data.merchant, products: [data.product.id] },
-        ],
       };
 
-      expect(reducer()(dirtyState, action)).toEqual(expectedValue);
+      expect(reducer()(initialState, action)).toEqual(expectedValue);
     });
 
-    it('should handle adding known entry to dirty cart', () => {
-      const entryIndex = 4;
-      const entryId = dirtyState.entries[entryIndex].id;
+    it('should handle updating multiple known entries in existing item', () => {
+      const initialState = {
+        items: [
+          { itemId: 1, entryIds: [1, 2], name: 'Lorem ipsum dolor' },
+        ],
+        entries: [
+          {
+            entryId: 1, id: 1, name: 'Example product 1', price: 100, quantity: 1,
+          },
+          {
+            entryId: 2, id: 2, name: 'Example product 2', price: 200, quantity: 2,
+          },
+        ],
+      };
       const data = {
-        entries: [{ ...dirtyState.entries[entryIndex], quantity: 3 }],
-        details: {
-          [entryId]: {
-            ...dirtyState.details[entryId],
-            currency: 'USD',
-            price: 10000,
+        entries: [
+          {
+            entryId: 1, id: 1, name: 'Example product 1 updated', price: 100, quantity: 3,
           },
-        },
-        product: dirtyState.products[2],
-        merchant: dirtyState.merchants[1],
-      };
-      const action = actions.cartItemAdd(data);
-      const expectedValue = {
-        items: dirtyState.items,
-        details: {
-          ...dirtyState.details,
-          [entryId]: {
-            ...data.details[entryId],
-            price: 10000,
-            currency: 'USD',
+          {
+            entryId: 2, id: 2, name: 'Example product 2 updated', price: 200, quantity: 4,
           },
-        },
-        entries: dirtyState.entries.map(entry => ({ ...entry })),
-        products: dirtyState.products,
-        merchants: dirtyState.merchants,
+        ],
+        itemId: 1,
       };
-
-      expectedValue.entries[entryIndex] = { ...data.entries[0] };
-
-      expect(reducer()(dirtyState, action)).toEqual(expectedValue);
-    });
-
-    // TODO: should handle adding known entry with different entries
-    // TODO: should handle adding known entry with removed entries
-  });
-
-  describe('using CART_ITEM_DELETE', () => {
-    it('should do nothing if cartItemId was not found', () => {
-      const cartItemId = 9876;
-      const action = actions.cartItemDelete(cartItemId);
-      const expectedValue = { ...dirtyState };
-
-      expect(reducer()(dirtyState, action)).toEqual(expectedValue);
-    });
-
-    it('should remove cart item with it\'s dependencies', () => {
-      const cartItemId = dirtyState.items[0].id;
-      const cartItemEntries = dirtyState.items[0].entries;
-      const action = actions.cartItemDelete(cartItemId);
+      const action = actions.updateItem(data);
       const expectedValue = {
         items: [
-          ...dirtyState.items.slice(1),
+          {
+            ...initialState.items[0],
+          },
         ],
-        details: {
-          ...Object.entries(dirtyState.details).reduce((acc, detail) => {
-            const key = detail[0];
-            const value = detail[1];
-
-            if (cartItemEntries.indexOf(+key) !== -1) {
-              return acc;
-            }
-
-            return {
-              ...acc,
-              [key]: value,
-            };
-          }, {}),
-        },
         entries: [
-          dirtyState.entries[1],
-          ...dirtyState.entries.slice(3),
+          ...data.entries,
         ],
-        products: [
-          ...dirtyState.products.slice(1),
-        ],
-        merchants: dirtyState.merchants.slice(1),
       };
 
-      expect(reducer()(dirtyState, action)).toEqual(expectedValue);
+      expect(reducer()(initialState, action)).toEqual(expectedValue);
     });
 
-    // TODO: should leave dependencies
+    it('should handle adding new single entry to existing item', () => {
+      const initialState = {
+        items: [
+          { itemId: 1, entryIds: [1, 2], name: 'Lorem ipsum dolor' },
+        ],
+        entries: [
+          {
+            entryId: 1, id: 1, name: 'Example product 1', price: 100, quantity: 1,
+          },
+          {
+            entryId: 2, id: 2, name: 'Example product 2', price: 200, quantity: 2,
+          },
+        ],
+      };
+      const data = {
+        entries: [
+          ...initialState.entries,
+          {
+            id: 3, name: 'Example product 3', price: 300, quantity: 3,
+          },
+        ],
+        itemId: 1,
+      };
+      const action = actions.updateItem(data);
+      const expectedValue = {
+        items: [
+          {
+            ...initialState.items[0], entryIds: [...initialState.items[0].entryIds, 3],
+          },
+        ],
+        entries: [
+          data.entries[0],
+          data.entries[1],
+          { ...data.entries[2], entryId: 3 },
+        ],
+      };
+
+      expect(reducer()(initialState, action)).toEqual(expectedValue);
+    });
+
+    it('should handle updating with single entry and dirty cart for non-linear internal id\'s', () => {
+      const initialState = {
+        items: [
+          { itemId: 1, entryIds: [1, 2] },
+          { itemId: 5, entryIds: [7] },
+        ],
+        entries: [
+          {
+            entryId: 1, id: 1, name: 'Example product 1', price: 100, quantity: 1,
+          },
+          {
+            entryId: 2, id: 2, name: 'Example product 2', price: 200, quantity: 2,
+          },
+          {
+            entryId: 7, id: 7, name: 'Example product 7', price: 700, quantity: 7,
+          },
+        ],
+      };
+      const data = {
+        entries: [
+          initialState.entries[2],
+          {
+            id: 3, name: 'Example product 3', price: 300, quantity: 3,
+          },
+        ],
+        itemId: 5,
+      };
+      const action = actions.updateItem(data);
+      const expectedValue = {
+        items: [
+          initialState.items[0],
+          { ...initialState.items[1], entryIds: [7, 8] },
+        ],
+        entries: [
+          ...initialState.entries,
+          { ...data.entries[1], entryId: 8 },
+        ],
+      };
+
+      expect(reducer()(initialState, action)).toEqual(expectedValue);
+    });
+
+    it('should remove entries no longer present in item', () => {
+      const initialState = {
+        items: [
+          { itemId: 1, entryIds: [1, 2], name: 'Lorem ipsum dolor' },
+        ],
+        entries: [
+          {
+            entryId: 1, id: 1, name: 'Example product 1', price: 100, quantity: 1,
+          },
+          {
+            entryId: 2, id: 2, name: 'Example product 2', price: 200, quantity: 2,
+          },
+        ],
+      };
+      const data = {
+        entries: [
+          initialState.entries[1],
+        ],
+        itemId: 1,
+      };
+      const action = actions.updateItem(data);
+      const expectedValue = {
+        items: [
+          {
+            ...initialState.items[0], entryIds: [2],
+          },
+        ],
+        entries: [
+          data.entries[0],
+        ],
+      };
+
+      expect(reducer()(initialState, action)).toEqual(expectedValue);
+    });
   });
 
-  describe('using CLEAR_CART', () => {
-    it('should clear cart contents', () => {
-      const action = actions.clearCart();
-      const expectedValue = { ...initialState };
+  describe('using ITEM_REMOVE', () => {
+    it('should do nothing if itemId was not provided', () => {
+      const initialState = {
+        items: [
+          { itemId: 1, entryIds: [1, 2], name: 'Lorem ipsum dolor' },
+        ],
+        entries: [
+          {
+            entryId: 1, id: 1, name: 'Example product 1', price: 100, quantity: 1,
+          },
+          {
+            entryId: 2, id: 2, name: 'Example product 2', price: 200, quantity: 2,
+          },
+        ],
+      };
+      const itemId = undefined;
+      const action = actions.removeItem(itemId);
+      const expectedValue = {
+        ...initialState,
+      };
 
-      expect(reducer()(dirtyState, action)).toEqual(expectedValue);
+      expect(reducer()(initialState, action)).toEqual(expectedValue);
+    });
+
+    it('should do nothing if item with specified id was not found', () => {
+      const initialState = {
+        items: [
+          { itemId: 1, entryIds: [1, 2], name: 'Lorem ipsum dolor' },
+        ],
+        entries: [
+          {
+            entryId: 1, id: 1, name: 'Example product 1', price: 100, quantity: 1,
+          },
+          {
+            entryId: 2, id: 2, name: 'Example product 2', price: 200, quantity: 2,
+          },
+        ],
+      };
+      const itemId = 1234567;
+      const action = actions.removeItem(itemId);
+      const expectedValue = {
+        ...initialState,
+      };
+
+      expect(reducer()(initialState, action)).toEqual(expectedValue);
+    });
+
+    it('should handle removing item with it\'s entries from state', () => {
+      const initialState = {
+        items: [
+          { itemId: 1, entryIds: [1, 2] },
+          { itemId: 5, entryIds: [7] },
+        ],
+        entries: [
+          {
+            entryId: 1, id: 1, name: 'Example product 1', price: 100, quantity: 1,
+          },
+          {
+            entryId: 2, id: 2, name: 'Example product 2', price: 200, quantity: 2,
+          },
+          {
+            entryId: 7, id: 7, name: 'Example product 7', price: 700, quantity: 7,
+          },
+        ],
+      };
+      const itemId = 1;
+      const action = actions.removeItem(itemId);
+      const expectedValue = {
+        items: [
+          initialState.items[1],
+        ],
+        entries: [
+          initialState.entries[2],
+        ],
+      };
+
+      expect(reducer()(initialState, action)).toEqual(expectedValue);
+    });
+  });
+
+  describe('using CART_CLEAR', () => {
+    it('should clear cart contents', () => {
+      const initialState = {
+        items: [
+          { itemId: 1, entryIds: [1, 2] },
+          { itemId: 5, entryIds: [7] },
+        ],
+        entries: [
+          {
+            entryId: 1, id: 1, name: 'Example product 1', price: 100, quantity: 1,
+          },
+          {
+            entryId: 2, id: 2, name: 'Example product 2', price: 200, quantity: 2,
+          },
+          {
+            entryId: 7, id: 7, name: 'Example product 7', price: 700, quantity: 7,
+          },
+        ],
+      };
+      const action = actions.clear();
+      const expectedValue = {
+        ...defaultInitialState,
+      };
+
+      expect(reducer()(initialState, action)).toEqual(expectedValue);
     });
   });
 });
