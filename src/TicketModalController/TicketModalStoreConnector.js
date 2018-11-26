@@ -97,10 +97,14 @@ class TicketModalStoreConnector extends React.Component {
   });
 
   handleSubmit = (cartItem) => {
-    const { addItemToCart, onSubmit } = this.props;
+    const { addItemToCart, onSubmit, updateCartItem } = this.props;
+    const { itemId } = cartItem;
 
-    // TODO: if cartItem was passed - update cart item instead of adding new one
-    addItemToCart(cartItem);
+    if (itemId) {
+      updateCartItem(cartItem);
+    } else {
+      addItemToCart(cartItem);
+    }
 
     if (onSubmit) {
       onSubmit(cartItem);
@@ -155,6 +159,7 @@ TicketModalStoreConnector.propTypes = {
   open: PropTypes.bool,
   sightEvent: PropTypes.shape({}),
   sightEventId: PropTypes.number.isRequired,
+  updateCartItem: PropTypes.func.isRequired,
 };
 
 TicketModalStoreConnector.defaultProps = {
@@ -174,10 +179,11 @@ const mapStateToProps = (state, { cartItemId }) => ({
 });
 
 const mapDispatchToProps = {
-  addItemToCart: cartActions.cartItemAdd,
+  addItemToCart: cartActions.addItem,
   fetchAvailableTickets: sightEventsActions.fetchAvailableTickets,
   fetchAvailableTicketsCancel: sightEventsActions.fetchAvailableTicketsCancel,
   fetchSightEvent: sightEventsActions.fetchItem,
+  updateCartItem: cartActions.updateItem,
 };
 
 export default compose(
