@@ -1,98 +1,25 @@
 import { createLogic } from 'redux-logic';
-import _find from 'lodash/find';
+import _isEqual from 'lodash/isEqual';
 import _uniq from 'lodash/uniq';
-import { types as profileTypes } from './profile';
+import { actions as profileActions } from './profile';
 
 export const name = 'cart';
 const prefix = `commons/${name}/`;
 
 /*
- * HELPERS
- */
-
-function getDetailsFromState(state, entries) {
-  return Object.entries(state.details).reduce((acc, detail) => {
-    const [key, value] = detail;
-
-    if (entries.indexOf(+key) === -1) {
-      return acc;
-    }
-
-    return { ...acc, [key]: value };
-  }, {});
-}
-
-function getEntriesFromState(state, entries) {
-  return state.entries.filter(entry => entries.indexOf(entry.id) !== -1);
-}
-
-function getMerchantFromState(state, merchantId) {
-  return _find(state.merchants, { id: merchantId });
-}
-
-function getProductFromState(state, entries) {
-  return state.products.filter(
-    product => product.entries.every(entryId => entries.indexOf(entryId) !== -1),
-  )[0];
-}
-
-const getTicketsAsList = tickets => tickets.reduce((acc, ticket) => {
-  const { city, id, name: ticketName } = ticket;
-
-  const ticketEntries = ticket.entries.reduce((entryAcc, entry) => {
-    const result = { ...entryAcc };
-
-    if (entryAcc[entry.date]) {
-      result[entry.date].push(entry);
-    } else {
-      result[entry.date] = [entry];
-    }
-
-    return result;
-  }, {});
-
-  const result = Object.values(ticketEntries).map(entries => ({
-    city,
-    entries,
-    id,
-    name: ticketName,
-  }));
-
-  return [
-    ...acc,
-    ...result,
-  ];
-}, []);
-
-export const helpers = {
-  getDetailsFromState,
-  getEntriesFromState,
-  getMerchantFromState,
-  getProductFromState,
-  getTicketsAsList,
-};
-
-
-/*
  * TYPES
  */
 
-const CLEAR_SIGHT_ENTRIES = `${prefix}CLEAR_SIGHT_ENTRIES`;
-const DELETE_SIGHT_ENTRIES = `${prefix}DELETE_SIGHT_ENTRIES`;
-const UPDATE_SIGHT_ENTRIES = `${prefix}UPDATE_SIGHT_ENTRIES`;
-const CART_ITEM_ADD = `${prefix}CART_ITEM_ADD`;
-const CART_ITEM_DELETE = `${prefix}CART_ITEM_DELETE`;
-const CART_ITEM_UPDATE = `${prefix}CART_ITEM_UPDATE`;
-const CLEAR_CART = `${prefix}CLEAR_CART`;
+const CART_CLEAR = `${prefix}CART_CLEAR`;
+const ITEM_ADD = `${prefix}ITEM_ADD`;
+const ITEM_REMOVE = `${prefix}ITEM_REMOVE`;
+const ITEM_UPDATE = `${prefix}ITEM_UPDATE`;
 
 export const types = {
-  CART_ITEM_ADD,
-  CART_ITEM_DELETE,
-  CART_ITEM_UPDATE,
-  CLEAR_CART,
-  CLEAR_SIGHT_ENTRIES,
-  DELETE_SIGHT_ENTRIES,
-  UPDATE_SIGHT_ENTRIES,
+  CART_CLEAR,
+  ITEM_ADD,
+  ITEM_REMOVE,
+  ITEM_UPDATE,
 };
 
 
@@ -101,98 +28,79 @@ export const types = {
  */
 
 /**
+ * Clears cart
+ *
+ * @method
+ * @return {{
+ *   type: string
+ * }}
+ */
+const clear = () => ({
+  type: CART_CLEAR,
+});
+
+/**
+ * Creates action for new cart item
+ *
+ * @method
+ * @param {object[]} entries - cart entries details
+ * @param {number} entries[].price - entry price
+ * @param {number} entries[].quantity
+ * @param {*} * - extra item details
+ * @return {{
+ *   type: string,
+ *   data: {entries: object[], ...}
+ * }}
+ */
+const addItem = ({ entries, ...rest } = {}) => ({
+  type: ITEM_ADD,
+  data: {
+    entries,
+    ...rest,
+  },
+});
+
+/**
+ * Creates action for cart item removal
+ *
+ * @method
+ * @param {number} itemId
+ * @return {{
+ *   type: string,
+ *   itemId: number
+ * }}
+ */
+const removeItem = itemId => ({
+  type: ITEM_REMOVE,
+  itemId,
+});
+
+/**
  * Creates action with new cart item details
  *
  * @method
- * @param {Object} [details] - extra information about entries
- * @param {Object[]} entries - order information
- * @param {Object} [product] - product details
- * @param {Object} [merchant] - merchant details
+ * @param {object[]} entries - cart entries details
+ * @param {number} entries[].price - entry price
+ * @param {number} entries[].quantity
+ * @param {*} * - extra item details
  * @return {{
  *   type: string,
- *   data: {details, entries: Object[], product, merchant}
+ *   data: {entries: object[], ...}
  * }}
  */
-const cartItemAdd = ({
-  details, entries, product, merchant,
-} = {}) => ({
-  type: CART_ITEM_ADD,
+const updateItem = ({ entries, ...rest } = {}) => ({
+  type: ITEM_UPDATE,
   data: {
-    details,
     entries,
-    product,
-    merchant,
-  },
-});
-
-/**
- * Creates an action for cart item deletion
- *
- * @method
- * @param {number} id - cart item id
- * @return {{
- *   type: string,
- *   data: {id: number}
- * }}
- */
-const cartItemDelete = id => ({
-  type: CART_ITEM_DELETE,
-  data: {
-    id,
-  },
-});
-
-/**
- * Creates an action for cart item updates
- *
- * @method
- * @param {number} id - cart item id
- * @param {Object} [details] - extra information about entries
- * @param {Object[]} entries - order information
- * @return {{
- *   type: string,
- *   data: {id: number, details, entries: Object[]}
- * }}
- */
-const cartItemUpdate = ({ id, details, entries } = {}) => ({
-  type: CART_ITEM_UPDATE,
-  data: {
-    id,
-    details,
-    entries,
-  },
-});
-
-const clearCart = () => ({
-  type: CLEAR_CART,
-});
-
-const addSightEntries = data => ({ // TODO: delete method
-  type: UPDATE_SIGHT_ENTRIES,
-  data: {
-    nextSightEntry: data,
-    prevSightEntry: null,
-  },
-});
-
-const clearSightEntries = clearCart;
-
-const updateSightEntries = (prevSightEntry, nextSightEntry) => ({ // TODO: delete method
-  type: UPDATE_SIGHT_ENTRIES,
-  data: {
-    nextSightEntry,
-    prevSightEntry,
+    ...rest,
   },
 });
 
 export const actions = {
-  cartItemAdd,
-  cartItemDelete,
-  cartItemUpdate,
-  clearCart,
-  addSightEntries,
-  clearSightEntries,
-  updateSightEntries,
+  clear,
+  addItem,
+  removeItem,
+  updateItem,
 };
 
 
@@ -204,129 +112,131 @@ export const actions = {
  * Returns current state.
  *
  * @method
- * @param {Object} state
+ * @param {object} state - redux state
  * @return {*}
  */
 const getState = state => state[name];
 
 /**
- * Get single cart item.
+ * Returns all available entries
  *
  * @method
- * @param {Object} state
- * @param {number} cartItemId
+ * @param {object} state - redux state
  * @return {{
- *   id: number,
- *   details,
- *   entries: Object[],
- *   entries,
- *   product
+ *   entryId: number,
+ *   price: number,
+ *   quantity: number,
+ *   ...rest: {...}
  * }}
  */
-const getCartItem = (state, cartItemId) => {
-  const localState = getState(state);
-  const { items } = localState;
+const getEntries = state => getState(state).entries;
 
-  const cartItem = _find(items, { id: cartItemId });
+/**
+ * Returns all available entries reduced by provided keys
+ *
+ * @method
+ * @param {object} state - redux state
+ * @return {*}
+ */
+const getEntriesByKeys = state => (keys) => {
+  const { entries } = getState(state);
 
-  if (!cartItem) {
-    return cartItem;
+  if (!entries.length || !keys || !keys.length) {
+    return [];
   }
 
-  const product = getProductFromState(localState, cartItem.entries);
+  return entries.reduce((acc, entry) => {
+    const nextEntry = keys.reduce((acu, key) => ({ ...acu, [key]: entry[key] }), {});
+
+    return [...acc, nextEntry];
+  }, []);
+};
+
+/**
+ * Get item with specified id
+ *
+ * @method
+ * @param {object} state - redux state
+ * @param {number} itemId - id of cart's item
+ * @return {{
+ *   entries: object[],
+ *   itemId: number
+ *   ...rest: {...}
+ * }}
+ */
+const getItem = (state, itemId) => {
+  const { entries: stateEntries, items: stateItems } = getState(state);
+
+  const stateItem = stateItems.find(i => i.itemId === itemId);
+
+  if (!stateItem) {
+    return stateItem;
+  }
+
+  const { entryIds, ...item } = stateItem;
+  const entries = stateEntries.reduce((acc, entry) => {
+    const next = [...acc];
+    const hasEntry = entryIds.some(entryId => entryId === entry.entryId);
+
+    if (hasEntry) {
+      next.push(entry);
+    }
+
+    return next;
+  }, []);
 
   return {
-    id: cartItemId,
-    details: getDetailsFromState(localState, cartItem.entries),
-    entries: getEntriesFromState(localState, cartItem.entries),
-    merchant: getMerchantFromState(localState, product && product.merchantId),
-    product,
+    ...item,
+    entries,
   };
 };
 
 /**
- * Returns list of cart items.
+ * Get all available items
  *
- * @method
- * @param {Object} state
- * @return {Object[]}
+ * @param {object} state - redux state
+ * @return {{
+ *   entries: object[],
+ *   itemId: number
+ *   ...rest: {...}
+ * }[]}
  */
-const getCartItems = (state) => {
+const getItems = (state) => {
   const { items } = getState(state);
 
-  return items.map(item => getCartItem(state, item.id));
-};
-
-const getSightEntriesAsTickets = (state) => {
-  const cartItems = getCartItems(state);
-
-  return cartItems.map(({
-    id, details, entries, product,
-  }) => ({
-    cartItemId: id,
-    id: product && product.id,
-    city: product && product.location && product.location.city,
-    name: product && product.name,
-    entries: entries.map(entry => ({ ...entry, ...details[entry.id] })),
-  }));
+  return items.map(({ itemId }) => getItem(state, itemId));
 };
 
 /**
- * Returns order entries.
+ * Get number of total items in cart
  *
  * @method
- * @param state
- * @return {Object[]}
- */
-const getEntries = state => getState(state).entries;
-
-const getSightEntries = getCartItems;
-
-const getTicketEntries = getEntries;
-
-/**
- * Get number of total items in cart.
- *
- * @method
- * @param state
+ * @param {object} state - redux state
  * @return {number}
  */
 const getTotalItems = state => getState(state).items.length;
 
-const getTicketsQuantity = getTotalItems;
-
 /**
- * Get total price of cart items as basic monetary value.
+ * Get total price of items in cart
  *
  * @method
- * @param state
+ * @param {object} state - redux state
  * @return {number}
  */
 const getTotalPrice = (state) => {
-  const { details, entries } = getState(state);
+  const { entries } = getState(state);
 
-  return entries.reduce((acc, { id, quantity }) => {
-    const { price } = details[id] || {};
-
-    if (price) {
-      return acc + price * quantity;
-    }
-
-    return acc;
-  }, 0);
+  return entries.reduce((acc, { price = 0, quantity = 0 }) => acc + price * quantity, 0);
 };
 
 export const selectors = {
-  getCartItem,
-  getCartItems,
   getEntries,
+  getEntriesByKeys,
+  getItem,
+  getItems,
   getState,
   getTotalItems,
   getTotalPrice,
-  getSightEntries,
-  getSightEntriesAsTickets,
-  getTicketEntries,
-  getTicketsQuantity,
 };
 
 
@@ -336,10 +246,10 @@ export const selectors = {
 
 const clearCartLogic = createLogic({
   type: [
-    profileTypes.LOGOUT_SUCCESS,
+    profileActions.LOGOUT_SUCCESS,
   ],
   process() {
-    return clearCart();
+    return clear();
   },
 });
 
@@ -355,196 +265,169 @@ export const logic = {
 /**
  * Cart model
  *
- * items: Array<{ id: number, entries: Array<entryId> }>
- * entries: Array<{ id: number, quantity: number, *}> - entries for order API
- * details: { [entryId]: {price: number, *} } - extra information about entries
- * merchants: Array<{ id: number, products: Array<productId>, *}>
- * products: Array<{ id: number, merchantId: number, entries: Array<entryId>, *}>
+ * @param {object[]} items - cart items
+ * @param {number} items[].itemId - internal cart id
+ * @param {number[]} items[].entryIds - id's of referenced entries
+ * @param {*} [items[].*] - any data required by the app
+ * @param {object[]} entries - order entries
+ * @param {number} entries[].entryId - internal cart id
+ * @param {number} entries[].quantity - entry quantity
+ * @param {number} entries[].price - entry's unit price
+ * @param {*} [entries[].*] - any data required by the app
  *
  */
 export const defaultInitialState = {
-  items: [],
-  details: {},
   entries: [],
-  products: [],
-  merchants: [],
+  items: [],
 };
 
 const reducer = (initialState = defaultInitialState) => (state = initialState, action) => {
   switch (action.type) {
-    case CART_ITEM_ADD: {
+    case CART_CLEAR: {
+      return defaultInitialState;
+    }
+    case ITEM_ADD: {
+      const { entries: stateEntries, items: stateItems } = state;
+      const { entries: actionEntries, type, ...itemDetails } = action.data;
+
+      // ENTRIES
+      const entries = [...stateEntries];
+      const latestEntry = entries[entries.length - 1] || {};
+      let latestEntryId = latestEntry.entryId ? latestEntry.entryId : 0;
+      let hasExistingEntries = false;
+      const entryIds = [];
+
+      actionEntries.forEach((entry) => {
+        const { entryId, quantity, ...rest } = entry;
+        const existingEntryIndex = entries.findIndex((fEntry) => {
+          const { entryId: fEntryId, quantity: fQuantity, ...fRest } = fEntry;
+
+          return fEntryId === entryId || _isEqual(rest, fRest);
+        });
+
+        if (existingEntryIndex !== -1) {
+          entries[existingEntryIndex].quantity += quantity;
+
+          entryIds.push(entries[existingEntryIndex].entryId);
+
+          hasExistingEntries = true;
+        } else {
+          latestEntryId += 1;
+
+          entries.push({
+            ...entry,
+            entryId: latestEntryId,
+          });
+          entryIds.push(latestEntryId);
+        }
+      });
+
+      // ITEMS
+      const items = [...stateItems];
+
+      if (hasExistingEntries) {
+        const itemIndex = items.findIndex(
+          item => item.entryIds.some(entryId => entryIds.indexOf(entryId) !== -1),
+        );
+
+        items[itemIndex].entryIds = _uniq([...items[itemIndex].entryIds, ...entryIds]);
+      } else {
+        const latestItem = items[items.length - 1] || {};
+        const itemId = latestItem.itemId ? latestItem.itemId + 1 : 1;
+
+        items.push({ ...itemDetails, itemId, entryIds });
+      }
+
+      return {
+        entries,
+        items,
+      };
+    }
+    case ITEM_REMOVE: {
+      const { entries: stateEntries, items: stateItems } = state;
+      const { itemId: actionItemId } = action;
+      const entries = [...stateEntries];
+      const items = [...stateItems];
+      const itemIndex = items.findIndex(item => item.itemId === actionItemId);
+
+      if (itemIndex !== -1) {
+        items[itemIndex].entryIds.forEach((entryId) => {
+          const entryIndex = entries.findIndex(entry => entry.entryId === entryId);
+
+          if (entryIndex !== -1) {
+            entries.splice(entryIndex, 1);
+          }
+        });
+
+        items.splice(itemIndex, 1);
+      }
+
+      return {
+        entries,
+        items,
+      };
+    }
+    case ITEM_UPDATE: {
+      const { entries: stateEntries, items: stateItems } = state;
       const {
-        details: nextDetails, entries: nextEntries, product: nextProduct, merchant: nextMerchant,
+        entries: actionEntries, itemId: actionItemId, ...itemDetails
       } = action.data;
+      const entries = [...stateEntries];
+      const items = [...stateItems];
+      const itemIndex = items.findIndex(item => item.itemId === actionItemId);
 
-      let cartItemId = 1;
+      if (itemIndex !== -1) {
+        // ENTRIES
+        const latestEntry = entries[entries.length - 1] || {};
+        let latestEntryId = latestEntry.entryId ? latestEntry.entryId : 0;
+        const entryIds = [];
 
-      if (state.items.length) {
-        const latestItem = state.items[state.items.length - 1];
+        items[itemIndex].entryIds.forEach((entryId) => {
+          const itemEntryIndex = actionEntries.findIndex(entry => entry.entryId === entryId);
+          const zeroQtyEntryIndex = actionEntries
+            .findIndex(entry => entry.entryId === entryId && entry.quantity === 0);
 
-        cartItemId = latestItem.id + 1;
-      }
+          if (itemEntryIndex === -1 || zeroQtyEntryIndex !== -1) {
+            const entryIndex = entries.findIndex(entry => entry.entryId === entryId);
 
-
-      // ITEMS
-      let items = [...state.items];
-
-      const hasEntries = items.some(
-        item => nextEntries.every(entry => item.entries.indexOf(entry.id) !== -1),
-      );
-
-      if (!hasEntries) {
-        items = [
-          ...items,
-          { id: cartItemId, entries: nextEntries.map(entry => entry.id) },
-        ];
-      }
-
-
-      // DETAILS
-      const details = {
-        ...state.details,
-        ...nextDetails,
-      };
-
-
-      // ENTRIES
-      const entries = [
-        ...state.entries.filter(entry => !_find(nextEntries, { id: entry.id })),
-        ...nextEntries,
-      ];
-
-
-      // MERCHANTS
-      let merchants = [...state.merchants];
-
-      if (nextMerchant) {
-        const isMerchantInState = !!_find(merchants, { id: nextMerchant.id });
-
-        if (isMerchantInState) {
-          merchants = merchants.map((merchant) => {
-            if (merchant.id === nextMerchant.id) {
-              return {
-                ...merchant,
-                products: _uniq([
-                  ...merchant.products,
-                  nextProduct.id,
-                ]),
-              };
+            if (entryIndex !== -1) {
+              entries.splice(entryIndex, 1);
             }
+          } else {
+            entryIds.push(entryId);
+          }
+        });
 
-            return merchant;
-          });
-        } else {
-          merchants.push({
-            ...nextMerchant, // WAT
-            products: [nextProduct.id],
-          });
-        }
-      }
+        actionEntries.forEach((entry) => {
+          const { entryId, quantity } = entry;
+          const entryIndex = entries.findIndex(item => item.entryId === entryId);
 
+          if (entryIndex !== -1) {
+            entries[entryIndex] = entry;
+          } else if (quantity > 0) {
+            latestEntryId += 1;
 
-      // PRODUCTS
-      let products = [...state.products];
+            entries.push({
+              ...entry,
+              entryId: latestEntryId,
+            });
+            entryIds.push(latestEntryId);
+          }
+        });
 
-      if (nextProduct) {
-        const isProductInState = !!_find(products, { id: nextProduct.id });
-
-        if (isProductInState) {
-          products = products.map((product) => {
-            const merchant = _find(merchants, m => m.products.indexOf(nextProduct.id) !== -1);
-
-            if (product.id === nextProduct.id) {
-              return {
-                ...nextProduct,
-                entries: nextEntries.map(entry => entry.id),
-                merchantId: merchant && merchant.id,
-              };
-            }
-
-            return product;
-          });
-        } else {
-          const merchant = _find(merchants, m => m.products.indexOf(nextProduct.id) !== -1);
-
-          products.push({
-            ...nextProduct, // WAT
-            entries: nextEntries.map(entry => entry.id),
-            merchantId: merchant && merchant.id,
-          });
-        }
-      }
-
-      return {
-        ...state,
-        entries,
-        details,
-        items,
-        merchants,
-        products,
-      };
-    }
-    case CART_ITEM_DELETE: {
-      const { id } = action.data;
-      const cartItem = _find(state.items, { id });
-
-      if (!cartItem) {
-        return {
-          ...state,
+        // ITEMS
+        items[itemIndex] = {
+          ...items[itemIndex],
+          entryIds,
+          ...itemDetails,
         };
       }
 
-
-      // DETAILS
-      const details = Object.entries(state.details).reduce((acc, detail) => {
-        const key = detail[0];
-        const value = detail[1];
-
-        if (cartItem.entries.indexOf(+key) !== -1) {
-          return acc;
-        }
-
-        return {
-          ...acc,
-          [key]: value,
-        };
-      }, {});
-
-
-      // ENTRIES
-      const entries = state.entries.filter(entry => cartItem.entries.indexOf(entry.id) === -1);
-
-
-      // ITEMS
-      const items = state.items.filter(item => item.id !== id);
-
-
-      // PRODUCTS
-      const products = state.products
-        .map(product => ({
-          ...product,
-          entries: product.entries.filter(entryId => cartItem.entries.indexOf(entryId) === -1),
-        }))
-        .filter(product => product.entries.length !== 0);
-
-
-      // MERCHANTS
-      const merchants = state.merchants
-        .filter(merchant => products.some(({ merchantId }) => merchantId === merchant.id));
-
       return {
-        ...state,
-        details,
-        entries,
         items,
-        merchants,
-        products,
+        entries,
       };
     }
-    case CLEAR_CART:
-      return {
-        ...initialState,
-      };
     default:
       return state;
   }
