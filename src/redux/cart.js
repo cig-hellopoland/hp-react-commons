@@ -335,7 +335,7 @@ const reducer = (initialState = defaultInitialState) => (state = initialState, a
         const latestItem = items[items.length - 1] || {};
         const itemId = latestItem.itemId ? latestItem.itemId + 1 : 1;
 
-        items.push({ itemId, entryIds, ...itemDetails });
+        items.push({ ...itemDetails, itemId, entryIds });
       }
 
       return {

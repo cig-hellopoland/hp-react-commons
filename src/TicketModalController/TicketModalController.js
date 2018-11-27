@@ -92,10 +92,10 @@ class TicketModalController extends Component {
   };
 
   getInitialPoolId = (cartItem) => {
-    if (cartItem && cartItem.id) {
-      const { details, entries } = cartItem;
-      const { id } = entries[0];
-      const { poolId } = details[id];
+    const { entries } = cartItem;
+
+    if (entries && entries.length) {
+      const { poolId } = entries[0];
 
       return poolId;
     }
@@ -306,11 +306,9 @@ class TicketModalController extends Component {
       return [
         ...acc,
         {
-          id: entry.id,
+          ...entry,
           date: format(date, constants.DATE_FORMAT),
           entryId: entries[entry.id].entryId,
-          name: entry.name,
-          price: entry.price,
           poolId,
           quantity: entries[entry.id].quantity,
         },

@@ -149,7 +149,7 @@ TicketModalStoreConnector.propTypes = {
   addItemToCart: PropTypes.func.isRequired,
   availableTickets: PropTypes.shape({}),
   cartItem: PropTypes.shape({}),
-  // cartItemId: PropTypes.number,
+  cartItemId: PropTypes.number, // eslint-disable-line
   children: PropTypes.func.isRequired,
   fallback: PropTypes.func,
   fetchAvailableTickets: PropTypes.func.isRequired,
@@ -165,7 +165,7 @@ TicketModalStoreConnector.propTypes = {
 TicketModalStoreConnector.defaultProps = {
   availableTickets: {},
   onSubmit: null,
-  // cartItemId: null,
+  cartItemId: null,
   cartItem: {},
   fallback: null,
   open: false,
@@ -174,7 +174,7 @@ TicketModalStoreConnector.defaultProps = {
 
 const mapStateToProps = (state, { cartItemId }) => ({
   availableTickets: sightEventsSelectors.getAvailableTickets(state),
-  cartItem: cartSelectors.getCartItem(state, cartItemId),
+  cartItem: cartSelectors.getItem(state, cartItemId),
   sightEvent: sightEventsSelectors.getSightEvent(state),
 });
 
