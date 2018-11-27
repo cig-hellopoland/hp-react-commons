@@ -1,4 +1,20 @@
 export {
+  default as cart,
+  actions as cartActions,
+  logic as cartLogic,
+  selectors as cartSelectors,
+  types as cartTypes,
+} from './cart';
+
+export {
+  default as order,
+  actions as orderActions,
+  logic as orderLogic,
+  selectors as orderSelectors,
+  types as orderTypes,
+} from './order';
+
+export {
   default as profile,
   actions as profileActions,
   logic as profileLogic,
@@ -23,9 +39,9 @@ export {
 } from './sights';
 
 export {
-  default as cart,
-  actions as cartActions,
-  logic as cartLogic,
-  selectors as cartSelectors,
-  types as cartTypes,
-} from './cart';
+  default as ticketPoolDefinitions,
+  actions as ticketPoolDefinitionsActions,
+  logic as ticketPoolDefinitionsLogic,
+  selectors as ticketPoolDefinitionsSelectors,
+  types as ticketPoolDefinitionsTypes,
+} from './ticketPoolDefinitions';

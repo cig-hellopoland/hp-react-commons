@@ -92,10 +92,10 @@ class TicketModalController extends Component {
   };
 
   getInitialPoolId = (cartItem) => {
-    if (cartItem && cartItem.id) {
-      const { details, entries } = cartItem;
-      const { id } = entries[0];
-      const { poolId } = details[id];
+    const { entries } = cartItem;
+
+    if (entries && entries.length) {
+      const { poolId } = entries[0];
 
       return poolId;
     }
@@ -297,35 +297,28 @@ class TicketModalController extends Component {
 
   generateCartItem = () => {
     const { date, entries, poolId } = this.state;
-    const { sightEvent: product } = this.props;
+    const { cartItem, sightEvent: product } = this.props;
     const ticketDefinitions = this.getTicketDefinitions();
 
     const detailedEntries = Object.keys(entries).reduce((acc, entryId) => {
       const entry = _find(ticketDefinitions, { id: +entryId });
 
-      return {
-        details: {
-          ...acc.details,
-          [entryId]: {
-            name: entry.name,
-            price: entry.price,
-            poolId,
-          },
+      return [
+        ...acc,
+        {
+          ...entry,
+          date: format(date, constants.DATE_FORMAT),
+          entryId: entries[entry.id].entryId,
+          poolId,
+          quantity: entries[entry.id].quantity,
         },
-        entries: [
-          ...acc.entries,
-          {
-            id: entry.id,
-            date: format(date, constants.DATE_FORMAT),
-            quantity: entries[entry.id].quantity,
-          },
-        ],
-      };
-    }, { details: {}, entries: [] });
+      ];
+    }, []);
 
     return {
-      ...detailedEntries,
-      product,
+      ...product,
+      itemId: cartItem.itemId,
+      entries: detailedEntries,
     };
   };
 

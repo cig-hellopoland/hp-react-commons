@@ -97,10 +97,14 @@ class TicketModalStoreConnector extends React.Component {
   });
 
   handleSubmit = (cartItem) => {
-    const { addItemToCart, onSubmit } = this.props;
+    const { addItemToCart, onSubmit, updateCartItem } = this.props;
+    const { itemId } = cartItem;
 
-    // TODO: if cartItem was passed - update cart item instead of adding new one
-    addItemToCart(cartItem);
+    if (itemId) {
+      updateCartItem(cartItem);
+    } else {
+      addItemToCart(cartItem);
+    }
 
     if (onSubmit) {
       onSubmit(cartItem);
@@ -145,7 +149,7 @@ TicketModalStoreConnector.propTypes = {
   addItemToCart: PropTypes.func.isRequired,
   availableTickets: PropTypes.shape({}),
   cartItem: PropTypes.shape({}),
-  // cartItemId: PropTypes.number,
+  cartItemId: PropTypes.number, // eslint-disable-line
   children: PropTypes.func.isRequired,
   fallback: PropTypes.func,
   fetchAvailableTickets: PropTypes.func.isRequired,
@@ -155,12 +159,13 @@ TicketModalStoreConnector.propTypes = {
   open: PropTypes.bool,
   sightEvent: PropTypes.shape({}),
   sightEventId: PropTypes.number.isRequired,
+  updateCartItem: PropTypes.func.isRequired,
 };
 
 TicketModalStoreConnector.defaultProps = {
   availableTickets: {},
   onSubmit: null,
-  // cartItemId: null,
+  cartItemId: null,
   cartItem: {},
   fallback: null,
   open: false,
@@ -169,15 +174,16 @@ TicketModalStoreConnector.defaultProps = {
 
 const mapStateToProps = (state, { cartItemId }) => ({
   availableTickets: sightEventsSelectors.getAvailableTickets(state),
-  cartItem: cartSelectors.getCartItem(state, cartItemId),
+  cartItem: cartSelectors.getItem(state, cartItemId),
   sightEvent: sightEventsSelectors.getSightEvent(state),
 });
 
 const mapDispatchToProps = {
-  addItemToCart: cartActions.cartItemAdd,
+  addItemToCart: cartActions.addItem,
   fetchAvailableTickets: sightEventsActions.fetchAvailableTickets,
   fetchAvailableTicketsCancel: sightEventsActions.fetchAvailableTicketsCancel,
   fetchSightEvent: sightEventsActions.fetchItem,
+  updateCartItem: cartActions.updateItem,
 };
 
 export default compose(
