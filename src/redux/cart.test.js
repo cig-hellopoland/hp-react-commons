@@ -1085,6 +1085,42 @@ describe('reducer', () => {
 
       expect(reducer()(initialState, action)).toEqual(expectedValue);
     });
+
+    it('should remove entries which quantity equals zero', () => {
+      const initialState = {
+        items: [
+          { itemId: 1, entryIds: [1, 2], name: 'Lorem ipsum dolor' },
+        ],
+        entries: [
+          {
+            entryId: 1, id: 1, name: 'Example product 1', price: 100, quantity: 1,
+          },
+          {
+            entryId: 2, id: 2, name: 'Example product 2', price: 200, quantity: 2,
+          },
+        ],
+      };
+      const data = {
+        entries: [
+          { ...initialState.entries[0], quantity: 0 },
+          initialState.entries[1],
+        ],
+        itemId: 1,
+      };
+      const action = actions.updateItem(data);
+      const expectedValue = {
+        items: [
+          {
+            ...initialState.items[0], entryIds: [2],
+          },
+        ],
+        entries: [
+          data.entries[1],
+        ],
+      };
+
+      expect(reducer()(initialState, action)).toEqual(expectedValue);
+    });
   });
 
   describe('using ITEM_REMOVE', () => {

@@ -384,8 +384,10 @@ const reducer = (initialState = defaultInitialState) => (state = initialState, a
 
         items[itemIndex].entryIds.forEach((entryId) => {
           const itemEntryIndex = actionEntries.findIndex(entry => entry.entryId === entryId);
+          const zeroQtyEntryIndex = actionEntries
+            .findIndex(entry => entry.entryId === entryId && entry.quantity === 0);
 
-          if (itemEntryIndex === -1) {
+          if (itemEntryIndex === -1 || zeroQtyEntryIndex !== -1) {
             const entryIndex = entries.findIndex(entry => entry.entryId === entryId);
 
             if (entryIndex !== -1) {
@@ -397,12 +399,12 @@ const reducer = (initialState = defaultInitialState) => (state = initialState, a
         });
 
         actionEntries.forEach((entry) => {
-          const { entryId } = entry;
+          const { entryId, quantity } = entry;
           const entryIndex = entries.findIndex(item => item.entryId === entryId);
 
           if (entryIndex !== -1) {
             entries[entryIndex] = entry;
-          } else {
+          } else if (quantity > 0) {
             latestEntryId += 1;
 
             entries.push({
