@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.0.0
+* Refactored cart
+
 ## 0.9.0
 * Added PDF uplaod actions in `sightEvents` reducer.
 
