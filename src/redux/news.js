@@ -1,8 +1,6 @@
 import { createLogic } from 'redux-logic';
 import _find from 'lodash/find';
 
-const debounceTime = 500;
-
 export const apiURL = '/news';
 export const name = 'news';
 const prefix = `commons/${name}/`;
@@ -259,7 +257,7 @@ const getPosts = state => getState(state).list;
 const getPostById = (state, id) => {
   const list = getPosts(state);
 
-  return _find(list.data, { id }) || null;
+  return _find(list, { id }) || null;
 };
 
 export const selectors = {
@@ -399,7 +397,7 @@ const reducer = (initialState = defaultInitialState) => (state = initialState, a
       return {
         ...state,
         error: initialState.error,
-        list: action.data,
+        list: action.data.data,
       };
     default:
       return state;

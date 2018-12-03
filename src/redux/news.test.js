@@ -60,7 +60,6 @@ function generateAppState(data) {
  */
 
 describe('actions', () => {
-
   it('should create an action to clear item from state', () => {
     const { clearItem } = actions;
     const { CLEAR_ITEM } = types;
@@ -354,8 +353,7 @@ describe('reducer', () => {
 
   it('should handle FETCH_LIST_SUCCESS', () => {
     const data = {
-      config: {},
-      items: [
+      data: [
         { id: 1 },
         { id: 2 },
       ],
@@ -363,7 +361,7 @@ describe('reducer', () => {
     const action = actions.fetchListSuccess(data);
     const expectedValue = {
       ...defaultInitialState,
-      list: data.items,
+      list: data.data,
     };
 
     expect(reducer()(defaultInitialState, action)).toEqual(expectedValue);
