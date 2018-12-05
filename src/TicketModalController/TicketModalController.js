@@ -284,8 +284,7 @@ class TicketModalController extends Component {
 
     if (date) {
       data.options.params = {
-        // TODO: get rid of Z on the end?
-        date: `${format(date, constants.DAY_FORMAT)}Z`,
+        date: format(date, constants.DAY_FORMAT),
       };
 
       fetchAvailableTicketsByDate(data);
