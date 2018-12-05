@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.0.1
+* Fixed date parsing in `TicketModalControler` and `pool-parser` utils
+
 ## 1.0.0
 * Refactored cart
 
