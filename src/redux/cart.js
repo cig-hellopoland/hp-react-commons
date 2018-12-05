@@ -273,6 +273,11 @@ export const selectors = {
  * LOGIC
  */
 
+/**
+ * Logic used for handling cart clearing.
+ *
+ * @method
+ */
 const clearCartLogic = createLogic({
   type: [
     profileActions.LOGOUT_SUCCESS,
@@ -292,18 +297,18 @@ export const logic = {
  */
 
 /**
- * Initializes reducer with default state
+ * Default state model.
  *
- * @param {object[]} items - cart items
- * @param {number} items[].itemId - internal cart id
- * @param {number[]} items[].entryIds - id's of referenced entries
- * @param {*} [items[].*] - any data required by the app
- * @param {object[]} entries - order entries
- * @param {number} entries[].entryId - internal cart id
- * @param {number} entries[].quantity - entry quantity
- * @param {number} entries[].price - entry's unit price
- * @param {*} [entries[].*] - any data required by the app
- *
+ * @type {object}
+ * @property {object[]} items - cart items
+ * @property {number} items[].itemId - internal cart id
+ * @property {number[]} items[].entryIds - id's of referenced entries
+ * @property {*} [items[].*] - any data required by the app
+ * @property {object[]} entries - order entries
+ * @property {number} entries[].entryId - internal cart id
+ * @property {number} entries[].quantity - entry quantity
+ * @property {number} entries[].price - entry's unit price
+ * @property {*} [entries[].*] - any data required by the app
  */
 export const defaultInitialState = {
   entries: [],
@@ -312,7 +317,7 @@ export const defaultInitialState = {
 
 
 /**
- * Cart reducer.
+ * Module's reducer function.
  *
  * @method
  * @param initialState
