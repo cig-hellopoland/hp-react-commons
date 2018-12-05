@@ -347,7 +347,7 @@ class TicketModalController extends Component {
       const hasAvailableTickets = this.hasAvailableTickets(ticketPools);
 
       if (activeStep === 1 && isPoolSingle && hasAvailableTickets) {
-        const { ticketPool } = ticketPools[0];
+        const [ticketPool] = ticketPools;
 
         this.setState({
           date: extendDateWithEventTime(date, ticketPool.startDate),
