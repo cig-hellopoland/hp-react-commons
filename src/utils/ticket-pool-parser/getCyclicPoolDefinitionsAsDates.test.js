@@ -139,5 +139,31 @@ describe('Ticket Pool Parser', () => {
 
       expect(getCyclicPoolDefinitionsAsDates(data, { start, end })).toEqual(expectedValue);
     });
+
+    it('should return weekends with weekly interval', () => {
+      const data = [
+        {
+          endDate: (new Date(2001, 8, 15, 8)).toISOString(),
+          name: 'Example pool',
+          startDate: (new Date(2001, 8, 15, 5)).toISOString(),
+          frequencyData: {
+            daysOfWeek: [6, 7],
+            frequency: 1,
+            frequencyType: 'WEEKLY',
+          },
+        },
+      ];
+      const expectedValue = [
+        format(new Date(2001, 9, 13), constants.DAY_FORMAT),
+        format(new Date(2001, 9, 14), constants.DAY_FORMAT),
+        format(new Date(2001, 9, 20), constants.DAY_FORMAT),
+        format(new Date(2001, 9, 21), constants.DAY_FORMAT),
+
+      ];
+      const start = format(new Date(2001, 9, 9));
+      const end = format(new Date(2001, 9, 23));
+
+      expect(getCyclicPoolDefinitionsAsDates(data, { start, end })).toEqual(expectedValue);
+    });
   });
 });
