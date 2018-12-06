@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.0.2
+* Fixed `getInitialActiveStep` logic in TicketModalController.
+
 ## 1.0.1
 * Fixed date parsing in `TicketModalControler` and `pool-parser` utils
 
