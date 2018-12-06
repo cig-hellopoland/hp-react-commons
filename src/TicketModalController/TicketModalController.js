@@ -45,14 +45,17 @@ class TicketModalController extends Component {
 
   getInitialActiveStep = (cartItem) => {
     const { sightEvent } = this.props;
-    const { ticketPoolDefinitions } = sightEvent;
-    const { id: poolId } = ticketPoolDefinitions[0];
+    const { ticketPoolDefinitions } = sightEvent || {};
 
-    const isPoolSingle = this.isPoolSingle(ticketPoolDefinitions);
-    const isPoolCyclic = this.isPoolCyclic(ticketPoolDefinitions, poolId);
+    if (ticketPoolDefinitions && ticketPoolDefinitions.length > 0) {
+      const { id: poolId } = ticketPoolDefinitions[0];
 
-    if ((cartItem && cartItem.id) || (isPoolSingle && !isPoolCyclic)) {
-      return 3;
+      const isPoolSingle = this.isPoolSingle(ticketPoolDefinitions);
+      const isPoolCyclic = this.isPoolCyclic(ticketPoolDefinitions, poolId);
+
+      if ((cartItem && cartItem.id) || (isPoolSingle && !isPoolCyclic)) {
+        return 3;
+      }
     }
 
     return 1;
