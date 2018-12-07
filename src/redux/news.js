@@ -370,7 +370,7 @@ export const logic = {
 export const defaultInitialState = {
   error: null,
   item: {},
-  list: {},
+  list: [],
 };
 
 const reducer = (initialState = defaultInitialState) => (state = initialState, action) => {
