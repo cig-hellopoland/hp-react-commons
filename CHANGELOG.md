@@ -3,6 +3,9 @@
 ## 1.1.0
 * Added news reducer and logic
 
+## 1.0.4
+* Fixed ticket pool id no being saved after selecting day in calendar.
+
 ## 1.0.3
 * Fixed `clearCartLogic` in `cart` duck.
 
