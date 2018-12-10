@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.0.3
+* Fixed `clearCartLogic` in `cart` duck.
+
 ## 1.0.2
 * Fixed `getInitialActiveStep` logic in TicketModalController.
 

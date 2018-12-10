@@ -1,7 +1,7 @@
 import { createLogic } from 'redux-logic';
 import _isEqual from 'lodash/isEqual';
 import _uniq from 'lodash/uniq';
-import { actions as profileActions } from './profile';
+import { types as profileTypes } from './profile';
 
 export const name = 'cart';
 const prefix = `commons/${name}/`;
@@ -246,7 +246,7 @@ export const selectors = {
 
 const clearCartLogic = createLogic({
   type: [
-    profileActions.LOGOUT_SUCCESS,
+    profileTypes.LOGOUT_SUCCESS,
   ],
   process() {
     return clear();
