@@ -354,6 +354,7 @@ class TicketModalController extends Component {
 
         this.setState({
           date: extendDateWithEventTime(date, ticketPool.startDate),
+          poolId: ticketPool.id,
         }, this.setStep(3));
       } else {
         this.nextStep();
