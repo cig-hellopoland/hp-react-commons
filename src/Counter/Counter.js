@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import exactProp from '../utils/exactProp';
 
 /**
+ * Component used for selecting ticket amount.
  * @example
   <Counter
     value={this.state.value}
@@ -23,7 +24,6 @@ import exactProp from '../utils/exactProp';
     )}
   </Counter>
  */
-
 class Counter extends Component {
   decrease = () => {
     const {

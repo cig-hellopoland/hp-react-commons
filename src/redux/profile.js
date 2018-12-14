@@ -1,6 +1,20 @@
 import { createLogic } from 'redux-logic';
 
+/**
+ * Defines set of methods for managing user's profile.
+ * @module Profile
+ */
+
+/**
+ * Module name.
+ * @type {string}
+ */
 export const name = 'profile';
+
+/**
+ * Reducer prefix.
+ * @type {string}
+ */
 const prefix = `commons/${name}/`;
 
 
@@ -8,17 +22,76 @@ const prefix = `commons/${name}/`;
  * TYPES
  */
 
+/**
+ * Type used for handling unauthorized error.
+ * @type {string}
+ */
 const ERROR_UNAUTHORIZED = `${prefix}ERROR_UNAUTHORIZED`;
+
+/**
+ * Type used for handling profile fetching.
+ * @type {string}
+ */
 const FETCH_PROFILE = `${prefix}FETCH_PROFILE`;
+
+/**
+ * Type used for handling profile fetching cancellation.
+ * @type {string}
+ */
 const FETCH_PROFILE_CANCEL = `${prefix}FETCH_PROFILE_CANCEL`;
+
+/**
+ * Type used for handling profile fetching failure.
+ * @type {string}
+ */
 const FETCH_PROFILE_FAILURE = `${prefix}FETCH_PROFILE_FAILURE`;
+
+/**
+ * Type used for handling profile fetching success.
+ * @type {string}
+ */
 const FETCH_PROFILE_SUCCESS = `${prefix}FETCH_PROFILE_SUCCESS`;
+
+/**
+ * Type used for handling user login.
+ * @type {string}
+ */
 const LOGIN = `${prefix}LOGIN`;
+
+/**
+ * Type used for handling user login failure.
+ * @type {string}
+ */
 const LOGIN_FAILURE = `${prefix}LOGIN_FAILURE`;
+
+/**
+ * Type used for handling user login success.
+ * @type {string}
+ */
 const LOGIN_SUCCESS = `${prefix}LOGIN_SUCCESS`;
+
+/**
+ * Type used for handling user logout.
+ * @type {string}
+ */
 const LOGOUT = `${prefix}LOGOUT`;
+
+/**
+ * Type used for handling user logout success.
+ * @type {string}
+ */
 const LOGOUT_SUCCESS = `${prefix}LOGOUT_SUCCESS`;
+
+/**
+ * Type used for handling JWT access token refreshing.
+ * @type {string}
+ */
 const REFRESH_ACCESS_TOKEN = `${prefix}REFRESH_ACCESS_TOKEN`;
+
+/**
+ * Type used for handling JWT access token refreshing success.
+ * @type {string}
+ */
 const REFRESH_ACCESS_TOKEN_SUCCESS = `${prefix}REFRESH_ACCESS_TOKEN_SUCCESS`;
 
 export const types = {
@@ -43,7 +116,6 @@ export const types = {
 
 /**
  * Informs application that user is not authenticated with the server (401 HTTP code).
- *
  * @method
  * @return {{type: string}}
  */
@@ -54,7 +126,6 @@ const errorUnauthorized = (payload = {}) => ({
 
 /**
  * Creates action with profile request details.
- *
  * @method
  * @callback failureCallback
  * @callback successCallback
@@ -84,7 +155,6 @@ const fetchProfile = ({
 
 /**
  * Creates action for profile request cancelling.
- *
  * @method
  * @return {{type: string}}
  */
@@ -94,7 +164,6 @@ const fetchProfileCancel = () => ({
 
 /**
  * Creates action for profile request failing.
- *
  * @method
  * @param {Object} params - axios response schema
  * @param params.data - response body
@@ -114,7 +183,6 @@ const fetchProfileFailure = ({ data, status } = {}) => ({
 
 /**
  * Creates action for successful profile request.
- *
  * @method
  * @param {Object} data - response body
  * @return {{type: string, data: *}}
@@ -126,7 +194,6 @@ const fetchProfileSuccess = data => ({
 
 /**
  * Creates action with login request details.
- *
  * @method
  * @callback failureCallback
  * @callback successCallback
@@ -158,7 +225,6 @@ const login = ({
 
 /**
  * Creates action for login request failing.
- *
  * @method
  * @param {Object} params - axios response schema
  * @param params.data - response body
@@ -178,7 +244,6 @@ const loginFailure = ({ data, status } = {}) => ({
 
 /**
  * Creates action for users/mesuccessful login request.
- *
  * @method
  * @param {Object} data - response body
  * @return {{type: string, data: *}}
@@ -190,7 +255,6 @@ const loginSuccess = data => ({
 
 /**
  * Creates action with login request details.
- *
  * @method
  * @callback failureCallback
  * @callback successCallback
@@ -230,7 +294,6 @@ const logoutSuccess = () => ({
 
 /**
  * Creates action for JWT token refreshing.
- *
  * @method
  * @callback failureCallback
  * @callback successCallback
@@ -262,7 +325,6 @@ const refreshAccessToken = ({
 
 /**
  * Creates action for successful refreshed token.
- *
  * @method
  * @param {*} data - response body
  * @return {{type: string, data: *}}
@@ -294,7 +356,6 @@ export const actions = {
 
 /**
  * Returns current state.
- *
  * @method
  * @param {Object} state
  * @return {*}
@@ -303,7 +364,6 @@ const getState = state => state[name];
 
 /**
  * Returns request error.
- *
  * @method
  * @param {Object} state
  * @return {null}
@@ -312,7 +372,6 @@ const getError = state => getState(state).error;
 
 /**
  * Returns user's sign in credentials.
- *
  * @method
  * @param {Object} state
  * @return {*}
@@ -321,7 +380,6 @@ const getCredentials = state => getState(state).credentials;
 
 /**
  * Returns user's profile.
- *
  * @method
  * @param {Object} state
  * @return {*}
@@ -330,7 +388,6 @@ const getProfile = state => getState(state).profile;
 
 /**
  * Checks if user is authenticated.
- *
  * @method
  * @param {Object} state
  * @return {boolean}
@@ -350,6 +407,10 @@ export const selectors = {
  * LOGIC
  */
 
+/**
+ * Logic used for handling profile fetching.
+ * @method
+ */
 const fetchProfileLogic = createLogic({
   type: [
     FETCH_PROFILE,
@@ -392,6 +453,10 @@ const fetchProfileLogic = createLogic({
   },
 });
 
+/**
+ * Logic used for handling profile fetching on successful login attempt.
+ * @method
+ */
 const fetchProfileOnLoginSuccessLogic = createLogic({
   type: [
     LOGIN_SUCCESS,
@@ -405,6 +470,10 @@ const fetchProfileOnLoginSuccessLogic = createLogic({
   },
 });
 
+/**
+ * Logic used for handling user login.
+ * @method
+ */
 const loginLogic = createLogic({
   type: [
     LOGIN,
@@ -443,6 +512,10 @@ const loginLogic = createLogic({
   },
 });
 
+/**
+ * Logic used for handling user logout.
+ * @method
+ */
 const logoutLogic = createLogic({
   type: [
     LOGOUT,
@@ -472,6 +545,10 @@ const logoutLogic = createLogic({
   },
 });
 
+/**
+ * Logic used for handling authorization error.
+ * @method
+ */
 const unauthorizedLogic = createLogic({
   type: [
     ERROR_UNAUTHORIZED,
@@ -500,7 +577,15 @@ export const logic = {
 /*
  * REDUCERS
  */
-// export for test purposes
+
+/**
+ * Default state model.
+ * @type {object}
+ * @property {object} credentials - user authentication credentials
+ * @property {object|null} error - submission error
+ * @property {boolean} isAuthenticated - determines if user is authenticated
+ * @property {object} profile - stores user profile information
+ */
 export const defaultInitialState = {
   credentials: {},
   error: null,
@@ -508,6 +593,12 @@ export const defaultInitialState = {
   profile: {},
 };
 
+/**
+ * Module's reducer function.
+ * @method
+ * @param {object} initialState - allows initializing reducer with custom state
+ * @return {object}
+ */
 const reducer = (initialState = defaultInitialState) => (state = initialState, action) => {
   switch (action.type) {
     case FETCH_PROFILE_SUCCESS:

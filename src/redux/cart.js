@@ -3,16 +3,49 @@ import _isEqual from 'lodash/isEqual';
 import _uniq from 'lodash/uniq';
 import { types as profileTypes } from './profile';
 
+/**
+ * Defines set of methods for managing cart.
+ * @module Cart
+ */
+
+/**
+ * Module name.
+ * @type {string}
+ */
 export const name = 'cart';
+
+/**
+ * Reducer prefix.
+ * @type {string}
+ */
 const prefix = `commons/${name}/`;
 
 /*
  * TYPES
  */
 
+/**
+ * Type used for reseting cart's state.
+ * @type {string}
+ */
 const CART_CLEAR = `${prefix}CART_CLEAR`;
+
+/**
+ * Type used for adding new item to cart.
+ * @type {string}
+ */
 const ITEM_ADD = `${prefix}ITEM_ADD`;
+
+/**
+ * Type used for removing item from cart.
+ * @type {string}
+ */
 const ITEM_REMOVE = `${prefix}ITEM_REMOVE`;
+
+/**
+ * Type used for updating cart's item.
+ * @type {string}
+ */
 const ITEM_UPDATE = `${prefix}ITEM_UPDATE`;
 
 export const types = {
@@ -28,7 +61,7 @@ export const types = {
  */
 
 /**
- * Clears cart
+ * Clears cart.
  *
  * @method
  * @return {{
@@ -40,16 +73,16 @@ const clear = () => ({
 });
 
 /**
- * Creates action for new cart item
+ * Creates action for new cart item.
  *
  * @method
  * @param {object[]} entries - cart entries details
  * @param {number} entries[].price - entry price
- * @param {number} entries[].quantity
+ * @param {number} entries[].quantity - entry quantity
  * @param {*} * - extra item details
  * @return {{
  *   type: string,
- *   data: {entries: object[], ...}
+ *   data: {entries: object[]}
  * }}
  */
 const addItem = ({ entries, ...rest } = {}) => ({
@@ -61,7 +94,7 @@ const addItem = ({ entries, ...rest } = {}) => ({
 });
 
 /**
- * Creates action for cart item removal
+ * Creates action for cart item removal.
  *
  * @method
  * @param {number} itemId
@@ -76,7 +109,7 @@ const removeItem = itemId => ({
 });
 
 /**
- * Creates action with new cart item details
+ * Creates action with new cart item details.
  *
  * @method
  * @param {object[]} entries - cart entries details
@@ -85,7 +118,7 @@ const removeItem = itemId => ({
  * @param {*} * - extra item details
  * @return {{
  *   type: string,
- *   data: {entries: object[], ...}
+ *   data: {entries: object[]}
  * }}
  */
 const updateItem = ({ entries, ...rest } = {}) => ({
@@ -118,21 +151,20 @@ export const actions = {
 const getState = state => state[name];
 
 /**
- * Returns all available entries
+ * Returns all available entries.
  *
  * @method
  * @param {object} state - redux state
  * @return {{
  *   entryId: number,
  *   price: number,
- *   quantity: number,
- *   ...rest: {...}
+ *   quantity: number
  * }}
  */
 const getEntries = state => getState(state).entries;
 
 /**
- * Returns all available entries reduced by provided keys
+ * Returns all available entries reduced by provided keys.
  *
  * @method
  * @param {object} state - redux state
@@ -153,7 +185,7 @@ const getEntriesByKeys = state => (keys) => {
 };
 
 /**
- * Get item with specified id
+ * Get item with specified id.
  *
  * @method
  * @param {object} state - redux state
@@ -161,7 +193,6 @@ const getEntriesByKeys = state => (keys) => {
  * @return {{
  *   entries: object[],
  *   itemId: number
- *   ...rest: {...}
  * }}
  */
 const getItem = (state, itemId) => {
@@ -192,14 +223,13 @@ const getItem = (state, itemId) => {
 };
 
 /**
- * Get all available items
+ * Get all available items.
  *
  * @param {object} state - redux state
  * @return {{
  *   entries: object[],
  *   itemId: number
- *   ...rest: {...}
- * }[]}
+ * }}
  */
 const getItems = (state) => {
   const { items } = getState(state);
@@ -208,7 +238,7 @@ const getItems = (state) => {
 };
 
 /**
- * Get number of total items in cart
+ * Get number of total items in cart.
  *
  * @method
  * @param {object} state - redux state
@@ -217,7 +247,7 @@ const getItems = (state) => {
 const getTotalItems = state => getState(state).items.length;
 
 /**
- * Get total price of items in cart
+ * Get total price of items in cart.
  *
  * @method
  * @param {object} state - redux state
@@ -244,6 +274,11 @@ export const selectors = {
  * LOGIC
  */
 
+/**
+ * Logic used for handling cart clearing.
+ *
+ * @method
+ */
 const clearCartLogic = createLogic({
   type: [
     profileTypes.LOGOUT_SUCCESS,
@@ -263,24 +298,32 @@ export const logic = {
  */
 
 /**
- * Cart model
+ * Default state model.
  *
- * @param {object[]} items - cart items
- * @param {number} items[].itemId - internal cart id
- * @param {number[]} items[].entryIds - id's of referenced entries
- * @param {*} [items[].*] - any data required by the app
- * @param {object[]} entries - order entries
- * @param {number} entries[].entryId - internal cart id
- * @param {number} entries[].quantity - entry quantity
- * @param {number} entries[].price - entry's unit price
- * @param {*} [entries[].*] - any data required by the app
- *
+ * @type {object}
+ * @property {object[]} items - cart items
+ * @property {number} items[].itemId - internal cart id
+ * @property {number[]} items[].entryIds - id's of referenced entries
+ * @property {*} [items[].*] - any data required by the app
+ * @property {object[]} entries - order entries
+ * @property {number} entries[].entryId - internal cart id
+ * @property {number} entries[].quantity - entry quantity
+ * @property {number} entries[].price - entry's unit price
+ * @property {*} [entries[].*] - any data required by the app
  */
 export const defaultInitialState = {
   entries: [],
   items: [],
 };
 
+
+/**
+ * Module's reducer function.
+ *
+ * @method
+ * @param initialState
+ * @return {object}
+ */
 const reducer = (initialState = defaultInitialState) => (state = initialState, action) => {
   switch (action.type) {
     case CART_CLEAR: {

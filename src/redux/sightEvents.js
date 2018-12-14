@@ -1,52 +1,244 @@
 import { createLogic } from 'redux-logic';
 import _find from 'lodash/find';
 
+/**
+ * Defines set of methods for managing SightEvent entities.
+ * @module SightEvents
+ */
+
+/**
+ * Defines interval of handling events
+ * @type {number}
+ */
 const debounceTime = 500;
 
+/**
+ * Base API URL.
+ * @type {string}
+ */
 export const apiURL = '/sight-events';
+
+/**
+ * Module name.
+ * @type {string}
+ */
 export const name = 'sightEvents';
+
+/**
+ * Reducer prefix.
+ * @type {string}
+ */
 const prefix = `commons/${name}/`;
 
 /*
  * TYPES
  */
 
+/**
+ * Type used for clearing ticket information for currently loaded entity.
+ * @type {string}
+ */
 const CLEAR_AVAILABLE_TICKETS = `${prefix}CLEAR_AVAILABLE_TICKETS`;
+
+/**
+ * Type used for clearing currently loaded entity.
+ * @type {string}
+ */
 const CLEAR_ITEM = `${prefix}CLEAR_ITEM`;
+
+/**
+ * Type used for clearing search results.
+ * @type {string}
+ */
 const CLEAR_SEARCH_RESULTS = `${prefix}CLEAR_SEARCH_RESULTS`;
+
+/**
+ * Type used for handling entity creation.
+ * @type {string}
+ */
 const CREATE_ITEM = `${prefix}CREATE_ITEM`;
+
+/**
+ * Type used for handling entity creation failure.
+ * @type {string}
+ */
 const CREATE_ITEM_FAILURE = `${prefix}CREATE_ITEM_FAILURE`;
+
+/**
+ * Type used for handling entity creation success.
+ * @type {string}
+ */
 const CREATE_ITEM_SUCCESS = `${prefix}CREATE_ITEM_SUCCESS`;
+
+/**
+ * Type used for handling main image creation.
+ * @type {string}
+ */
 const CREATE_MAIN_IMAGE = `${prefix}CREATE_MAIN_IMAGE`;
+
+/**
+ * Type used for handling main image creation failure.
+ * @type {string}
+ */
 const CREATE_MAIN_IMAGE_FAILURE = `${prefix}CREATE_MAIN_IMAGE_FAILURE`;
+
+/**
+ * Type used for handling main image creation success.
+ * @type {string}
+ */
 const CREATE_MAIN_IMAGE_SUCCESS = `${prefix}CREATE_MAIN_IMAGE_SUCCESS`;
+
+/**
+ * Type used for handling PDF document creation.
+ * @type {string}
+ */
 const CREATE_PDF = `${prefix}CREATE_PDF`;
+
+/**
+ * Type used for handling PDF document creation failure.
+ * @type {string}
+ */
 const CREATE_PDF_FAILURE = `${prefix}CREATE_PDF_FAILURE`;
+
+/**
+ * Type used for handling PDF document creation success.
+ * @type {string}
+ */
 const CREATE_PDF_SUCCESS = `${prefix}CREATE_PDF_SUCCESS`;
+
+/**
+ * Type used for handling entity deletion.
+ * @type {string}
+ */
 const DELETE_ITEM = `${prefix}DELETE_ITEM`;
+
+/**
+ * Type used for handling entity deletion failure.
+ * @type {string}
+ */
 const DELETE_ITEM_FAILURE = `${prefix}DELETE_ITEM_FAILURE`;
+
+/**
+ * Type used for handling entity deletion success.
+ * @type {string}
+ */
 const DELETE_ITEM_SUCCESS = `${prefix}DELETE_ITEM_SUCCESS`;
 const DELETE_PDF = `${prefix}DELETE_PDF`;
 const DELETE_PDF_FAILURE = `${prefix}DELETE_PDF_FAILURE`;
 const DELETE_PDF_SUCCESS = `${prefix}DELETE_PDF_SUCCESS`;
+
+/**
+ * Type used for handling ticket information fetching.
+ * @type {string}
+ */
 const FETCH_AVAILABLE_TICKETS = `${prefix}FETCH_AVAILABLE_TICKETS`;
+
+/**
+ * Type used for handling ticket information fetching cancellation.
+ * @type {string}
+ */
 const FETCH_AVAILABLE_TICKETS_CANCEL = `${prefix}FETCH_AVAILABLE_TICKETS_CANCEL`;
+
+/**
+ * Type used for handling ticket information fetching failure.
+ * @type {string}
+ */
 const FETCH_AVAILABLE_TICKETS_FAILURE = `${prefix}FETCH_AVAILABLE_TICKETS_FAILURE`;
+
+/**
+ * Type used for handling ticket information fetching success.
+ * @type {string}
+ */
 const FETCH_AVAILABLE_TICKETS_SUCCESS = `${prefix}FETCH_AVAILABLE_TICKETS_SUCCESS`;
+
+/**
+ * Type used for handling entity fetching.
+ * @type {string}
+ */
 const FETCH_ITEM = `${prefix}FETCH_ITEM`;
+
+/**
+ * Type used for handling entity fetching cancellation.
+ * @type {string}
+ */
 const FETCH_ITEM_CANCEL = `${prefix}FETCH_ITEM_CANCEL`;
+
+/**
+ * Type used for handling entity fetching failure.
+ * @type {string}
+ */
 const FETCH_ITEM_FAILURE = `${prefix}FETCH_ITEM_FAILURE`;
+
+/**
+ * Type used for handling entity fetching success.
+ * @type {string}
+ */
 const FETCH_ITEM_SUCCESS = `${prefix}FETCH_ITEM_SUCCESS`;
+
+/**
+ * Type used for handling entity list fetching.
+ * @type {string}
+ */
 const FETCH_LIST = `${prefix}FETCH_LIST`;
+
+/**
+ * Type used for handling entity list fetching cancellation.
+ * @type {string}
+ */
 const FETCH_LIST_CANCEL = `${prefix}FETCH_LIST_CANCEL`;
+
+/**
+ * Type used for handling entity list fetching failure.
+ * @type {string}
+ */
 const FETCH_LIST_FAILURE = `${prefix}FETCH_LIST_FAILURE`;
+
+/**
+ * Type used for handling entity list fetching success.
+ * @type {string}
+ */
 const FETCH_LIST_SUCCESS = `${prefix}FETCH_LIST_SUCCESS`;
+
+/**
+ * Type used for handling entity search results fetching.
+ * @type {string}
+ */
 const FETCH_SEARCH_RESULTS = `${prefix}FETCH_SEARCH_RESULTS`;
+
+/**
+ * Type used for handling entity search results fetching cancellation.
+ * @type {string}
+ */
 const FETCH_SEARCH_RESULTS_CANCEL = `${prefix}FETCH_SEARCH_RESULTS_CANCEL`;
+
+/**
+ * Type used for handling entity search results fetching failure.
+ * @type {string}
+ */
 const FETCH_SEARCH_RESULTS_FAILURE = `${prefix}FETCH_SEARCH_RESULTS_FAILURE`;
+
+/**
+ * Type used for handling entity search results fetching success.
+ * @type {string}
+ */
 const FETCH_SEARCH_RESULTS_SUCCESS = `${prefix}FETCH_SEARCH_RESULTS_SUCCESS`;
+
+/**
+ * Type used for handling entity updates.
+ * @type {string}
+ */
 const UPDATE_ITEM = `${prefix}UPDATE_ITEM`;
+
+/**
+ * Type used for handling entity updates failure.
+ * @type {string}
+ */
 const UPDATE_ITEM_FAILURE = `${prefix}UPDATE_ITEM_FAILURE`;
+
+/**
+ * Type used for handling entity updates success.
+ * @type {string}
+ */
 const UPDATE_ITEM_SUCCESS = `${prefix}UPDATE_ITEM_SUCCESS`;
 
 export const types = {
@@ -96,7 +288,6 @@ export const types = {
 
 /**
  * Creates action for item removal.
- *
  * @method
  * @return {{type: string}}
  */
@@ -106,7 +297,6 @@ const clearAvailableTickets = () => ({
 
 /**
  * Creates action for item removal.
- *
  * @method
  * @return {{type: string}}
  */
@@ -116,7 +306,6 @@ const clearItem = () => ({
 
 /**
  * Creates action for search results removal.
- *
  * @method
  * @return {{type: string}}
  */
@@ -126,10 +315,7 @@ const clearSearchResults = () => ({
 
 /**
  * Creates action with item creation request details.
- *
  * @method
- * @callback failureCallback
- * @callback successCallback
  * @param {Object} params
  * @param {Object} params.data - request data
  * @param {Object} [params.options] - request config
@@ -158,7 +344,6 @@ const createItem = ({
 
 /**
  * Creates action for item creation request failing.
- *
  * @method
  * @param {Object} params - axios response schema
  * @param params.data - response body
@@ -178,7 +363,6 @@ const createItemFailure = ({ data, status } = {}) => ({
 
 /**
  * Creates action for successful item creation request.
- *
  * @method
  * @param {Object} data - response body
  * @return {{type: string, data: *}}
@@ -190,10 +374,7 @@ const createItemSuccess = data => ({
 
 /**
  * Creates action with main image creation request details.
- *
  * @method
- * @callback failureCallback
- * @callback successCallback
  * @param {number} id - item id
  * @param {Object} data - request data
  * @param {Object} [options] - request config
@@ -226,7 +407,6 @@ const createMainImage = ({
 
 /**
  * Creates action for main image creation request failing.
- *
  * @method
  * @param {Object} params - axios response schema
  * @param params.data - response body
@@ -246,7 +426,6 @@ const createMainImageFailure = ({ data, status } = {}) => ({
 
 /**
  * Creates action for successful main image creation request.
- *
  * @method
  * @param {Object} data - response body
  * @return {{type: string, data: *}}
@@ -258,10 +437,7 @@ const createMainImageSuccess = data => ({
 
 /**
  * Creates action with main image creation request details.
- *
  * @method
- * @callback failureCallback
- * @callback successCallback
  * @param {number} id - item id
  * @param {Object} data - request data
  * @param {Object} [options] - request config
@@ -294,7 +470,6 @@ const createPDF = ({
 
 /**
  * Creates action for main image creation request failing.
- *
  * @method
  * @param {Object} params - axios response schema
  * @param params.data - response body
@@ -314,7 +489,6 @@ const createPDFFailure = ({ data, status } = {}) => ({
 
 /**
  * Creates action for successful main image creation request.
- *
  * @method
  * @param {Object} data - response body
  * @return {{type: string, data: *}}
@@ -326,10 +500,7 @@ const createPDFSuccess = data => ({
 
 /**
  * Creates action with item deletion request details.
- *
  * @method
- * @callback failureCallback
- * @callback successCallback
  * @param {Object} params
  * @param {number} params.id - item id
  * @param {Object} [params.options] - request config
@@ -357,7 +528,6 @@ const deleteItem = ({
 
 /**
  * Creates action for item deletion request failing.
- *
  * @method
  * @param {Object} params - axios response schema
  * @param params.data - response body
@@ -377,7 +547,6 @@ const deleteItemFailure = ({ data, status } = {}) => ({
 
 /**
  * Creates action for successful item deletion request.
- *
  * @method
  * @return {{type: string}}
  */
@@ -448,10 +617,7 @@ const deletePdfSuccess = () => ({
 
 /**
  * Creates action with available tickets request details.
- *
  * @method
- * @callback failureCallback
- * @callback successCallback
  * @param {number} id - SightEvent id
  * @param {Object} options - request config
  * @param {Object} query - URL query string
@@ -480,7 +646,6 @@ const fetchAvailableTickets = ({
 
 /**
  * Creates action for available tickets request cancelling.
- *
  * @method
  * @return {{type: string}}
  */
@@ -490,7 +655,6 @@ const fetchAvailableTicketsCancel = () => ({
 
 /**
  * Creates action for available tickets request failing.
- *
  * @method
  * @param data - response body
  * @param status - response status
@@ -509,7 +673,6 @@ const fetchAvailableTicketsFailure = ({ data, status } = {}) => ({
 
 /**
  * Creates action for successful available tickets request.
- *
  * @method
  * @param {Object} data - response body
  * @return {{type: string, data: *}}
@@ -521,10 +684,7 @@ const fetchAvailableTicketsSuccess = data => ({
 
 /**
  * Creates action with item request details.
- *
  * @method
- * @callback failureCallback
- * @callback successCallback
  * @param {Object} params
  * @param {number} params.id - item id
  * @param {Object} [params.options] - request config
@@ -552,7 +712,6 @@ const fetchItem = ({
 
 /**
  * Creates action for item request cancelling.
- *
  * @method
  * @return {{type: string}}
  */
@@ -562,7 +721,6 @@ const fetchItemCancel = () => ({
 
 /**
  * Creates action for item request failing.
- *
  * @method
  * @param {Object} params - axios response schema
  * @param params.data - response body
@@ -582,7 +740,6 @@ const fetchItemFailure = ({ data, status } = {}) => ({
 
 /**
  * Creates action for successful item request.
- *
  * @method
  * @param {Object} data - response body
  * @return {{type: string, data: *}}
@@ -594,10 +751,7 @@ const fetchItemSuccess = data => ({
 
 /**
  * Creates action with list request details.
- *
  * @method
- * @callback failureCallback
- * @callback successCallback
  * @param {Object} params
  * @param {Object} [params.data] - request data
  * @param {Object} [params.options] - request config
@@ -625,9 +779,7 @@ const fetchList = ({
 });
 
 /**
- * Creates action for list request cancellin
-g.
- *
+ * Creates action for list request cancelling.
  * @method
  * @return {{type: string}}
  */
@@ -637,7 +789,6 @@ const fetchListCancel = () => ({
 
 /**
  * Creates action for list request failing.
- *
  * @method
  * @param {Object} params - axios response schema
  * @param params.data - response body
@@ -657,7 +808,6 @@ const fetchListFailure = ({ data, status } = {}) => ({
 
 /**
  * Creates action for successful list request.
- *
  * @method
  * @param {Object} data - response body
  * @return {{type: string, data: *}}
@@ -669,10 +819,7 @@ const fetchListSuccess = data => ({
 
 /**
  * Creates action with search request details.
- *
  * @method
- * @callback failureCallback
- * @callback successCallback
  * @param {Object} params
  * @param {Object} params.data - request data
  * @param {Object} [params.options] - request config
@@ -702,7 +849,6 @@ const fetchSearchResults = ({
 
 /**
  * Creates action for search request cancelling.
- *
  * @method
  * @return {{type: string}}
  */
@@ -712,7 +858,6 @@ const fetchSearchResultsCancel = () => ({
 
 /**
  * Creates action for search request failing.
- *
  * @method
  * @param {Object} params - axios response schema
  * @param params.data - response body
@@ -732,10 +877,8 @@ const fetchSearchResultsFailure = ({ data, status } = {}) => ({
 
 /**
  * Creates action for successful search request.
- *
  * @method
  * @param {Object} data - response body
-
  * @return {{type: string, data: *}}
  */
 const fetchSearchResultsSuccess = data => ({
@@ -745,16 +888,12 @@ const fetchSearchResultsSuccess = data => ({
 
 /**
  * Creates action with item update request details.
- *
  * @method
- * @callback failureCallback
- * @callback successCallback
  * @param {Object} params
  * @param {Object} params.id - item id
  * @param {Object} params.data - request body
  * @param {Object} [params.options] - request config
- * @param {failureCallback} [params.onFailure
-] - failure callback
+ * @param {failureCallback} [params.onFailure] - failure callback
  * @param {successCallback} [params.onSuccess] - success callback
  * @return {{
  *   type: string,
@@ -779,7 +918,6 @@ const updateItem = ({
 
 /**
  * Creates action for item update request failing.
- *
  * @method
  * @param {Object} params - axios response schema
  * @param params.data - response body
@@ -799,8 +937,7 @@ const updateItemFailure = ({ data, status } = {}) => ({
 
 /**
  * Creates action for successful item creation request.
- *
- * @methoddeleteItemFailure
+ * @method
  * @param {Object} data - response body
  * @return {{type: string, data: *}}
  */
@@ -856,45 +993,40 @@ export const actions = {
 
 /**
  * Returns current state.
- *
  * @method
- * @param {Object} state
+ * @param {Object} state - redux state
  * @return {*}
  */
 const getState = state => state[name];
 
 /**
  * Returns request error.
- *
  * @method
- * @param {Object} state
+ * @param {Object} state - redux state
  * @return {*}
  */
 const getError = state => getState(state).error;
 
 /**
  * Returns currently loaded SightEvent.
- *
  * @method
- * @param {Object} state
+ * @param {Object} state - redux state
  * @return {*}
  */
 const getSightEvent = state => getState(state).item;
 
 /**
  * Returns currently loaded SightEvents list.
- *
  * @method
- * @param {Object} state
+ * @param {Object} state - redux state
  * @return {*}
  */
 const getSightEvents = state => getState(state).list;
 
 /**
  * Returns SightEvent with specified id from SightEvents list.
- *
  * @method
- * @param {Object} state
+ * @param {Object} state - redux state
  * @param {number} id - Sight id
  * @return {*}
  */
@@ -904,6 +1036,11 @@ const getSightEventById = (state, id) => {
   return _find(list, { id }) || null;
 };
 
+/**
+ * Returns available tickets for current entity.
+ * @param {object} state - redux state
+ * @return {object}
+ */
 const getAvailableTickets = state => getState(state).availableTickets;
 
 export const selectors = {
@@ -920,6 +1057,10 @@ export const selectors = {
  * LOGIC
  */
 
+/**
+ * Logic used for handling entity search results clearing.
+ * @method
+ */
 const clearSearchResultsLogic = createLogic({
   type: [
     CLEAR_SEARCH_RESULTS,
@@ -932,6 +1073,10 @@ const clearSearchResultsLogic = createLogic({
   },
 });
 
+/**
+ * Logic used for handling entity creation.
+ * @method
+ */
 const createItemLogic = createLogic({
   type: [
     CREATE_ITEM,
@@ -971,7 +1116,10 @@ const createItemLogic = createLogic({
   },
 });
 
-
+/**
+ * Logic used for handling main image creation.
+ * @method
+ */
 const createMainImageLogic = createLogic({
   type: [
     CREATE_MAIN_IMAGE,
@@ -1011,6 +1159,10 @@ const createMainImageLogic = createLogic({
   },
 });
 
+/**
+ * Logic used for handling PDF document creation.
+ * @method
+ */
 const createPDFLogic = createLogic({
   type: [
     CREATE_PDF,
@@ -1050,6 +1202,10 @@ const createPDFLogic = createLogic({
   },
 });
 
+/**
+ * Logic used for handling entity deletion.
+ * @method
+ */
 const deleteItemLogic = createLogic({
   type: [
     DELETE_ITEM,
@@ -1079,45 +1235,6 @@ const deleteItemLogic = createLogic({
       }
     } catch ({ response }) {
       dispatch(deleteItemFailure(response));
-
-      if (onFailure) {
-        onFailure();
-      }
-    }
-
-    done();
-  },
-});
-
-const deletePdfLogic = createLogic({
-  type: [
-    DELETE_PDF,
-  ],
-  latest: true,
-  async process(
-    { action: { payload, onFailure, onSuccess }, httpClient, cancelled$ },
-    dispatch,
-    done,
-  ) {
-    try {
-      const response = await httpClient.cancellable(payload, cancelled$);
-      const { status } = response;
-
-      if (status === 200 || status === 204) {
-        dispatch(deletePdfSuccess());
-
-        if (onSuccess) {
-          onSuccess();
-        }
-      } else {
-        dispatch(deletePdfFailure(response));
-
-        if (onFailure) {
-          onFailure();
-        }
-      }
-    } catch ({ response }) {
-      dispatch(deletePdfFailure(response));
 
       if (onFailure) {
         onFailure();
@@ -1174,6 +1291,10 @@ const fetchAvailableTicketsLogic = createLogic({
   },
 });
 
+/**
+ * Logic used for handling entity fetching.
+ * @method
+ */
 const fetchItemLogic = createLogic({
   type: [
     FETCH_ITEM,
@@ -1216,6 +1337,10 @@ const fetchItemLogic = createLogic({
   },
 });
 
+/**
+ * Logic used for handling entity list fetching.
+ * @method
+ */
 const fetchListLogic = createLogic({
   type: [
     FETCH_LIST,
@@ -1258,6 +1383,10 @@ const fetchListLogic = createLogic({
   },
 });
 
+/**
+ * Logic used for handling entity search results fetching.
+ * @method
+ */
 const fetchSearchResultsLogic = createLogic({
   type: [
     FETCH_SEARCH_RESULTS,
@@ -1300,6 +1429,10 @@ const fetchSearchResultsLogic = createLogic({
   },
 });
 
+/**
+ * Logic used for handling entity updates.
+ * @method
+ */
 const updateItemLogic = createLogic({
   type: [
     UPDATE_ITEM,
@@ -1358,7 +1491,14 @@ export const logic = {
  * REDUCERS
  */
 
-// export for test purposes
+/**
+ * Default state model.
+ * @type {object}
+ * @property {object|null} error - submission error
+ * @property {object} item - current entity data
+ * @property {object[]} list - entity list data
+ * @property {object} availableTickets - ticket details for current entity
+ */
 export const defaultInitialState = {
   error: null,
   item: {},
@@ -1366,6 +1506,12 @@ export const defaultInitialState = {
   availableTickets: {},
 };
 
+/**
+ * Module's reducer function.
+ * @method
+ * @param {object} initialState - allows initializing reducer with custom state
+ * @return {object}
+ */
 const reducer = (initialState = defaultInitialState) => (state = initialState, action) => {
   switch (action.type) {
     case CLEAR_AVAILABLE_TICKETS:

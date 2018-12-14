@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.1.1
+* Updated JSDoc
+
 ## 1.1.0
 * Added news reducer and logic
 
