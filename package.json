@@ -51,7 +51,7 @@
   },
   "scripts": {
     "build": "babel src --out-dir ./dist --ignore src/**/*.test.js --source-maps",
-    "clean": "rimraf ./dist ./jsdoc",
+    "clean": "rimraf ./dist ./jsdoc/*",
     "distribute": "cd dist && npm publish --registry=https://packages.fream.pl/repository/npm-fream/",
     "jsdoc": "npm run clean && jsdoc -r -d ./jsdoc ./src",
     "jsdoc2md": "npm run clean && jsdoc2md src/**/*.js > jsdoc/hellopoland-react-commons.md",
