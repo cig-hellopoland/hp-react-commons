@@ -1,10 +1,33 @@
 import { createLogic } from 'redux-logic';
 import _find from 'lodash/find';
 
+/**
+ * Defines set of methods for managing TicketPoolDefinition entities.
+ * @module TicketPoolDefinitions
+ */
+
+/**
+ * Defines interval of handling events
+ * @type {number}
+ */
 const debounceTime = 500;
 
+/**
+ * Base API URL.
+ * @type {string}
+ */
 export const apiURL = '/ticket-pool-definitions';
+
+/**
+ * Module name.
+ * @type {string}
+ */
 export const name = 'ticketPoolDefinitions';
+
+/**
+ * Reducer prefix.
+ * @type {string}
+ */
 const prefix = `commons/${name}/`;
 
 
@@ -12,28 +35,142 @@ const prefix = `commons/${name}/`;
  * TYPES
  */
 
+/**
+ * Type used for clearing search results.
+ * @type {string}
+ */
 const CLEAR_SEARCH_RESULTS = `${prefix}CLEAR_SEARCH_RESULTS`;
+
+/**
+ * Type used for clearing currently loaded entity.
+ * @type {string}
+ */
 const CLEAR_ITEM = `${prefix}CLEAR_ITEM`;
+
+/**
+ * Type used for handling entity creation.
+ * @type {string}
+ */
 const CREATE_ITEM = `${prefix}CREATE_ITEM`;
+
+/**
+ * Type used for handling entity creation failure.
+ * @type {string}
+ */
 const CREATE_ITEM_FAILURE = `${prefix}CREATE_ITEM_FAILURE`;
+
+/**
+ * Type used for handling entity creation success.
+ * @type {string}
+ */
 const CREATE_ITEM_SUCCESS = `${prefix}CREATE_ITEM_SUCCESS`;
+
+/**
+ * Type used for handling entity deletion.
+ * @type {string}
+ */
 const DELETE_ITEM = `${prefix}DELETE_ITEM`;
+
+/**
+ * Type used for handling entity deletion failure.
+ * @type {string}
+ */
 const DELETE_ITEM_FAILURE = `${prefix}DELETE_ITEM_FAILURE`;
+
+/**
+ * Type used for handling entity deletion success.
+ * @type {string}
+ */
 const DELETE_ITEM_SUCCESS = `${prefix}DELETE_ITEM_SUCCESS`;
+
+/**
+ * Type used for handling entity fetching.
+ * @type {string}
+ */
 const FETCH_ITEM = `${prefix}FETCH_ITEM`;
+
+/**
+ * Type used for handling entity fetching cancellation.
+ * @type {string}
+ */
 const FETCH_ITEM_CANCEL = `${prefix}FETCH_ITEM_CANCEL`;
+
+/**
+ * Type used for handling entity fetching failure.
+ * @type {string}
+ */
 const FETCH_ITEM_FAILURE = `${prefix}FETCH_ITEM_FAILURE`;
+
+/**
+ * Type used for handling entity fetching success.
+ * @type {string}
+ */
 const FETCH_ITEM_SUCCESS = `${prefix}FETCH_ITEM_SUCCESS`;
+
+/**
+ * Type used for handling entity list fetching.
+ * @type {string}
+ */
 const FETCH_LIST = `${prefix}FETCH_LIST`;
+
+/**
+ * Type used for handling entity list fetching cancellation.
+ * @type {string}
+ */
 const FETCH_LIST_CANCEL = `${prefix}FETCH_LIST_CANCEL`;
+
+/**
+ * Type used for handling entity list fetching failure.
+ * @type {string}
+ */
 const FETCH_LIST_FAILURE = `${prefix}FETCH_LIST_FAILURE`;
+
+/**
+ * Type used for handling entity list fetching success.
+ * @type {string}
+ */
 const FETCH_LIST_SUCCESS = `${prefix}FETCH_LIST_SUCCESS`;
+
+/**
+ * Type used for handling entity search results fetching.
+ * @type {string}
+ */
 const FETCH_SEARCH_RESULTS = `${prefix}FETCH_SEARCH_RESULTS`;
+
+/**
+ * Type used for handling entity search results fetching cancellation.
+ * @type {string}
+ */
 const FETCH_SEARCH_RESULTS_CANCEL = `${prefix}FETCH_SEARCH_RESULTS_CANCEL`;
+
+/**
+ * Type used for handling entity search results fetching failure.
+ * @type {string}
+ */
 const FETCH_SEARCH_RESULTS_FAILURE = `${prefix}FETCH_SEARCH_RESULTS_FAILURE`;
+
+/**
+ * Type used for handling entity search results fetching success.
+ * @type {string}
+ */
 const FETCH_SEARCH_RESULTS_SUCCESS = `${prefix}FETCH_SEARCH_RESULTS_SUCCESS`;
+
+/**
+ * Type used for handling entity updates.
+ * @type {string}
+ */
 const UPDATE_ITEM = `${prefix}UPDATE_ITEM`;
+
+/**
+ * Type used for handling entity updates failure.
+ * @type {string}
+ */
 const UPDATE_ITEM_FAILURE = `${prefix}UPDATE_ITEM_FAILURE`;
+
+/**
+ * Type used for handling entity updates success.
+ * @type {string}
+ */
 const UPDATE_ITEM_SUCCESS = `${prefix}UPDATE_ITEM_SUCCESS`;
 
 export const types = {
@@ -69,7 +206,6 @@ export const types = {
 
 /**
  * Creates action for search results removal.
- *
  * @method
  * @return {{type: string}}
  */
@@ -79,7 +215,6 @@ const clearSearchResults = () => ({
 
 /**
  * Creates action for item removal.
- *
  * @method
  * @return {{type: string}}
  */
@@ -89,10 +224,7 @@ const clearItem = () => ({
 
 /**
  * Creates action with item creation request details.
- *
  * @method
- * @callback failureCallback
- * @callback successCallback
  * @param {Object} params
  * @param {Object} params.data - request data
  * @param {Object} [params.options] - request config
@@ -121,7 +253,6 @@ const createItem = ({
 
 /**
  * Creates action for item creation request failing.
- *
  * @method
  * @param {Object} params - axios response schema
  * @param params.data - response body
@@ -141,7 +272,6 @@ const createItemFailure = ({ data, status } = {}) => ({
 
 /**
  * Creates action for successful item creation request.
- *
  * @method
  * @param {Object} data - response body
  * @return {{type: string, data: *}}
@@ -153,10 +283,7 @@ const createItemSuccess = data => ({
 
 /**
  * Creates action with item deletion request details.
- *
  * @method
- * @callback failureCallback
- * @callback successCallback
  * @param {Object} params
  * @param {number} params.id - item id
  * @param {Object} [params.options] - request config
@@ -184,7 +311,6 @@ const deleteItem = ({
 
 /**
  * Creates action for item deletion request failing.
- *
  * @method
  * @param {Object} params - axios response schema
  * @param params.data - response body
@@ -204,7 +330,6 @@ const deleteItemFailure = ({ data, status } = {}) => ({
 
 /**
  * Creates action for successful item deletion request.
- *
  * @method
  * @return {{type: string}}
  */
@@ -214,10 +339,7 @@ const deleteItemSuccess = () => ({
 
 /**
  * Creates action with item request details.
- *
  * @method
- * @callback failureCallback
- * @callback successCallback
  * @param {Object} params
  * @param {number} params.id - item id
  * @param {Object} [params.options] - request config
@@ -245,7 +367,6 @@ const fetchItem = ({
 
 /**
  * Creates action for item request cancelling.
- *
  * @method
  * @return {{type: string}}
  */
@@ -255,7 +376,6 @@ const fetchItemCancel = () => ({
 
 /**
  * Creates action for item request failing.
- *
  * @method
  * @param {Object} params - axios response schema
  * @param params.data - response body
@@ -275,7 +395,6 @@ const fetchItemFailure = ({ data, status } = {}) => ({
 
 /**
  * Creates action for successful item request.
- *
  * @method
  * @param {Object} data - response body
  * @return {{type: string, data: *}}
@@ -287,10 +406,7 @@ const fetchItemSuccess = data => ({
 
 /**
  * Creates action with list request details.
- *
  * @method
- * @callback failureCallback
- * @callback successCallback
  * @param {Object} params
  * @param {Object} [params.data] - request data
  * @param {Object} [params.options] - request config
@@ -319,7 +435,6 @@ const fetchList = ({
 
 /**
  * Creates action for list request cancelling.
- *
  * @method
  * @return {{type: string}}
  */
@@ -329,7 +444,6 @@ const fetchListCancel = () => ({
 
 /**
  * Creates action for list request failing.
- *
  * @method
  * @param {Object} params - axios response schema
  * @param params.data - response body
@@ -349,7 +463,6 @@ const fetchListFailure = ({ data, status } = {}) => ({
 
 /**
  * Creates action for successful list request.
- *
  * @method
  * @param {Object} data - response body
  * @return {{type: string, data: *}}
@@ -361,10 +474,7 @@ const fetchListSuccess = data => ({
 
 /**
  * Creates action with search request details.
- *
  * @method
- * @callback failureCallback
- * @callback successCallback
  * @param {Object} params
  * @param {Object} params.data - request data
  * @param {Object} [params.options] - request config
@@ -393,7 +503,6 @@ const fetchSearchResults = ({
 
 /**
  * Creates action for search request cancelling.
- *
  * @method
  * @return {{type: string}}
  */
@@ -403,7 +512,6 @@ const fetchSearchResultsCancel = () => ({
 
 /**
  * Creates action for search request failing.
- *
  * @method
  * @param {Object} params - axios response schema
  * @param params.data - response body
@@ -423,7 +531,6 @@ const fetchSearchResultsFailure = ({ data, status } = {}) => ({
 
 /**
  * Creates action for successful search request.
- *
  * @method
  * @param {Object} data - response body
  * @return {{type: string, data: *}}
@@ -435,10 +542,7 @@ const fetchSearchResultsSuccess = data => ({
 
 /**
  * Creates action with item update request details.
- *
  * @method
- * @callback failureCallback
- * @callback successCallback
  * @param {Object} params
  * @param {Object} params.id - item id
  * @param {Object} params.data - request body
@@ -468,7 +572,6 @@ const updateItem = ({
 
 /**
  * Creates action for item update request failing.
- *
  * @method
  * @param {Object} params - axios response schema
  * @param params.data - response body
@@ -488,8 +591,7 @@ const updateItemFailure = ({ data, status } = {}) => ({
 
 /**
  * Creates action for successful item creation request.
- *
- * @methoddeleteItemFailure
+ * @method
  * @param {Object} data - response body
  * @return {{type: string, data: *}}
  */
@@ -531,45 +633,40 @@ export const actions = {
 
 /**
  * Returns current state.
- *
  * @method
- * @param {Object} state
+ * @param {object} state - redux state
  * @return {*}
  */
 const getState = state => state[name];
 
 /**
  * Returns request error.
- *
  * @method
- * @param {Object} state
+ * @param {object} state - redux state
  * @return {*}
  */
 const getError = state => getState(state).error;
 
 /**
  * Returns currently loaded SightEvent.
- *
  * @method
- * @param {Object} state
+ * @param {Object} state - redux state
  * @return {*}
  */
 const getTicketPoolDefinition = state => getState(state).item;
 
 /**
  * Returns currently loaded SightEvents list.
- *
  * @method
- * @param {Object} state
+ * @param {Object} state - redux state
  * @return {*}
  */
 const getTicketPoolDefinitions = state => getState(state).list;
 
 /**
  * Returns SightEvent with specified id from SightEvents list.
- *
  * @method
- * @param {Object} state
+ * @param {Object} state - redux state
  * @param {number} id - Sight id
  * @return {*}
  */
@@ -592,6 +689,10 @@ export const selectors = {
  * LOGIC
  */
 
+/**
+ * Logic used for handling entity search results clearing.
+ * @method
+ */
 const clearSearchResultsLogic = createLogic({
   type: [
     CLEAR_SEARCH_RESULTS,
@@ -604,6 +705,10 @@ const clearSearchResultsLogic = createLogic({
   },
 });
 
+/**
+ * Logic used for handling entity creation.
+ * @method
+ */
 const createItemLogic = createLogic({
   type: [
     CREATE_ITEM,
@@ -643,6 +748,10 @@ const createItemLogic = createLogic({
   },
 });
 
+/**
+ * Logic used for handling entity deletion.
+ * @method
+ */
 const deleteItemLogic = createLogic({
   type: [
     DELETE_ITEM,
@@ -682,6 +791,10 @@ const deleteItemLogic = createLogic({
   },
 });
 
+/**
+ * Logic used for handling entity fetching.
+ * @method
+ */
 const fetchItemLogic = createLogic({
   type: [
     FETCH_ITEM,
@@ -724,6 +837,10 @@ const fetchItemLogic = createLogic({
   },
 });
 
+/**
+ * Logic used for handling entity list fetching.
+ * @method
+ */
 const fetchListLogic = createLogic({
   type: [
     FETCH_LIST,
@@ -766,6 +883,10 @@ const fetchListLogic = createLogic({
   },
 });
 
+/**
+ * Logic used for handling entity search results fetching.
+ * @method
+ */
 const fetchSearchResultsLogic = createLogic({
   type: [
     FETCH_SEARCH_RESULTS,
@@ -808,6 +929,10 @@ const fetchSearchResultsLogic = createLogic({
   },
 });
 
+/**
+ * Logic used for handling entity updates.
+ * @method
+ */
 const updateItemLogic = createLogic({
   type: [
     UPDATE_ITEM,
@@ -862,13 +987,25 @@ export const logic = {
  * REDUCERS
  */
 
-// export for test purposes
+/**
+ * Default state model.
+ * @type {object}
+ * @property {object|null} error - submission error
+ * @property {object} item - current entity data
+ * @property {object[]} list - entity list data
+ */
 export const defaultInitialState = {
   error: null,
   item: {},
   list: [],
 };
 
+/**
+ * Module's reducer function.
+ * @method
+ * @param {object} initialState - allows initializing reducer with custom state
+ * @return {object}
+ */
 const reducer = (initialState = defaultInitialState) => (state = initialState, action) => {
   switch (action.type) {
     case CLEAR_SEARCH_RESULTS:
