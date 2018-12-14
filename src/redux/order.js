@@ -1,8 +1,27 @@
 import { createLogic } from 'redux-logic';
 import { types as userTypes } from './profile';
 
+/**
+ * Defines set of methods for managing order placement.
+ * @module Order
+ */
+
+/**
+ * Base API URL.
+ * @type {string}
+ */
 export const apiURL = '/orders';
+
+/**
+ * Module name.
+ * @type {string}
+ */
 export const name = 'order';
+
+/**
+ * Reducer prefix.
+ * @type {string}
+ */
 const prefix = `commons/${name}/`;
 
 
@@ -10,13 +29,52 @@ const prefix = `commons/${name}/`;
  * TYPES
  */
 
+/**
+ * Type used for resetting order's state.
+ * @type {string}
+ */
 const CLEAR_ORDER = `${prefix}CLEAR_ORDER`;
+
+/**
+ * Type used for clearing transaction details.
+ * @type {string}
+ */
 const CLEAR_TRANSACTION = `${prefix}CLEAR_TRANSACTION`;
+
+/**
+ * Type used for handling order submission.
+ * @type {string}
+ */
 const SEND_ORDER = `${prefix}SEND_ORDER`;
+
+/**
+ * Type used for handling order cancellation.
+ * @type {string}
+ */
 const SEND_ORDER_CANCEL = `${prefix}SEND_ORDER_CANCEL`;
+
+/**
+ * Type used for handling order failure.
+ * @type {string}
+ */
 const SEND_ORDER_FAILURE = `${prefix}SEND_ORDER_FAILURE`;
+
+/**
+ * Type used for handling order success.
+ * @type {string}
+ */
 const SEND_ORDER_SUCCESS = `${prefix}SEND_ORDER_SUCCESS`;
+
+/**
+ * Type used for handling order details update.
+ * @type {string}
+ */
 const UPDATE_DETAILS = `${prefix}UPDATE_DETAILS`;
+
+/**
+ * Type used for handling order entries update.
+ * @type {string}
+ */
 const UPDATE_ENTRIES = `${prefix}UPDATE_ENTRIES`;
 
 export const types = {
@@ -59,8 +117,6 @@ const clearTransaction = () => ({
  * Creates action with order request details.
  *
  * @method
- * @callback failureCallback
- * @callback successCallback
  * @param {Object} params
  * @param {Object} params.data - request data
  * @param {Object} [params.options] - request config
@@ -174,7 +230,7 @@ export const actions = {
  * Returns current state.
  *
  * @method
- * @param {Object} state
+ * @param {Object} state - redux state
  * @return {*}
  */
 const getState = state => state[name];
@@ -183,7 +239,7 @@ const getState = state => state[name];
  * Returns request error.
  *
  * @method
- * @param {Object} state
+ * @param {Object} state - redux state
  * @return {*}
  */
 const getError = state => getState(state).error;
@@ -192,7 +248,7 @@ const getError = state => getState(state).error;
  * Returns order details.
  *
  * @method
- * @param {Object} state
+ * @param {Object} state - redux state
  * @return {*}
  */
 const getDetails = state => getState(state).details;
@@ -201,7 +257,7 @@ const getDetails = state => getState(state).details;
  * Returns order entries.
  *
  * @method
- * @param {Object} state
+ * @param {Object} state - redux state
  * @return {*}
  */
 const getEntries = state => getState(state).entries;
@@ -210,7 +266,7 @@ const getEntries = state => getState(state).entries;
  * Returns transaction details.
  *
  * @method
- * @param {Object} state
+ * @param {Object} state - redux state
  * @return {*}
  */
 const getTransaction = state => getState(state).transaction;
@@ -219,7 +275,7 @@ const getTransaction = state => getState(state).transaction;
  * Returns order information.
  *
  * @method
- * @param {Object} state
+ * @param {Object} state - redux state
  * @return {{details: *, entries: *}}
  */
 const getOrder = (state) => {
@@ -245,6 +301,11 @@ export const selectors = {
  * LOGIC
  */
 
+/**
+ * Logic used for handling order clearing.
+ *
+ * @method
+ */
 const clearOrderLogic = createLogic({
   type: [
     userTypes.LOGIN_SUCCESS,
@@ -256,6 +317,11 @@ const clearOrderLogic = createLogic({
   },
 });
 
+/**
+ * Logic used for handling order submission.
+ *
+ * @method
+ */
 const sendOrderLogic = createLogic({
   type: [
     SEND_ORDER,
@@ -308,7 +374,15 @@ export const logic = {
  * REDUCERS
  */
 
-// export for test purposes
+/**
+ * Default state model.
+ *
+ * @type {object}
+ * @property {object} details - buyer's details
+ * @property {object[]} entries - list of order entries
+ * @property {object|null} error - submission error
+ * @property {object} transaction - transaction details
+ */
 export const defaultInitialState = {
   details: {},
   entries: [],
@@ -316,6 +390,13 @@ export const defaultInitialState = {
   transaction: {},
 };
 
+/**
+ * Module's reducer function.
+ *
+ * @method
+ * @param {object} initialState - allows initializing reducer with custom state
+ * @return {object}
+ */
 const reducer = (initialState = defaultInitialState) => (state = initialState, action) => {
   switch (action.type) {
     case CLEAR_TRANSACTION:
