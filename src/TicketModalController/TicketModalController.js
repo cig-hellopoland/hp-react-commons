@@ -45,14 +45,17 @@ class TicketModalController extends Component {
 
   getInitialActiveStep = (cartItem) => {
     const { sightEvent } = this.props;
-    const { ticketPoolDefinitions } = sightEvent;
-    const { id: poolId } = ticketPoolDefinitions[0];
+    const { ticketPoolDefinitions } = sightEvent || {};
 
-    const isPoolSingle = this.isPoolSingle(ticketPoolDefinitions);
-    const isPoolCyclic = this.isPoolCyclic(ticketPoolDefinitions, poolId);
+    if (ticketPoolDefinitions && ticketPoolDefinitions.length > 0) {
+      const { id: poolId } = ticketPoolDefinitions[0];
 
-    if ((cartItem && cartItem.id) || (isPoolSingle && !isPoolCyclic)) {
-      return 3;
+      const isPoolSingle = this.isPoolSingle(ticketPoolDefinitions);
+      const isPoolCyclic = this.isPoolCyclic(ticketPoolDefinitions, poolId);
+
+      if ((cartItem && cartItem.id) || (isPoolSingle && !isPoolCyclic)) {
+        return 3;
+      }
     }
 
     return 1;
@@ -284,8 +287,7 @@ class TicketModalController extends Component {
 
     if (date) {
       data.options.params = {
-        // TODO: get rid of Z on the end?
-        date: `${format(date, constants.DAY_FORMAT)}Z`,
+        date: format(date, constants.DAY_FORMAT),
       };
 
       fetchAvailableTicketsByDate(data);
@@ -343,12 +345,17 @@ class TicketModalController extends Component {
     const { steps, onSubmit } = this.props;
 
     if (activeStep <= steps - 1) {
-      const { availableTickets } = this.props;
-      const isPoolSingle = this.isPoolSingle(availableTickets.ticketPools);
-      const hasAvailableTickets = this.hasAvailableTickets(availableTickets.ticketPools);
+      const { availableTickets: { ticketPools } } = this.props;
+      const isPoolSingle = this.isPoolSingle(ticketPools);
+      const hasAvailableTickets = this.hasAvailableTickets(ticketPools);
 
       if (activeStep === 1 && isPoolSingle && hasAvailableTickets) {
-        this.setStep(3);
+        const [ticketPool] = ticketPools;
+
+        this.setState({
+          date: extendDateWithEventTime(date, ticketPool.startDate),
+          poolId: ticketPool.id,
+        }, this.setStep(3));
       } else {
         this.nextStep();
       }

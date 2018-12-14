@@ -1,7 +1,7 @@
 import { createLogic } from 'redux-logic';
 import _isEqual from 'lodash/isEqual';
 import _uniq from 'lodash/uniq';
-import { actions as profileActions } from './profile';
+import { types as profileTypes } from './profile';
 
 /**
  * Defines set of methods for managing cart.
@@ -281,7 +281,7 @@ export const selectors = {
  */
 const clearCartLogic = createLogic({
   type: [
-    profileActions.LOGOUT_SUCCESS,
+    profileTypes.LOGOUT_SUCCESS,
   ],
   process() {
     return clear();

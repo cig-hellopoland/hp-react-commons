@@ -1,4 +1,3 @@
-import getDay from 'date-fns/get_day';
 import getDate from 'date-fns/get_date';
 import getMonth from 'date-fns/get_month';
 import differenceInCalendarWeeks from 'date-fns/difference_in_calendar_weeks';
@@ -6,6 +5,7 @@ import differenceInCalendarDays from 'date-fns/difference_in_calendar_days';
 import differenceInCalendarMonths from 'date-fns/difference_in_calendar_months';
 import startOfDay from 'date-fns/start_of_day';
 import frequencyTypes from './frequencyTypes';
+import getDay from './getDay';
 import isAfter from './isAfter';
 import isBefore from './isBefore';
 
@@ -26,7 +26,8 @@ export default function isDateAvailableInPool(date, poolDefinition) {
   if (frequencyType === frequencyTypes.WEEKLY) {
     const { daysOfWeek } = frequencyData;
     const allowedDaysOfWeek = daysOfWeek || [getDay(startDate)];
-    if (allowedDaysOfWeek.includes(getDay(date))) {
+    const providedDay = getDay(date);
+    if (allowedDaysOfWeek.includes(providedDay)) {
       return differenceInCalendarWeeks(startDate, date) % frequency === 0;
     }
 
