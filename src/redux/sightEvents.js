@@ -26,6 +26,9 @@ const CREATE_PDF_SUCCESS = `${prefix}CREATE_PDF_SUCCESS`;
 const DELETE_ITEM = `${prefix}DELETE_ITEM`;
 const DELETE_ITEM_FAILURE = `${prefix}DELETE_ITEM_FAILURE`;
 const DELETE_ITEM_SUCCESS = `${prefix}DELETE_ITEM_SUCCESS`;
+const DELETE_PDF = `${prefix}DELETE_PDF`;
+const DELETE_PDF_FAILURE = `${prefix}DELETE_PDF_FAILURE`;
+const DELETE_PDF_SUCCESS = `${prefix}DELETE_PDF_SUCCESS`;
 const FETCH_AVAILABLE_TICKETS = `${prefix}FETCH_AVAILABLE_TICKETS`;
 const FETCH_AVAILABLE_TICKETS_CANCEL = `${prefix}FETCH_AVAILABLE_TICKETS_CANCEL`;
 const FETCH_AVAILABLE_TICKETS_FAILURE = `${prefix}FETCH_AVAILABLE_TICKETS_FAILURE`;
@@ -62,6 +65,9 @@ export const types = {
   DELETE_ITEM,
   DELETE_ITEM_FAILURE,
   DELETE_ITEM_SUCCESS,
+  DELETE_PDF,
+  DELETE_PDF_FAILURE,
+  DELETE_PDF_SUCCESS,
   FETCH_AVAILABLE_TICKETS,
   FETCH_AVAILABLE_TICKETS_CANCEL,
   FETCH_AVAILABLE_TICKETS_FAILURE,
@@ -377,6 +383,67 @@ const deleteItemFailure = ({ data, status } = {}) => ({
  */
 const deleteItemSuccess = () => ({
   type: DELETE_ITEM_SUCCESS,
+});
+
+/**
+ * Creates action with pdf deletion request details.
+ *
+ * @method
+ * @callback failureCallback
+ * @callback successCallback
+ * @param {Object} params
+ * @param {number} params.id - item id
+ * @param {Object} [params.options] - request config
+ * @param {failureCallback} [params.onFailure] - failure callback
+ * @param {successCallback} [params.onSuccess] - success callback
+ * @return {{
+ *   type: string,
+ *   payload: {url: string, method: string, options: *},
+ *   onFailure: failureCallback,
+ *   onSuccess: successCallback
+ * }}
+ */
+const deletePdf = ({
+  id, options, onFailure, onSuccess,
+} = {}) => ({
+  type: DELETE_PDF,
+  payload: {
+    url: `${apiURL}/${id}/pdf`,
+    method: 'delete',
+    ...options,
+  },
+  onFailure,
+  onSuccess,
+});
+
+/**
+ * Creates action for pdf deletion request failing.
+ *
+ * @method
+ * @param {Object} params - axios response schema
+ * @param params.data - response body
+ * @param params.status - response status
+ * @return {{
+ *   type: string,
+ *   error: {data, status: number}
+ * }}
+ */
+const deletePdfFailure = ({ data, status } = {}) => ({
+  type: DELETE_PDF_FAILURE,
+  error: {
+    data,
+    status,
+  },
+});
+
+/**
+ * Creates action for successful pdf deletion request.
+ *
+ * @method
+ * @return {{type: string}}
+ */
+const deletePdfSuccess = () => ({
+  type: DELETE_PDF_SUCCESS,
 });
 
 /**
@@ -758,6 +825,9 @@ export const actions = {
   deleteItem,
   deleteItemFailure,
   deleteItemSuccess,
+  deletePdf,
+  deletePdfFailure,
+  deletePdfSuccess,
   fetchAvailableTickets,
   fetchAvailableTicketsCancel,
   fetchAvailableTicketsFailure,
@@ -1019,6 +1089,45 @@ const deleteItemLogic = createLogic({
   },
 });
 
+const deletePdfLogic = createLogic({
+  type: [
+    DELETE_PDF,
+  ],
+  latest: true,
+  async process(
+    { action: { payload, onFailure, onSuccess }, httpClient, cancelled$ },
+    dispatch,
+    done,
+  ) {
+    try {
+      const response = await httpClient.cancellable(payload, cancelled$);
+      const { status } = response;
+
+      if (status === 200 || status === 204) {
+        dispatch(deletePdfSuccess());
+
+        if (onSuccess) {
+          onSuccess();
+        }
+      } else {
+        dispatch(deletePdfFailure(response));
+
+        if (onFailure) {
+          onFailure();
+        }
+      }
+    } catch ({ response }) {
+      dispatch(deletePdfFailure(response));
+
+      if (onFailure) {
+        onFailure();
+      }
+    }
+
+    done();
+  },
+});
+
 const fetchAvailableTicketsLogic = createLogic({
   type: [
     FETCH_AVAILABLE_TICKETS,
@@ -1236,6 +1345,7 @@ export const logic = {
   createMainImageLogic,
   createPDFLogic,
   deleteItemLogic,
+  deletePdfLogic,
   fetchAvailableTicketsLogic,
   fetchItemLogic,
   fetchListLogic,
