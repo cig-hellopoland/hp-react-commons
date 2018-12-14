@@ -4,6 +4,7 @@ import _uniq from 'lodash/uniq';
 import { actions as profileActions } from './profile';
 
 /**
+ * Defines set of methods for managing cart.
  * @module Cart
  */
 

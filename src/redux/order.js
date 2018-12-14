@@ -2,6 +2,7 @@ import { createLogic } from 'redux-logic';
 import { types as userTypes } from './profile';
 
 /**
+ * Defines set of methods for managing order placement.
  * @module Order
  */
 

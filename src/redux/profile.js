@@ -1,6 +1,7 @@
 import { createLogic } from 'redux-logic';
 
 /**
+ * Defines set of methods for managing user's profile.
  * @module Profile
  */
 

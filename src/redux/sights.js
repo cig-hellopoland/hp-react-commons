@@ -2,6 +2,7 @@ import { createLogic } from 'redux-logic';
 import _find from 'lodash/find';
 
 /**
+ * Defines set of methods for managing Sight entities.
  * @module Sights
  */
 
