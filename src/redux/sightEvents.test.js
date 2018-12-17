@@ -315,7 +315,7 @@ describe('actions', () => {
   });
 
   it('should create an action to make pdf delete request', () => {
-    const { deletePdf } = actions;
+    const { deletePDF } = actions;
     const { DELETE_PDF } = types;
     const id = 1;
     const options = { b: 2 };
@@ -327,47 +327,47 @@ describe('actions', () => {
       },
     };
 
-    expect(deletePdf({ id })).toEqual(expectedValue);
+    expect(deletePDF({ id })).toEqual(expectedValue);
 
     expectedValue.payload = {
       ...expectedValue.payload,
       ...options,
     };
 
-    expect(deletePdf({ id, options })).toEqual(expectedValue);
+    expect(deletePDF({ id, options })).toEqual(expectedValue);
 
     expectedValue.onFailure = onFailure;
     expectedValue.onSuccess = onSuccess;
 
-    expect(deletePdf({
+    expect(deletePDF({
       id, options, onFailure, onSuccess,
     })).toEqual(expectedValue);
   });
 
 
   it('should create an action to fail pdf delete request', () => {
-    const { deletePdfFailure } = actions;
+    const { deletePDFFailure } = actions;
     const { DELETE_PDF_FAILURE } = types;
     const expectedValue = {
       type: DELETE_PDF_FAILURE,
       error: {},
     };
 
-    expect(deletePdfFailure()).toEqual(expectedValue);
+    expect(deletePDFFailure()).toEqual(expectedValue);
 
     expectedValue.error = axiosResponseError;
 
-    expect(deletePdfFailure(axiosResponseError)).toEqual(expectedValue);
+    expect(deletePDFFailure(axiosResponseError)).toEqual(expectedValue);
   });
 
   it('should create an action to succeed item delete request', () => {
-    const { deletePdfSuccess } = actions;
+    const { deletePDFSuccess } = actions;
     const { DELETE_PDF_SUCCESS } = types;
     const expectedValue = {
       type: DELETE_PDF_SUCCESS,
     };
 
-    expect(deletePdfSuccess()).toEqual(expectedValue);
+    expect(deletePDFSuccess()).toEqual(expectedValue);
   });
 
   it('should create an action to clear available tickets from state', () => {

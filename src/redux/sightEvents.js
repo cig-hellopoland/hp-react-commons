@@ -123,8 +123,23 @@ const DELETE_ITEM_FAILURE = `${prefix}DELETE_ITEM_FAILURE`;
  * @type {string}
  */
 const DELETE_ITEM_SUCCESS = `${prefix}DELETE_ITEM_SUCCESS`;
+
+/**
+ * Type used for handling PDF document deletion.
+ * @type {string}
+ */
 const DELETE_PDF = `${prefix}DELETE_PDF`;
+
+/**
+ * Type used for handling PDF document deletion failure.
+ * @type {string}
+ */
 const DELETE_PDF_FAILURE = `${prefix}DELETE_PDF_FAILURE`;
+
+/**
+ * Type used for handling PDF document deletion success.
+ * @type {string}
+ */
 const DELETE_PDF_SUCCESS = `${prefix}DELETE_PDF_SUCCESS`;
 
 /**
@@ -436,7 +451,7 @@ const createMainImageSuccess = data => ({
 });
 
 /**
- * Creates action with main image creation request details.
+ * Creates action with PDF document creation request details.
  * @method
  * @param {number} id - item id
  * @param {Object} data - request data
@@ -469,7 +484,7 @@ const createPDF = ({
 });
 
 /**
- * Creates action for main image creation request failing.
+ * Creates action for PDF document creation request failing.
  * @method
  * @param {Object} params - axios response schema
  * @param params.data - response body
@@ -488,7 +503,7 @@ const createPDFFailure = ({ data, status } = {}) => ({
 });
 
 /**
- * Creates action for successful main image creation request.
+ * Creates action for successful PDF document creation request.
  * @method
  * @param {Object} data - response body
  * @return {{type: string, data: *}}
@@ -556,10 +571,7 @@ const deleteItemSuccess = () => ({
 
 /**
  * Creates action with pdf deletion request details.
- *
  * @method
- * @callback failureCallback
- * @callback successCallback
  * @param {Object} params
  * @param {number} params.id - item id
  * @param {Object} [params.options] - request config
@@ -572,7 +584,7 @@ const deleteItemSuccess = () => ({
  *   onSuccess: successCallback
  * }}
  */
-const deletePdf = ({
+const deletePDF = ({
   id, options, onFailure, onSuccess,
 } = {}) => ({
   type: DELETE_PDF,
@@ -587,7 +599,6 @@ const deletePdf = ({
 
 /**
  * Creates action for pdf deletion request failing.
- *
  * @method
  * @param {Object} params - axios response schema
  * @param params.data - response body
@@ -597,7 +608,7 @@ const deletePdf = ({
  *   error: {data, status: number}
  * }}
  */
-const deletePdfFailure = ({ data, status } = {}) => ({
+const deletePDFFailure = ({ data, status } = {}) => ({
   type: DELETE_PDF_FAILURE,
   error: {
     data,
@@ -607,11 +618,10 @@ const deletePdfFailure = ({ data, status } = {}) => ({
 
 /**
  * Creates action for successful pdf deletion request.
- *
  * @method
  * @return {{type: string}}
  */
-const deletePdfSuccess = () => ({
+const deletePDFSuccess = () => ({
   type: DELETE_PDF_SUCCESS,
 });
 
@@ -962,9 +972,9 @@ export const actions = {
   deleteItem,
   deleteItemFailure,
   deleteItemSuccess,
-  deletePdf,
-  deletePdfFailure,
-  deletePdfSuccess,
+  deletePDF,
+  deletePDFFailure,
+  deletePDFSuccess,
   fetchAvailableTickets,
   fetchAvailableTicketsCancel,
   fetchAvailableTicketsFailure,
@@ -1245,6 +1255,54 @@ const deleteItemLogic = createLogic({
   },
 });
 
+
+/**
+ * Logic used for handling PDF document deletion.
+ * @method
+ */
+const deletePDFLogic = createLogic({
+  type: [
+    DELETE_PDF,
+  ],
+  latest: true,
+  async process(
+    { action: { payload, onFailure, onSuccess }, httpClient, cancelled$ },
+    dispatch,
+    done,
+  ) {
+    try {
+      const response = await httpClient.cancellable(payload, cancelled$);
+      const { status } = response;
+
+      if (status === 200 || status === 204) {
+        dispatch(deletePDFSuccess());
+
+        if (onSuccess) {
+          onSuccess();
+        }
+      } else {
+        dispatch(deletePDFFailure(response));
+
+        if (onFailure) {
+          onFailure();
+        }
+      }
+    } catch ({ response }) {
+      dispatch(deletePDFFailure(response));
+
+      if (onFailure) {
+        onFailure();
+      }
+    }
+
+    done();
+  },
+});
+
+/**
+ * Logic used for fetching information about available tickest.
+ * @method
+ */
 const fetchAvailableTicketsLogic = createLogic({
   type: [
     FETCH_AVAILABLE_TICKETS,
@@ -1478,7 +1536,7 @@ export const logic = {
   createMainImageLogic,
   createPDFLogic,
   deleteItemLogic,
-  deletePdfLogic,
+  deletePDFLogic,
   fetchAvailableTicketsLogic,
   fetchItemLogic,
   fetchListLogic,

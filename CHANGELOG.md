@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.2.0
+* Added PDF deletion methods to `sightEvents` duck.
+
 ## 1.1.1
 * Updated JSDoc
 
