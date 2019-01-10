@@ -1,6 +1,6 @@
 {
   "name": "@hello-poland/commons",
-  "version": "1.1.1",
+  "version": "1.2.0",
   "main": "redux/index.js",
   "repository": {
     "type": "git",
@@ -51,10 +51,10 @@
   },
   "scripts": {
     "build": "babel src --out-dir ./dist --ignore src/**/*.test.js --source-maps",
-    "clean": "rimraf ./dist",
+    "clean": "rimraf ./dist ./jsdoc/*",
     "distribute": "cd dist && npm publish --registry=https://packages.fream.pl/repository/npm-fream/",
-    "jsdoc": "jsdoc -r -d ./jsdoc ./src",
-    "jsdoc2md": "jsdoc2md src/**/*.js > jsdoc/hellopoland-react-commons.md",
+    "jsdoc": "npm run clean && jsdoc -r -d ./jsdoc ./src",
+    "jsdoc2md": "npm run clean && jsdoc2md src/**/*.js > jsdoc/hellopoland-react-commons.md",
     "lint": "eslint . --ext .js,.jsx --ignore-path .gitignore --cache",
     "lint-fix": "npm run lint -- --fix",
     "package": "npm run verify && npm run build && cpy .npmrc package.json CHANGELOG.md README.md ./dist",
