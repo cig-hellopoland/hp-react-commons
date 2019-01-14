@@ -106,6 +106,19 @@ class TicketModalController extends Component {
     return null;
   };
 
+  getTicketAvailabilityText = (totalTicketsNumber, selectedTicketsNumber, options = {}) => {
+    const t = options.t || (() => '')();
+    const availableTicketsNumber = totalTicketsNumber - selectedTicketsNumber;
+    let availability = t('ticketModal:ticketAvailability:unlimited');
+
+    if (totalTicketsNumber === 0) {
+      availability = t('ticketModal:ticketAvailability:unavailable');
+    } else if (totalTicketsNumber > 0) {
+      availability = t('ticketModal:ticketAvailability:available', { availableTicketsNumber });
+    }
+
+    return availability;
+  };
 
   getTicketDefinitions = (poolId) => {
     const { availableTickets: { ticketPools } } = this.props;
@@ -450,6 +463,7 @@ class TicketModalController extends Component {
       handlePoolChange: this.handlePoolChange,
       handlePrevButtonClick: this.handlePrevButtonClick,
       handleNextButtonClick: this.handleNextButtonClick,
+      getTicketAvailabilityText: this.getTicketAvailabilityText,
       getEntriesByPropName: this.getEntriesByPropName,
       ticketDefinitions: this.getTicketDefinitions(poolId),
       isNextButtonActive: this.isNextButtonActive(),
