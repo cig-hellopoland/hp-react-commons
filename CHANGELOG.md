@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.3.0
+* Added minimal supported node (8.15.0) and npm (6.4.1) versions.
+
 ## 1.2.0
 * Added PDF deletion methods to `sightEvents` duck.
 

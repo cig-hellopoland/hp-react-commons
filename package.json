@@ -6,6 +6,10 @@
     "type": "git",
     "url": "git@git.fream.pl:hello-poland/hellopoland-react-commons.git"
   },
+  "engines": {
+    "node": ">=8.15.0",
+    "npm": ">=6.4.1"
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",
