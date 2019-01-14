@@ -43,6 +43,15 @@ class TicketModalController extends Component {
     fetchAvailableTicketsCancel();
   }
 
+  getAvailablePoolTicketsQty = () => {
+    const { poolId } = this.state;
+    const { availableTickets: { ticketPools } } = this.props;
+    const ticketPool = this.getTicketPoolById(ticketPools, poolId) || {};
+    const { availableTicketsNumber } = ticketPool;
+
+    return Number.isInteger(availableTicketsNumber) ? availableTicketsNumber : null;
+  };
+
   getInitialActiveStep = (cartItem) => {
     const { sightEvent } = this.props;
     const { ticketPoolDefinitions } = sightEvent || {};
@@ -455,6 +464,7 @@ class TicketModalController extends Component {
     return children({
       ...props,
       ...this.state,
+      availablePoolTicketsQty: this.getAvailablePoolTicketsQty(),
       totalPrice: this.getTotalPrice(),
       totalTicketsQty: this.getTotalTicketsQty(),
       handleAgreementChange: this.handleAgreementChange,
