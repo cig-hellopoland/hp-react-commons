@@ -726,6 +726,55 @@ describe('actions', () => {
 
     expect(updateItemSuccess(data)).toEqual(expectedValue);
   });
+
+  it('should create an action to make stop sell request', () => {
+    const { stopSell } = actions;
+    const { STOP_SELL } = types;
+    const sightEventId = 1;
+    const ticketPoolId = 2;
+    const date = '1999-01-01';
+    const expectedValue = {
+      type: STOP_SELL,
+      payload: {
+        url: `${apiURL}/${sightEventId}/sale?tpdId=${ticketPoolId}&date=${date}`,
+        method: 'delete',
+      },
+    };
+
+    expect(stopSell({ sightEventId, ticketPoolId, date })).toEqual(expectedValue);
+
+    expectedValue.onFailure = onFailure;
+    expectedValue.onSuccess = onSuccess;
+
+    expect(stopSell({
+      sightEventId, ticketPoolId, date, onFailure, onSuccess,
+    })).toEqual(expectedValue);
+  });
+
+  it('should create an action to fail stop sell request', () => {
+    const { stopSellFailure } = actions;
+    const { STOP_SELL_FAILURE } = types;
+    const expectedValue = {
+      type: STOP_SELL_FAILURE,
+      error: {},
+    };
+
+    expect(stopSellFailure()).toEqual(expectedValue);
+
+    expectedValue.error = axiosResponseError;
+
+    expect(stopSellFailure(axiosResponseError)).toEqual(expectedValue);
+  });
+
+  it('should create an action to succeed stop sell request', () => {
+    const { stopSellSuccess } = actions;
+    const { STOP_SELL_SUCCESS } = types;
+    const expectedValue = {
+      type: STOP_SELL_SUCCESS,
+    };
+
+    expect(stopSellSuccess()).toEqual(expectedValue);
+  });
 });
 
 describe('selectors', () => {

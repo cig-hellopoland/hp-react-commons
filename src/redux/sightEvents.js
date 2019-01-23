@@ -256,6 +256,24 @@ const UPDATE_ITEM_FAILURE = `${prefix}UPDATE_ITEM_FAILURE`;
  */
 const UPDATE_ITEM_SUCCESS = `${prefix}UPDATE_ITEM_SUCCESS`;
 
+/**
+ * Type used for handling of sell stop.
+ * @type {string}
+ */
+const STOP_SELL= `${prefix}STOP_SELL`;
+
+/**
+ * Type used for handling entity updates failure.
+ * @type {string}
+ */
+const STOP_SELL_FAILURE = `${prefix}STOP_SELL_FAILURE`;
+
+/**
+ * Type used for handling entity updates success.
+ * @type {string}
+ */
+const STOP_SELL_SUCCESS = `${prefix}STOP_SELL_SUCCESS`;
+
 export const types = {
   CLEAR_AVAILABLE_TICKETS,
   CLEAR_ITEM,
@@ -294,6 +312,9 @@ export const types = {
   UPDATE_ITEM,
   UPDATE_ITEM_FAILURE,
   UPDATE_ITEM_SUCCESS,
+  STOP_SELL,
+  STOP_SELL_FAILURE,
+  STOP_SELL_SUCCESS,
 };
 
 
@@ -956,6 +977,67 @@ const updateItemSuccess = data => ({
   data,
 });
 
+/**
+ * Creates action with stop sell.
+ * @method
+ * @param {Object} params
+ * @param {Object} params.sightEventId - sightEvent id
+ * @param {Object} params.ticketPoolId - ticketPoolDefinition id
+ * @param {Object} params.date - user input - picked date
+ * @param {failureCallback} [params.onFailure] - failure callback
+ * @param {successCallback} [params.onSuccess] - success callback
+ * @return {{
+ *   type: string,
+ *   payload: {url: string, method: string},
+ *   onFailure: failureCallback,
+ *   onSuccess: successCallback
+ * }}
+ */
+
+const stopSell = ({
+  sightEventId, ticketPoolId, date, onFailure, onSuccess,
+} = {}) => ({
+  type: STOP_SELL,
+  payload: {
+    url: `${apiURL}/${sightEventId}/sale?tpdId=${ticketPoolId}&date=${date}`,
+    method: 'delete',
+  },
+  onFailure,
+  onSuccess,
+});
+
+/**
+ * Creates action for stop sell request failing.
+ * @method
+ * @param {Object} params - axios response schema
+ * @param params.data - response body
+ * @param params.status - response status
+ * @return {{
+ *   type: string,
+ *   error: {data, status: number}
+ * }}
+ */
+
+const stopSellFailure = ({ data, status } = {}) => ({
+  type: STOP_SELL_FAILURE,
+  error: {
+    data,
+    status,
+  },
+});
+
+/**
+ * Creates action for successful stop sell request.
+ * @method
+ * @param {Object} data - response body
+ * @return {{type: string, data: *}}
+ */
+
+const stopSellSuccess = data => ({
+  type: STOP_SELL_SUCCESS,
+  data,
+});
+
 export const actions = {
   clearAvailableTickets,
   clearItem,
@@ -994,6 +1076,9 @@ export const actions = {
   updateItem,
   updateItemFailure,
   updateItemSuccess,
+  stopSell,
+  stopSellFailure,
+  stopSellSuccess,
 };
 
 
@@ -1530,6 +1615,45 @@ const updateItemLogic = createLogic({
   },
 });
 
+const stopSellLogic = createLogic({
+  type: [
+    STOP_SELL,
+  ],
+  latest: true,
+  async process(
+    { action: { payload, onFailure, onSuccess }, httpClient, cancelled$ },
+    dispatch,
+    done,
+  ) {
+    try {
+      const response = await httpClient.cancellable(payload, cancelled$);
+      const { data, status } = response;
+
+      if (status === 200 || status === 201) {
+        dispatch(stopSellSuccess(data));
+
+        if (onSuccess) {
+          onSuccess();
+        }
+      } else {
+        dispatch(stopSellFailure(response));
+
+        if (onFailure) {
+          onFailure();
+        }
+      }
+    } catch ({ response }) {
+      dispatch(stopSellFailure(response));
+
+      if (onFailure) {
+        onFailure();
+      }
+    }
+
+    done();
+  },
+});
+
 export const logic = {
   clearSearchResultsLogic,
   createItemLogic,
@@ -1542,6 +1666,7 @@ export const logic = {
   fetchListLogic,
   fetchSearchResultsLogic,
   updateItemLogic,
+  stopSellLogic,
 };
 
 
@@ -1599,6 +1724,7 @@ const reducer = (initialState = defaultInitialState) => (state = initialState, a
     case FETCH_LIST_FAILURE:
     case FETCH_SEARCH_RESULTS_FAILURE:
     case UPDATE_ITEM_FAILURE:
+    case STOP_SELL_FAILURE:
       return {
         ...state,
         error: action.error,
