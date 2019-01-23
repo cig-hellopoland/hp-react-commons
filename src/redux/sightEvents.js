@@ -260,7 +260,7 @@ const UPDATE_ITEM_SUCCESS = `${prefix}UPDATE_ITEM_SUCCESS`;
  * Type used for handling of sell stop.
  * @type {string}
  */
-const STOP_SELL= `${prefix}STOP_SELL`;
+const STOP_SELL = `${prefix}STOP_SELL`;
 
 /**
  * Type used for handling entity updates failure.
