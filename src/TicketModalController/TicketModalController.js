@@ -451,6 +451,7 @@ class TicketModalController extends Component {
       handlePrevButtonClick: this.handlePrevButtonClick,
       handleNextButtonClick: this.handleNextButtonClick,
       getEntriesByPropName: this.getEntriesByPropName,
+      getTicketPoolById: this.getTicketPoolById,
       ticketDefinitions: this.getTicketDefinitions(poolId),
       isNextButtonActive: this.isNextButtonActive(),
       isPrevButtonActive: this.isPrevButtonActive(),

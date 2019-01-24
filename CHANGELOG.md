@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.6.0
+* Method `getTicketPoolById` from `TicketModalController` is publicly available to it's children.
+
 ## 1.3.0
 * Added minimal supported node (8.15.0) and npm (6.4.1) versions.
 
