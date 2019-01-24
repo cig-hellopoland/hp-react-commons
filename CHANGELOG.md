@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.4.0
+* Added `getAvailablePoolTicketsQty` to `TicketModalController`.
+
 ## 1.3.0
 * Added minimal supported node (8.15.0) and npm (6.4.1) versions.
 
