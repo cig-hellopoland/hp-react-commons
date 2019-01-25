@@ -1629,7 +1629,7 @@ const stopSellLogic = createLogic({
       const response = await httpClient.cancellable(payload, cancelled$);
       const { data, status } = response;
 
-      if (status === 200 || status === 201) {
+      if (status === 200 || status === 201 || status === 204) {
         dispatch(stopSellSuccess(data));
 
         if (onSuccess) {
