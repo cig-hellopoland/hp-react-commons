@@ -43,6 +43,15 @@ class TicketModalController extends Component {
     fetchAvailableTicketsCancel();
   }
 
+  getAvailablePoolTicketsQty = () => {
+    const { poolId } = this.state;
+    const { availableTickets: { ticketPools } } = this.props;
+    const ticketPool = this.getTicketPoolById(ticketPools, poolId) || {};
+    const { availableTicketsNumber } = ticketPool;
+
+    return Number.isInteger(availableTicketsNumber) ? availableTicketsNumber : null;
+  };
+
   getInitialActiveStep = (cartItem) => {
     const { sightEvent } = this.props;
     const { ticketPoolDefinitions } = sightEvent || {};
@@ -106,6 +115,19 @@ class TicketModalController extends Component {
     return null;
   };
 
+  getTicketAvailabilityText = (totalTicketsNumber, selectedTicketsNumber, options = {}) => {
+    const t = options.t || (() => '')();
+    const availableTicketsNumber = totalTicketsNumber - selectedTicketsNumber;
+    let availability = t('ticketModal:ticketAvailability:unlimited');
+
+    if (totalTicketsNumber === 0) {
+      availability = t('ticketModal:ticketAvailability:unavailable');
+    } else if (totalTicketsNumber > 0) {
+      availability = t('ticketModal:ticketAvailability:available', { availableTicketsNumber });
+    }
+
+    return availability;
+  };
 
   getTicketDefinitions = (poolId) => {
     const { availableTickets: { ticketPools } } = this.props;
@@ -442,6 +464,7 @@ class TicketModalController extends Component {
     return children({
       ...props,
       ...this.state,
+      availablePoolTicketsQty: this.getAvailablePoolTicketsQty(),
       totalPrice: this.getTotalPrice(),
       totalTicketsQty: this.getTotalTicketsQty(),
       handleAgreementChange: this.handleAgreementChange,
@@ -450,6 +473,7 @@ class TicketModalController extends Component {
       handlePoolChange: this.handlePoolChange,
       handlePrevButtonClick: this.handlePrevButtonClick,
       handleNextButtonClick: this.handleNextButtonClick,
+      getTicketAvailabilityText: this.getTicketAvailabilityText,
       getEntriesByPropName: this.getEntriesByPropName,
       ticketDefinitions: this.getTicketDefinitions(poolId),
       isNextButtonActive: this.isNextButtonActive(),
