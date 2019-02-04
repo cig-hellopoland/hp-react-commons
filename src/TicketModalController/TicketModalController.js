@@ -321,8 +321,10 @@ class TicketModalController extends Component {
 
   generateCartItem = () => {
     const { date, entries, poolId } = this.state;
-    const { cartItem, sightEvent: product } = this.props;
+    const { availableTickets, cartItem, sightEvent: product } = this.props;
+    const ticketPool = this.getTicketPoolById(availableTickets.ticketPools, poolId) || {};
     const ticketDefinitions = this.getTicketDefinitions();
+    const { wholeDay } = ticketPool;
 
     const detailedEntries = Object.keys(entries).reduce((acc, entryId) => {
       const entry = _find(ticketDefinitions, { id: +entryId });
@@ -334,6 +336,7 @@ class TicketModalController extends Component {
           date: format(date, constants.DATE_FORMAT),
           entryId: entries[entry.id].entryId,
           poolId,
+          wholeDay,
           quantity: entries[entry.id].quantity,
         },
       ];
@@ -475,6 +478,7 @@ class TicketModalController extends Component {
       handleNextButtonClick: this.handleNextButtonClick,
       getTicketAvailabilityText: this.getTicketAvailabilityText,
       getEntriesByPropName: this.getEntriesByPropName,
+      getTicketPoolById: this.getTicketPoolById,
       ticketDefinitions: this.getTicketDefinitions(poolId),
       isNextButtonActive: this.isNextButtonActive(),
       isPrevButtonActive: this.isPrevButtonActive(),

@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.6.0
+* Method `getTicketPoolById` from `TicketModalController` is publicly available to it's children.
+* Added `wholeDay` to cart entry.
+
 ## 1.5.0
 * Added Stop Sell functionality to Ticket Pools
 
