@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.5.0
+* Added Stop Sell functionality to Ticket Pools
+
 ## 1.4.0
 * Added `getAvailablePoolTicketsQty` to `TicketModalController`.
 * Added `getTicketAvailabilityText` to `TicketModalController`.
