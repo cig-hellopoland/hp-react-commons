@@ -29,6 +29,30 @@ const prefix = `commons/${name}/`;
 const ERROR_UNAUTHORIZED = `${prefix}ERROR_UNAUTHORIZED`;
 
 /**
+ * Type used for handling change password request.
+ * @type {string}
+ */
+const CHANGE_PASSWORD = `${prefix}CHANGE_PASSWORD`;
+
+/**
+ * Type used for handling change password request cancellation.
+ * @type {string}
+ */
+const CHANGE_PASSWORD_CANCEL = `${prefix}CHANGE_PASSWORD_CANCEL`;
+
+/**
+ * Type used for handling change password request failure.
+ * @type {string}
+ */
+const CHANGE_PASSWORD_FAILURE = `${prefix}CHANGE_PASSWORD_FAILURE`;
+
+/**
+ * Type used for handling change password request success.
+ * @type {string}
+ */
+const CHANGE_PASSWORD_SUCCESS = `${prefix}CHANGE_PASSWORD_SUCCESS`;
+
+/**
  * Type used for handling profile fetching.
  * @type {string}
  */
@@ -95,6 +119,10 @@ const REFRESH_ACCESS_TOKEN = `${prefix}REFRESH_ACCESS_TOKEN`;
 const REFRESH_ACCESS_TOKEN_SUCCESS = `${prefix}REFRESH_ACCESS_TOKEN_SUCCESS`;
 
 export const types = {
+  CHANGE_PASSWORD,
+  CHANGE_PASSWORD_CANCEL,
+  CHANGE_PASSWORD_FAILURE,
+  CHANGE_PASSWORD_SUCCESS,
   ERROR_UNAUTHORIZED,
   FETCH_PROFILE,
   FETCH_PROFILE_CANCEL,
@@ -122,6 +150,73 @@ export const types = {
 const errorUnauthorized = (payload = {}) => ({
   type: ERROR_UNAUTHORIZED,
   payload,
+});
+
+/**
+ * Creates action for password change request.
+ * @method
+ * @callback failureCallback
+ * @callback successCallback
+ * @param {Object} params
+ * @param {Object} [params.options] - request config
+ * @param {failureCallback} [params.onFailure] - failure callback
+ * @param {successCallback} [params.onSuccess] - success callback
+ * @return {{
+ *   type: string,
+ *   payload: {url: string, method: string, data: *, options: *},
+ *   onFailure: failureCallback,
+ *   onSuccess: successCallback
+ * }}
+ */
+const changePassword = ({
+  options, data, onFailure, onSuccess,
+} = {}) => ({
+  type: CHANGE_PASSWORD,
+  payload: {
+    url: '/users/me/password',
+    method: 'patch',
+    ...options,
+    data,
+  },
+  onFailure,
+  onSuccess,
+});
+
+/**
+ * Creates action for password change request cancelling.
+ * @method
+ * @return {{type: string}}
+ */
+const changePasswordCancel = () => ({
+  type: CHANGE_PASSWORD_CANCEL,
+});
+
+/**
+ * Creates action for password change request failing.
+ * @method
+ * @param {Object} params - axios response schema
+ * @param params.data - response body
+ * @param params.status - response status
+ * @return {{
+ *   type: string,
+ *   error: {data, status: number}
+ * }}
+ */
+const changePasswordFailure = ({ data, status } = {}) => ({
+  type: CHANGE_PASSWORD_FAILURE,
+  error: {
+    data,
+    status,
+  },
+});
+
+/**
+ * Creates action for successful password change request.
+ * @method
+ * @return {{type: string}}
+ */
+const changePasswordSuccess = () => ({
+  type: CHANGE_PASSWORD_SUCCESS,
 });
 
 /**
@@ -335,6 +430,10 @@ const refreshAccessTokenSuccess = data => ({
 });
 
 export const actions = {
+  changePassword,
+  changePasswordCancel,
+  changePasswordFailure,
+  changePasswordSuccess,
   errorUnauthorized,
   fetchProfile,
   fetchProfileCancel,
@@ -406,6 +505,48 @@ export const selectors = {
 /*
  * LOGIC
  */
+
+/**
+ * Logic used for handling password change request.
+ * @method
+ */
+const changePasswordLogic = createLogic({
+  type: [
+    CHANGE_PASSWORD,
+  ],
+  async process(
+    { action: { payload, onFailure, onSuccess }, httpClient, cancelled$ },
+    dispatch,
+    done,
+  ) {
+    try {
+      const response = await httpClient.cancellable(payload, cancelled$);
+      const { status } = response;
+
+      if (status === 200 || status === 204) {
+        dispatch(changePasswordSuccess());
+
+        if (onSuccess) {
+          onSuccess();
+        }
+      } else {
+        dispatch(changePasswordFailure(response));
+
+        if (onFailure) {
+          onFailure();
+        }
+      }
+    } catch ({ response }) {
+      dispatch(changePasswordFailure(response));
+
+      if (onFailure) {
+        onFailure();
+      }
+    }
+
+    done();
+  },
+});
 
 /**
  * Logic used for handling profile fetching.
@@ -566,6 +707,7 @@ const unauthorizedLogic = createLogic({
 });
 
 export const logic = {
+  changePasswordLogic,
   fetchProfileLogic,
   fetchProfileOnLoginSuccessLogic,
   loginLogic,
