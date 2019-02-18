@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.7.0
+* Added password changing methods to `profile` duck.
+
 ## 1.6.0
 * Method `getTicketPoolById` from `TicketModalController` is publicly available to it's children.
 * Added `wholeDay` to cart entry.

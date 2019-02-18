@@ -73,6 +73,73 @@ describe('actions', () => {
     expect(errorUnauthorized(payload)).toEqual(expectedValue);
   });
 
+  it('should create an action to make password change request', () => {
+    const { changePassword } = actions;
+    const { CHANGE_PASSWORD } = types;
+    const options = {
+      oldPassword: 'password',
+      newPassword: 'password123',
+    };
+    const expectedValue = {
+      type: CHANGE_PASSWORD,
+      payload: {
+        url: '/users/me/password',
+        method: 'patch',
+      },
+    };
+
+    expect(changePassword()).toEqual(expectedValue);
+
+    expectedValue.payload = {
+      ...expectedValue.payload,
+      ...options,
+    };
+
+    expect(changePassword({ options })).toEqual(expectedValue);
+
+    expectedValue.onFailure = onFailure;
+    expectedValue.onSuccess = onSuccess;
+
+    expect(changePassword({
+      options, onFailure, onSuccess,
+    })).toEqual(expectedValue);
+  });
+
+  it('should create an action to cancel password change request', () => {
+    const { changePasswordCancel } = actions;
+    const { CHANGE_PASSWORD_CANCEL } = types;
+    const expectedValue = {
+      type: CHANGE_PASSWORD_CANCEL,
+    };
+
+    expect(changePasswordCancel()).toEqual(expectedValue);
+  });
+
+  it('should create an action to fail password change request', () => {
+    const { changePasswordFailure } = actions;
+    const { CHANGE_PASSWORD_FAILURE } = types;
+    const expectedValue = {
+      type: CHANGE_PASSWORD_FAILURE,
+      error: {},
+    };
+
+    expect(changePasswordFailure()).toEqual(expectedValue);
+
+    expectedValue.error = axiosResponseError;
+
+    expect(changePasswordFailure(axiosResponseError)).toEqual(expectedValue);
+  });
+
+  it('should create an action to succeed password change request', () => {
+    const { changePasswordSuccess } = actions;
+    const { CHANGE_PASSWORD_SUCCESS } = types;
+    const expectedValue = {
+      type: CHANGE_PASSWORD_SUCCESS,
+    };
+
+    expect(changePasswordSuccess()).toEqual(expectedValue);
+  });
+
   it('should create an action to make profile request', () => {
     const { fetchProfile } = actions;
     const { FETCH_PROFILE } = types;
