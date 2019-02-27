@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.8.0
+* Changed search requests methods to GET.
+* Updated `npm` dependencies.
+
 ## 1.7.0
 * Added password changing methods to `profile` duck.
 
