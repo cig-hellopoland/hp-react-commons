@@ -870,10 +870,8 @@ const fetchSearchResults = ({
   payload: {
     url: `${apiURL}/search`,
     method: 'get',
-    options: {
-      ...options,
-      params,
-    },
+    ...options,
+    params,
   },
   onFailure,
   onSuccess,

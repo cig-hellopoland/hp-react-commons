@@ -407,9 +407,7 @@ describe('actions', () => {
       payload: {
         url: `${apiURL}/search`,
         method: 'get',
-        options: {
-          params,
-        },
+        params,
       },
     };
 
@@ -417,10 +415,7 @@ describe('actions', () => {
 
     expectedValue.payload = {
       ...expectedValue.payload,
-      options: {
-        ...options,
-        params,
-      },
+      ...options,
     };
 
     expect(fetchSearchResults({ options, params })).toEqual(expectedValue);
