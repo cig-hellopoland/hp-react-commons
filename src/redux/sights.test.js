@@ -400,31 +400,31 @@ describe('actions', () => {
   it('should create an action to make search request', () => {
     const { fetchSearchResults } = actions;
     const { FETCH_SEARCH_RESULTS } = types;
-    const data = { a: 1 };
+    const params = { a: 1 };
     const options = { b: 2 };
     const expectedValue = {
       type: FETCH_SEARCH_RESULTS,
       payload: {
         url: `${apiURL}/search`,
-        method: 'post',
-        data,
+        method: 'get',
+        params,
       },
     };
 
-    expect(fetchSearchResults({ data })).toEqual(expectedValue);
+    expect(fetchSearchResults({ params })).toEqual(expectedValue);
 
     expectedValue.payload = {
       ...expectedValue.payload,
       ...options,
     };
 
-    expect(fetchSearchResults({ data, options })).toEqual(expectedValue);
+    expect(fetchSearchResults({ options, params })).toEqual(expectedValue);
 
     expectedValue.onFailure = onFailure;
     expectedValue.onSuccess = onSuccess;
 
     expect(fetchSearchResults({
-      data, options, onFailure, onSuccess,
+      options, params, onFailure, onSuccess,
     })).toEqual(expectedValue);
   });
 

@@ -851,28 +851,27 @@ const fetchListSuccess = data => ({
 /**
  * Creates action with search request details.
  * @method
- * @param {Object} params
- * @param {Object} params.data - request data
- * @param {Object} [params.options] - request config
- * @param {failureCallback} [params.onFailure] - failure callback
- * @param {successCallback} [params.onSuccess] - success callback
+ * @param {Object} params - request data
+ * @param {Object} [options] - request config
+ * @param {failureCallback} [onFailure] - failure callback
+ * @param {successCallback} [onSuccess] - success callback
  * @return {{
  *   type: string,
- *   payload: {url: string, method: string, data: *, options: *},
+ *   payload: {url: string, method: string, params: *, options: *},
  *   onFailure: failureCallback,
  *   onSuccess: successCallback
  * }}
  */
 const fetchSearchResults = ({
-  data, options, onFailure, onSuccess,
+  params, options, onFailure, onSuccess,
 
 } = {}) => ({
   type: FETCH_SEARCH_RESULTS,
   payload: {
     url: `${apiURL}/search`,
-    method: 'post',
+    method: 'get',
     ...options,
-    data,
+    params,
   },
   onFailure,
   onSuccess,
