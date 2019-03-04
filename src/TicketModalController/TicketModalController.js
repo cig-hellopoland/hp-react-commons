@@ -322,7 +322,7 @@ class TicketModalController extends Component {
   generateCartItem = () => {
     const { date, entries, poolId } = this.state;
     const {
-      affiliationCode, availableTickets, cartItem, sightEvent: product,
+      affiliationCode: propsAffiliationCode, availableTickets, cartItem, sightEvent: product,
     } = this.props;
     const ticketPool = this.getTicketPoolById(availableTickets.ticketPools, poolId) || {};
     const ticketDefinitions = this.getTicketDefinitions();
@@ -330,6 +330,7 @@ class TicketModalController extends Component {
 
     const detailedEntries = Object.keys(entries).reduce((acc, entryId) => {
       const entry = _find(ticketDefinitions, { id: +entryId });
+      const affiliationCode = propsAffiliationCode || entry.affiliationCode;
 
       const cartEntry = {
         ...entry,
