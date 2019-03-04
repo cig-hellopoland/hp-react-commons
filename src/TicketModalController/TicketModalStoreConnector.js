@@ -117,7 +117,7 @@ class TicketModalStoreConnector extends React.Component {
 
   render() {
     const {
-      availableTickets, cartItem, children, fetchAvailableTickets,
+      affiliationCode, availableTickets, cartItem, children, fetchAvailableTickets,
       open, sightEvent, fetchAvailableTicketsCancel,
     } = this.props;
     const showFallback = this.isFallbackRequired();
@@ -132,6 +132,7 @@ class TicketModalStoreConnector extends React.Component {
 
     return (
       <TicketModalController
+        affiliationCode={affiliationCode}
         cartItem={cartItem}
         fetchAvailableTicketsByDate={fetchAvailableTickets}
         fetchAvailableTicketsCancel={fetchAvailableTicketsCancel}
@@ -147,6 +148,7 @@ class TicketModalStoreConnector extends React.Component {
 
 TicketModalStoreConnector.propTypes = {
   addItemToCart: PropTypes.func.isRequired,
+  affiliationCode: PropTypes.string,
   availableTickets: PropTypes.shape({}),
   cartItem: PropTypes.shape({}),
   cartItemId: PropTypes.number, // eslint-disable-line
@@ -163,6 +165,7 @@ TicketModalStoreConnector.propTypes = {
 };
 
 TicketModalStoreConnector.defaultProps = {
+  affiliationCode: null,
   availableTickets: {},
   onSubmit: null,
   cartItemId: null,
