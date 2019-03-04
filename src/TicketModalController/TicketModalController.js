@@ -96,6 +96,10 @@ class TicketModalController extends Component {
           nextValue[entry.id].quantity = entry.quantity;
         }
 
+        if (entry.affiliationCode) {
+          nextValue[entry.id].affiliationCode = entry.affiliationCode;
+        }
+
         return nextValue;
       }, {});
     }
@@ -330,7 +334,7 @@ class TicketModalController extends Component {
 
     const detailedEntries = Object.keys(entries).reduce((acc, entryId) => {
       const entry = _find(ticketDefinitions, { id: +entryId });
-      const affiliationCode = propsAffiliationCode || entry.affiliationCode;
+      const affiliationCode = propsAffiliationCode || entries[entry.id].affiliationCode;
 
       const cartEntry = {
         ...entry,
