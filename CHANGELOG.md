@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.9.0
+* Added affiliation code support to TicketModal.
+
 ## 1.8.0
 * Changed search requests methods to GET.
 * Updated `npm` dependencies.
