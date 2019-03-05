@@ -96,6 +96,10 @@ class TicketModalController extends Component {
           nextValue[entry.id].quantity = entry.quantity;
         }
 
+        if (entry.affiliationCode) {
+          nextValue[entry.id].affiliationCode = entry.affiliationCode;
+        }
+
         return nextValue;
       }, {});
     }
@@ -321,24 +325,33 @@ class TicketModalController extends Component {
 
   generateCartItem = () => {
     const { date, entries, poolId } = this.state;
-    const { availableTickets, cartItem, sightEvent: product } = this.props;
+    const {
+      affiliationCode: propsAffiliationCode, availableTickets, cartItem, sightEvent: product,
+    } = this.props;
     const ticketPool = this.getTicketPoolById(availableTickets.ticketPools, poolId) || {};
     const ticketDefinitions = this.getTicketDefinitions();
     const { wholeDay } = ticketPool;
 
     const detailedEntries = Object.keys(entries).reduce((acc, entryId) => {
       const entry = _find(ticketDefinitions, { id: +entryId });
+      const affiliationCode = propsAffiliationCode || entries[entry.id].affiliationCode;
+
+      const cartEntry = {
+        ...entry,
+        date: format(date, constants.DATE_FORMAT),
+        entryId: entries[entry.id].entryId,
+        poolId,
+        wholeDay,
+        quantity: entries[entry.id].quantity,
+      };
+
+      if (affiliationCode) {
+        cartEntry.affiliationCode = affiliationCode;
+      }
 
       return [
         ...acc,
-        {
-          ...entry,
-          date: format(date, constants.DATE_FORMAT),
-          entryId: entries[entry.id].entryId,
-          poolId,
-          wholeDay,
-          quantity: entries[entry.id].quantity,
-        },
+        cartEntry,
       ];
     }, []);
 
@@ -487,6 +500,7 @@ class TicketModalController extends Component {
 }
 
 TicketModalController.propTypes = {
+  affiliationCode: PropTypes.string,
   availableTickets: PropTypes.shape({}),
   cartItem: PropTypes.shape({}),
   children: PropTypes.func.isRequired,
@@ -498,6 +512,7 @@ TicketModalController.propTypes = {
 };
 
 TicketModalController.defaultProps = {
+  affiliationCode: null,
   availableTickets: {},
   cartItem: {},
   steps: 3,
