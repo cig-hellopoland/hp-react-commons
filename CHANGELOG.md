@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.9.1
+* Fixed cart items with 0 quantity.
+
 ## 1.9.0
 * Added affiliation code support to TicketModal.
 
