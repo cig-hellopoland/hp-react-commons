@@ -434,15 +434,21 @@ class TicketModalController extends Component {
   };
 
   handleEntryChange = (id, values) => {
-    this.setState(state => ({
-      entries: {
-        ...state.entries,
-        [id]: !values.quantity ? undefined : {
-          ...state.entries[id],
-          ...values,
-        },
-      },
-    }));
+    const { entries } = this.state;
+
+    const nextEntries = Object.entries(entries).reduce((acc, [entryKey, entryValues]) => {
+      if (+entryKey === id && values.quantity === 0) {
+        return acc;
+      }
+
+      return { ...acc, [entryKey]: entryValues };
+    }, {});
+
+    if (values.quantity > 0) {
+      nextEntries[id] = values;
+    }
+
+    this.setState({ entries: nextEntries });
   };
 
   handleAgreementChange = (agreementId, value) => {
