@@ -529,7 +529,7 @@ describe('reducer', () => {
 
           return [
             ...acc,
-            { entryId: index + 1, ...entry }
+            { entryId: index + 1, ...entry },
           ];
         }, []),
       };
