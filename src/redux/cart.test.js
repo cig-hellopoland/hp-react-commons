@@ -19,6 +19,7 @@ describe('actions', () => {
       expect(clear()).toEqual(expectedValue);
     });
   });
+
   describe('using addItem', () => {
     const { addItem } = actions;
     const { ITEM_ADD } = types;
@@ -463,6 +464,23 @@ describe('reducer', () => {
       expect(reducer()(defaultInitialState, action)).toEqual(expectedValue);
     });
 
+    it('should handle adding first cart item with single entry of zero quantity', () => {
+      const data = {
+        entries: [
+          {
+            id: 1, name: 'Example product', price: 100, quantity: 0,
+          },
+        ],
+      };
+      const action = actions.addItem(data);
+      const expectedValue = {
+        items: [],
+        entries: [],
+      };
+
+      expect(reducer()(defaultInitialState, action)).toEqual(expectedValue);
+    });
+
     it('should handle adding first cart item with multiple entries', () => {
       const data = {
         entries: [
@@ -480,6 +498,40 @@ describe('reducer', () => {
           { itemId: 1, entryIds: [1, 2] },
         ],
         entries: data.entries.map((entry, index) => ({ entryId: index + 1, ...entry })),
+      };
+
+      expect(reducer()(defaultInitialState, action)).toEqual(expectedValue);
+    });
+
+    it('should handle adding first cart item with multiple entries and one of zero quantity', () => {
+      const data = {
+        entries: [
+          {
+            id: 1, name: 'Example product 1', price: 100, quantity: 1,
+          },
+          {
+            id: 2, name: 'Example product 2', price: 200, quantity: 2,
+          },
+          {
+            id: 3, name: 'Example product 3', price: 200, quantity: 0,
+          },
+        ],
+      };
+      const action = actions.addItem(data);
+      const expectedValue = {
+        items: [
+          { itemId: 1, entryIds: [1, 2] },
+        ],
+        entries: data.entries.reduce((acc, entry, index) => {
+          if (index === data.entries.length - 1) {
+            return acc;
+          }
+
+          return [
+            ...acc,
+            { entryId: index + 1, ...entry }
+          ];
+        }, []),
       };
 
       expect(reducer()(defaultInitialState, action)).toEqual(expectedValue);

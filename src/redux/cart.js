@@ -354,7 +354,7 @@ const reducer = (initialState = defaultInitialState) => (state = initialState, a
           entryIds.push(entries[existingEntryIndex].entryId);
 
           hasExistingEntries = true;
-        } else {
+        } else if (quantity > 0) {
           latestEntryId += 1;
 
           entries.push({
@@ -374,7 +374,7 @@ const reducer = (initialState = defaultInitialState) => (state = initialState, a
         );
 
         items[itemIndex].entryIds = _uniq([...items[itemIndex].entryIds, ...entryIds]);
-      } else {
+      } else if (entries.length) {
         const latestItem = items[items.length - 1] || {};
         const itemId = latestItem.itemId ? latestItem.itemId + 1 : 1;
 

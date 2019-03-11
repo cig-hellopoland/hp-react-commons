@@ -437,7 +437,7 @@ class TicketModalController extends Component {
     this.setState(state => ({
       entries: {
         ...state.entries,
-        [id]: {
+        [id]: !values.quantity ? undefined : {
           ...state.entries[id],
           ...values,
         },
