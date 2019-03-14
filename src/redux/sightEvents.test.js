@@ -323,7 +323,7 @@ describe('actions', () => {
     const expectedValue = {
       type: DELETE_TRANSLATION,
       payload: {
-        url: `${apiURL}/${id}/${language}`,
+        url: `${apiURL}/${id}/languageVersion/${language}`,
         method: 'delete',
       },
     };
