@@ -314,6 +314,63 @@ describe('actions', () => {
     expect(deleteItemSuccess()).toEqual(expectedValue);
   });
 
+  it('should create an action to make translation delete request', () => {
+    const { deleteTranslation } = actions;
+    const { DELETE_TRANSLATION } = types;
+    const id = 1;
+    const language = 'pl-PL';
+    const options = { b: 2 };
+    const expectedValue = {
+      type: DELETE_TRANSLATION,
+      payload: {
+        url: `${apiURL}/${id}/${language}`,
+        method: 'delete',
+      },
+    };
+
+    expect(deleteTranslation({ id, language })).toEqual(expectedValue);
+
+    expectedValue.payload = {
+      ...expectedValue.payload,
+      ...options,
+    };
+
+    expect(deleteTranslation({ id, language, options })).toEqual(expectedValue);
+
+    expectedValue.onFailure = onFailure;
+    expectedValue.onSuccess = onSuccess;
+
+    expect(deleteTranslation({
+      id, language, options, onFailure, onSuccess,
+    })).toEqual(expectedValue);
+  });
+
+
+  it('should create an action to fail translation delete request', () => {
+    const { deleteTranslationFailure } = actions;
+    const { DELETE_TRANSLATION_FAILURE } = types;
+    const expectedValue = {
+      type: DELETE_TRANSLATION_FAILURE,
+      error: {},
+    };
+
+    expect(deleteTranslationFailure()).toEqual(expectedValue);
+
+    expectedValue.error = axiosResponseError;
+
+    expect(deleteTranslationFailure(axiosResponseError)).toEqual(expectedValue);
+  });
+
+  it('should create an action to succeed translation delete request', () => {
+    const { deleteTranslationSuccess } = actions;
+    const { DELETE_TRANSLATION_SUCCESS } = types;
+    const expectedValue = {
+      type: DELETE_TRANSLATION_SUCCESS,
+    };
+
+    expect(deleteTranslationSuccess()).toEqual(expectedValue);
+  });
+
   it('should create an action to make pdf delete request', () => {
     const { deletePDF } = actions;
     const { DELETE_PDF } = types;

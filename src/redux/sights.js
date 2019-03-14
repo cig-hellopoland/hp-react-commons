@@ -101,6 +101,24 @@ const DELETE_ITEM_FAILURE = `${prefix}DELETE_ITEM_FAILURE`;
 const DELETE_ITEM_SUCCESS = `${prefix}DELETE_ITEM_SUCCESS`;
 
 /**
+ * Type used for handling translation deletion.
+ * @type {string}
+ */
+const DELETE_TRANSLATION = `${prefix}DELETE_TRANSLATION`;
+
+/**
+ * Type used for handling translation deletion failure.
+ * @type {string}
+ */
+const DELETE_TRANSLATION_FAILURE = `${prefix}DELETE_TRANSLATION_FAILURE`;
+
+/**
+ * Type used for handling translation deletion success.
+ * @type {string}
+ */
+const DELETE_TRANSLATION_SUCCESS = `${prefix}DELETE_TRANSLATION_SUCCESS`;
+
+/**
  * Type used for handling entity fetching.
  * @type {string}
  */
@@ -202,6 +220,9 @@ export const types = {
   DELETE_ITEM,
   DELETE_ITEM_FAILURE,
   DELETE_ITEM_SUCCESS,
+  DELETE_TRANSLATION,
+  DELETE_TRANSLATION_FAILURE,
+  DELETE_TRANSLATION_SUCCESS,
   FETCH_ITEM,
   FETCH_ITEM_CANCEL,
   FETCH_ITEM_FAILURE,
@@ -419,6 +440,62 @@ const deleteItemFailure = ({ data, status } = {}) => ({
  */
 const deleteItemSuccess = () => ({
   type: DELETE_ITEM_SUCCESS,
+});
+
+/**
+ * Creates action with translation deletion request details.
+ * @method
+ * @param {Object} params
+ * @param {number} params.id - item id
+ * @param {Object} [params.options] - request config
+ * @param {failureCallback} [params.onFailure] - failure callback
+ * @param {successCallback} [params.onSuccess] - success callback
+ * @return {{
+ *   type: string,
+ *   payload: {url: string, method: string, options: *},
+ *   onFailure: failureCallback,
+ *   onSuccess: successCallback
+ * }}
+ */
+const deleteTranslation = ({
+  id, language, options, onFailure, onSuccess,
+} = {}) => ({
+  type: DELETE_TRANSLATION,
+  payload: {
+    url: `${apiURL}/${id}/${language}`,
+    method: 'delete',
+    ...options,
+  },
+  onFailure,
+  onSuccess,
+});
+
+/**
+ * Creates action for translation deletion request failing.
+ * @method
+ * @param {Object} params - axios response schema
+ * @param params.data - response body
+ * @param params.status - response status
+ * @return {{
+ *   type: string,
+ *   error: {data, status: number}
+ * }}
+ */
+const deleteTranslationFailure = ({ data, status } = {}) => ({
+  type: DELETE_TRANSLATION_FAILURE,
+  error: {
+    data,
+    status,
+  },
+});
+
+/**
+ * Creates action for successful translation deletion request.
+ * @method
+ * @return {{type: string}}
+ */
+const deleteTranslationSuccess = () => ({
+  type: DELETE_TRANSLATION_SUCCESS,
 });
 
 /**
@@ -695,6 +772,9 @@ export const actions = {
   deleteItem,
   deleteItemFailure,
   deleteItemSuccess,
+  deleteTranslation,
+  deleteTranslationFailure,
+  deleteTranslationSuccess,
   fetchItem,
   fetchItemCancel,
   fetchItemFailure,
@@ -921,6 +1001,49 @@ const deleteItemLogic = createLogic({
 });
 
 /**
+ * Logic used for handling translation deletion.
+ * @method
+ */
+const deleteTranslationLogic = createLogic({
+  type: [
+    DELETE_TRANSLATION,
+  ],
+  latest: true,
+  async process(
+    { action: { payload, onFailure, onSuccess }, httpClient, cancelled$ },
+    dispatch,
+    done,
+  ) {
+    try {
+      const response = await httpClient.cancellable(payload, cancelled$);
+      const { status } = response;
+
+      if (status === 200 || status === 204) {
+        dispatch(deleteItemSuccess());
+
+        if (onSuccess) {
+          onSuccess();
+        }
+      } else {
+        dispatch(deleteItemFailure(response));
+
+        if (onFailure) {
+          onFailure();
+        }
+      }
+    } catch ({ response }) {
+      dispatch(deleteItemFailure(response));
+
+      if (onFailure) {
+        onFailure();
+      }
+    }
+
+    done();
+  },
+});
+
+/**
  * Logic used for handling entity fetching.
  * @method
  */
@@ -1106,6 +1229,7 @@ export const logic = {
   createItemLogic,
   createMainImageLogic,
   deleteItemLogic,
+  deleteTranslationLogic,
   fetchItemLogic,
   fetchListLogic,
   fetchSearchResultsLogic,
@@ -1153,6 +1277,7 @@ const reducer = (initialState = defaultInitialState) => (state = initialState, a
     case CREATE_ITEM_FAILURE:
     case CREATE_MAIN_IMAGE_FAILURE:
     case DELETE_ITEM_FAILURE:
+    case DELETE_TRANSLATION_FAILURE:
     case FETCH_ITEM_FAILURE:
     case FETCH_LIST_FAILURE:
     case FETCH_SEARCH_RESULTS_FAILURE:
