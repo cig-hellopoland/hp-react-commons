@@ -261,32 +261,31 @@ describe('actions', () => {
   it('should create an action to make translation create request', () => {
     const { createTranslation } = actions;
     const { CREATE_TRANSLATION } = types;
-    const id = 3;
     const data = { a: 1 };
     const options = { b: 2 };
     const expectedValue = {
       type: CREATE_TRANSLATION,
       payload: {
-        url: `${apiURL}/${id}`,
+        url: apiURL,
         method: 'post',
         data,
       },
     };
 
-    expect(createTranslation({ id, data })).toEqual(expectedValue);
+    expect(createTranslation({ data })).toEqual(expectedValue);
 
     expectedValue.payload = {
       ...expectedValue.payload,
       ...options,
     };
 
-    expect(createTranslation({ id, data, options })).toEqual(expectedValue);
+    expect(createTranslation({ data, options })).toEqual(expectedValue);
 
     expectedValue.onFailure = onFailure;
     expectedValue.onSuccess = onSuccess;
 
     expect(createTranslation({
-      id, data, options, onFailure, onSuccess,
+      data, options, onFailure, onSuccess,
     })).toEqual(expectedValue);
   });
 
