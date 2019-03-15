@@ -445,11 +445,11 @@ const createItemSuccess = data => ({
  * }}
  */
 const createTranslation = ({
-  data, options, onFailure, onSuccess,
+  id, data, options, onFailure, onSuccess,
 } = {}) => ({
   type: CREATE_TRANSLATION,
   payload: {
-    url: apiURL,
+    url: `${apiURL}/${id}`,
     method: 'post',
     ...options,
     data,
