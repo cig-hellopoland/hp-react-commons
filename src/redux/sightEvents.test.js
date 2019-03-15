@@ -258,6 +258,64 @@ describe('actions', () => {
     expect(createPDFSuccess()).toEqual(expectedValue);
   });
 
+  it('should create an action to make translation create request', () => {
+    const { createTranslation } = actions;
+    const { CREATE_TRANSLATION } = types;
+    const data = { a: 1 };
+    const options = { b: 2 };
+    const expectedValue = {
+      type: CREATE_TRANSLATION,
+      payload: {
+        url: apiURL,
+        method: 'put',
+        data,
+      },
+    };
+
+    expect(createTranslation({ data })).toEqual(expectedValue);
+
+    expectedValue.payload = {
+      ...expectedValue.payload,
+      ...options,
+    };
+
+    expect(createTranslation({ data, options })).toEqual(expectedValue);
+
+    expectedValue.onFailure = onFailure;
+    expectedValue.onSuccess = onSuccess;
+
+    expect(createTranslation({
+      data, options, onFailure, onSuccess,
+    })).toEqual(expectedValue);
+  });
+
+  it('should create an action to fail translation create request', () => {
+    const { createTranslationFailure } = actions;
+    const { CREATE_TRANSLATION_FAILURE } = types;
+    const expectedValue = {
+      type: CREATE_TRANSLATION_FAILURE,
+      error: {},
+    };
+
+    expect(createTranslationFailure()).toEqual(expectedValue);
+
+    expectedValue.error = axiosResponseError;
+
+    expect(createTranslationFailure(axiosResponseError)).toEqual(expectedValue);
+  });
+
+  it('should create an action to succeed item create request', () => {
+    const { createTranslationSuccess } = actions;
+    const { CREATE_TRANSLATION_SUCCESS } = types;
+    const data = { a: 1 };
+    const expectedValue = {
+      type: CREATE_TRANSLATION_SUCCESS,
+      data,
+    };
+
+    expect(createTranslationSuccess(data)).toEqual(expectedValue);
+  });
+
   it('should create an action to make item delete request', () => {
     const { deleteItem } = actions;
     const { DELETE_ITEM } = types;
