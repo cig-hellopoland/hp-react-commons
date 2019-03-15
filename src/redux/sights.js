@@ -408,7 +408,7 @@ const createTranslation = ({
   type: CREATE_TRANSLATION,
   payload: {
     url: apiURL,
-    method: 'put',
+    method: 'post',
     ...options,
     data,
   },

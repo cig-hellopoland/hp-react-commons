@@ -196,7 +196,7 @@ describe('actions', () => {
       type: CREATE_TRANSLATION,
       payload: {
         url: apiURL,
-        method: 'put',
+        method: 'post',
         data,
       },
     };
