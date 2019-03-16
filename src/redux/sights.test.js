@@ -60,6 +60,48 @@ function generateAppState(data) {
  */
 
 describe('actions', () => {
+  it('should creater an action to make change deafault language request', () => {
+    const { changeDefaultLanguage } = actions;
+    const { CHANGE_DEFAULT_LANGUAGE } = types;
+    const options = {
+      headers: {
+        'Content-Language': 'pl-PL',
+      },
+    };
+    const expectedValue = {
+      type: CHANGE_DEFAULT_LANGUAGE,
+      payload: {
+        url: `${apiURL}/3/defaultLanguage`,
+        method: 'patch',
+        ...options,
+      },
+    };
+    expect(changeDefaultLanguage({ id: 3, options })).toEqual(expectedValue);
+
+    expectedValue.onFailure = onFailure;
+    expectedValue.onSuccess = onSuccess;
+
+    expect(changeDefaultLanguage({
+      id: 3, options, onFailure, onSuccess,
+    })).toEqual(expectedValue);
+  });
+
+  it('should create an action to fail change default language request', () => {
+    const { changeDefaultLanguageFailure } = actions;
+    const { CHANGE_DEFAULT_LANGUAGE_FAILURE } = types;
+
+    const expectedValue = {
+      type: CHANGE_DEFAULT_LANGUAGE_FAILURE,
+      error: {},
+    };
+
+    expect(changeDefaultLanguageFailure()).toEqual(expectedValue);
+
+    expectedValue.error = axiosResponseError;
+
+    expect(changeDefaultLanguageFailure(axiosResponseError)).toEqual(expectedValue);
+  });
+
   it('should create an action to make item create request', () => {
     const { createItem } = actions;
     const { CREATE_ITEM } = types;
