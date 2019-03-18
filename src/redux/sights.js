@@ -41,12 +41,6 @@ const prefix = `commons/${name}/`;
 const CHANGE_DEFAULT_LANGUAGE = `${prefix}CHANGE_DEFAULT_LANGUAGE`;
 
 /**
- * Type used for handling change default language request cancellation.
- * @type {string}
- */
-const CHANGE_DEFAULT_LANGUAGE_CANCEL = `${prefix}CHANGE_DEFAULT_LANGUAGE_CANCEL`;
-
-/**
  * Type used for handling change default language request failure.
  * @type {string}
  */
@@ -57,7 +51,6 @@ const CHANGE_DEFAULT_LANGUAGE_FAILURE = `${prefix}CHANGE_DEFAULT_LANGUAGE_FAILUR
  * @type {string}
  */
 const CHANGE_DEFAULT_LANGUAGE_SUCCESS = `${prefix}CHANGE_DEFAULT_LANGUAGE_SUCCESS`;
-
 
 /**
  * Type used for clearing search results.
@@ -129,19 +122,19 @@ const DELETE_ITEM_SUCCESS = `${prefix}DELETE_ITEM_SUCCESS`;
  * Type used for handling translation deletion.
  * @type {string}
  */
-const DELETE_TRANSLATION = `${prefix}DELETE_TRANSLATION`;
+const DELETE_LANGUAGE = `${prefix}DELETE_LANGUAGE`;
 
 /**
  * Type used for handling translation deletion failure.
  * @type {string}
  */
-const DELETE_TRANSLATION_FAILURE = `${prefix}DELETE_TRANSLATION_FAILURE`;
+const DELETE_LANGUAGE_FAILURE = `${prefix}DELETE_LANGUAGE_FAILURE`;
 
 /**
  * Type used for handling translation deletion success.
  * @type {string}
  */
-const DELETE_TRANSLATION_SUCCESS = `${prefix}DELETE_TRANSLATION_SUCCESS`;
+const DELETE_LANGUAGE_SUCCESS = `${prefix}DELETE_LANGUAGE_SUCCESS`;
 
 /**
  * Type used for handling entity fetching.
@@ -235,7 +228,6 @@ const UPDATE_ITEM_SUCCESS = `${prefix}UPDATE_ITEM_SUCCESS`;
 
 export const types = {
   CHANGE_DEFAULT_LANGUAGE,
-  CHANGE_DEFAULT_LANGUAGE_CANCEL,
   CHANGE_DEFAULT_LANGUAGE_FAILURE,
   CHANGE_DEFAULT_LANGUAGE_SUCCESS,
   CLEAR_SEARCH_RESULTS,
@@ -249,9 +241,9 @@ export const types = {
   DELETE_ITEM,
   DELETE_ITEM_FAILURE,
   DELETE_ITEM_SUCCESS,
-  DELETE_TRANSLATION,
-  DELETE_TRANSLATION_FAILURE,
-  DELETE_TRANSLATION_SUCCESS,
+  DELETE_LANGUAGE,
+  DELETE_LANGUAGE_FAILURE,
+  DELETE_LANGUAGE_SUCCESS,
   FETCH_ITEM,
   FETCH_ITEM_CANCEL,
   FETCH_ITEM_FAILURE,
@@ -301,15 +293,6 @@ const changeDefaultLanguage = ({
   },
   onFailure,
   onSuccess,
-});
-
-/**
- * Creates action for change default language request cancelling.
- * @method
- * @return {{type: string}}
- */
-const changeDefaultLanguageCancel = () => ({
-  type: CHANGE_DEFAULT_LANGUAGE_CANCEL,
 });
 
 /**
@@ -552,12 +535,12 @@ const deleteItemSuccess = () => ({
  *   onSuccess: successCallback
  * }}
  */
-const deleteTranslation = ({
-  id, language, options, onFailure, onSuccess,
+const deleteLanguage = ({
+  id, params, options, onFailure, onSuccess,
 } = {}) => ({
-  type: DELETE_TRANSLATION,
+  type: DELETE_LANGUAGE,
   payload: {
-    url: `/partner${apiURL}/${id}/languageVersion/${language}`,
+    url: `${apiURL}/${id}/languageVersion${params.forEach(param => `/${param}`)}`,
     method: 'delete',
     ...options,
   },
@@ -576,8 +559,8 @@ const deleteTranslation = ({
  *   error: {data, status: number}
  * }}
  */
-const deleteTranslationFailure = ({ data, status } = {}) => ({
-  type: DELETE_TRANSLATION_FAILURE,
+const deleteLanguageFailure = ({ data, status } = {}) => ({
+  type: DELETE_LANGUAGE_FAILURE,
   error: {
     data,
     status,
@@ -589,8 +572,8 @@ const deleteTranslationFailure = ({ data, status } = {}) => ({
  * @method
  * @return {{type: string}}
  */
-const deleteTranslationSuccess = () => ({
-  type: DELETE_TRANSLATION_SUCCESS,
+const deleteLanguageSuccess = () => ({
+  type: DELETE_LANGUAGE_SUCCESS,
 });
 
 /**
@@ -857,7 +840,6 @@ const updateItemSuccess = data => ({
 
 export const actions = {
   changeDefaultLanguage,
-  changeDefaultLanguageCancel,
   changeDefaultLanguageFailure,
   changeDefaultLanguageSuccess,
   clearSearchResults,
@@ -871,9 +853,9 @@ export const actions = {
   deleteItem,
   deleteItemFailure,
   deleteItemSuccess,
-  deleteTranslation,
-  deleteTranslationFailure,
-  deleteTranslationSuccess,
+  deleteLanguage,
+  deleteLanguageFailure,
+  deleteLanguageSuccess,
   fetchItem,
   fetchItemCancel,
   fetchItemFailure,
@@ -890,7 +872,6 @@ export const actions = {
   updateItemFailure,
   updateItemSuccess,
 };
-
 
 /*
  * SELECTORS
@@ -948,7 +929,6 @@ export const selectors = {
   getSights,
   getState,
 };
-
 
 /*
  * LOGIC
@@ -1145,9 +1125,9 @@ const deleteItemLogic = createLogic({
  * Logic used for handling translation deletion.
  * @method
  */
-const deleteTranslationLogic = createLogic({
+const deleteLanguageLogic = createLogic({
   type: [
-    DELETE_TRANSLATION,
+    DELETE_LANGUAGE,
   ],
   latest: true,
   async process(
@@ -1371,7 +1351,7 @@ export const logic = {
   createItemLogic,
   createMainImageLogic,
   deleteItemLogic,
-  deleteTranslationLogic,
+  deleteLanguageLogic,
   fetchItemLogic,
   fetchListLogic,
   fetchSearchResultsLogic,
@@ -1420,7 +1400,7 @@ const reducer = (initialState = defaultInitialState) => (state = initialState, a
     case CREATE_ITEM_FAILURE:
     case CREATE_MAIN_IMAGE_FAILURE:
     case DELETE_ITEM_FAILURE:
-    case DELETE_TRANSLATION_FAILURE:
+    case DELETE_LANGUAGE_FAILURE:
     case FETCH_ITEM_FAILURE:
     case FETCH_LIST_FAILURE:
     case FETCH_SEARCH_RESULTS_FAILURE:
@@ -1429,8 +1409,10 @@ const reducer = (initialState = defaultInitialState) => (state = initialState, a
         ...state,
         error: action.error,
       };
+    case CHANGE_DEFAULT_LANGUAGE_SUCCESS:
     case CREATE_ITEM_SUCCESS:
     case CREATE_MAIN_IMAGE_SUCCESS:
+    case DELETE_LANGUAGE_SUCCESS:
     case UPDATE_ITEM_SUCCESS:
       return {
         ...state,

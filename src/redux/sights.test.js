@@ -285,60 +285,60 @@ describe('actions', () => {
   });
 
   it('should create an action to make translation delete request', () => {
-    const { deleteTranslation } = actions;
-    const { DELETE_TRANSLATION } = types;
+    const { deleteLanguage } = actions;
+    const { DELETE_LANGUAGE } = types;
     const id = 1;
-    const language = 'pl-PL';
+    const params = ['pl-PL'];
     const options = { b: 2 };
     const expectedValue = {
-      type: DELETE_TRANSLATION,
+      type: DELETE_LANGUAGE,
       payload: {
-        url: `/partner${apiURL}/${id}/languageVersion/${language}`,
+        url: `${apiURL}/${id}/languageVersion${params.forEach(param => `/${param}`)}`,
         method: 'delete',
       },
     };
 
-    expect(deleteTranslation({ id, language })).toEqual(expectedValue);
+    expect(deleteLanguage({ id, params })).toEqual(expectedValue);
 
     expectedValue.payload = {
       ...expectedValue.payload,
       ...options,
     };
 
-    expect(deleteTranslation({ id, language, options })).toEqual(expectedValue);
+    expect(deleteLanguage({ id, params, options })).toEqual(expectedValue);
 
     expectedValue.onFailure = onFailure;
     expectedValue.onSuccess = onSuccess;
 
-    expect(deleteTranslation({
-      id, language, options, onFailure, onSuccess,
+    expect(deleteLanguage({
+      id, params, options, onFailure, onSuccess,
     })).toEqual(expectedValue);
   });
 
 
   it('should create an action to fail translation delete request', () => {
-    const { deleteTranslationFailure } = actions;
-    const { DELETE_TRANSLATION_FAILURE } = types;
+    const { deleteLanguageFailure } = actions;
+    const { DELETE_LANGUAGE_FAILURE } = types;
     const expectedValue = {
-      type: DELETE_TRANSLATION_FAILURE,
+      type: DELETE_LANGUAGE_FAILURE,
       error: {},
     };
 
-    expect(deleteTranslationFailure()).toEqual(expectedValue);
+    expect(deleteLanguageFailure()).toEqual(expectedValue);
 
     expectedValue.error = axiosResponseError;
 
-    expect(deleteTranslationFailure(axiosResponseError)).toEqual(expectedValue);
+    expect(deleteLanguageFailure(axiosResponseError)).toEqual(expectedValue);
   });
 
   it('should create an action to succeed translation delete request', () => {
-    const { deleteTranslationSuccess } = actions;
-    const { DELETE_TRANSLATION_SUCCESS } = types;
+    const { deleteLanguageSuccess } = actions;
+    const { DELETE_LANGUAGE_SUCCESS } = types;
     const expectedValue = {
-      type: DELETE_TRANSLATION_SUCCESS,
+      type: DELETE_LANGUAGE_SUCCESS,
     };
 
-    expect(deleteTranslationSuccess()).toEqual(expectedValue);
+    expect(deleteLanguageSuccess()).toEqual(expectedValue);
   });
 
 

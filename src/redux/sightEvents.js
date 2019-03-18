@@ -41,12 +41,6 @@ const prefix = `commons/${name}/`;
 const CHANGE_DEFAULT_LANGUAGE = `${prefix}CHANGE_DEFAULT_LANGUAGE`;
 
 /**
- * Type used for handling change default language request cancellation.
- * @type {string}
- */
-const CHANGE_DEFAULT_LANGUAGE_CANCEL = `${prefix}CHANGE_DEFAULT_LANGUAGE_CANCEL`;
-
-/**
  * Type used for handling change default language request failure.
  * @type {string}
  */
@@ -153,19 +147,19 @@ const DELETE_ITEM_SUCCESS = `${prefix}DELETE_ITEM_SUCCESS`;
  * Type used for handling translation deletion.
  * @type {string}
  */
-const DELETE_TRANSLATION = `${prefix}DELETE_TRANSLATION`;
+const DELETE_LANGUAGE = `${prefix}DELETE_LANGUAGE`;
 
 /**
  * Type used for handling translation deletion failure.
  * @type {string}
  */
-const DELETE_TRANSLATION_FAILURE = `${prefix}DELETE_TRANSLATION_FAILURE`;
+const DELETE_LANGUAGE_FAILURE = `${prefix}DELETE_LANGUAGE_FAILURE`;
 
 /**
  * Type used for handling translation deletion success.
  * @type {string}
  */
-const DELETE_TRANSLATION_SUCCESS = `${prefix}DELETE_TRANSLATION_SUCCESS`;
+const DELETE_LANGUAGE_SUCCESS = `${prefix}DELETE_LANGUAGE_SUCCESS`;
 
 /**
  * Type used for handling PDF document deletion.
@@ -319,7 +313,6 @@ const STOP_SELL_SUCCESS = `${prefix}STOP_SELL_SUCCESS`;
 
 export const types = {
   CHANGE_DEFAULT_LANGUAGE,
-  CHANGE_DEFAULT_LANGUAGE_CANCEL,
   CHANGE_DEFAULT_LANGUAGE_FAILURE,
   CHANGE_DEFAULT_LANGUAGE_SUCCESS,
   CLEAR_AVAILABLE_TICKETS,
@@ -337,9 +330,9 @@ export const types = {
   DELETE_ITEM,
   DELETE_ITEM_FAILURE,
   DELETE_ITEM_SUCCESS,
-  DELETE_TRANSLATION,
-  DELETE_TRANSLATION_FAILURE,
-  DELETE_TRANSLATION_SUCCESS,
+  DELETE_LANGUAGE,
+  DELETE_LANGUAGE_FAILURE,
+  DELETE_LANGUAGE_SUCCESS,
   DELETE_PDF,
   DELETE_PDF_FAILURE,
   DELETE_PDF_SUCCESS,
@@ -399,15 +392,6 @@ const changeDefaultLanguage = ({
   },
   onFailure,
   onSuccess,
-});
-
-/**
- * Creates action for change default language request cancelling.
- * @method
- * @return {{type: string}}
- */
-const changeDefaultLanguageCancel = () => ({
-  type: CHANGE_DEFAULT_LANGUAGE_CANCEL,
 });
 
 /**
@@ -721,12 +705,12 @@ const deleteItemSuccess = () => ({
  *   onSuccess: successCallback
  * }}
  */
-const deleteTranslation = ({
-  id, language, options, onFailure, onSuccess,
+const deleteLanguage = ({
+  id, params, options, onFailure, onSuccess,
 } = {}) => ({
-  type: DELETE_TRANSLATION,
+  type: DELETE_LANGUAGE,
   payload: {
-    url: `/partner${apiURL}/${id}/languageVersion/${language}`,
+    url: `${apiURL}/${id}/languageVersion${params.forEach(param => `/${param}`)}`,
     method: 'delete',
     ...options,
   },
@@ -745,8 +729,8 @@ const deleteTranslation = ({
  *   error: {data, status: number}
  * }}
  */
-const deleteTranslationFailure = ({ data, status } = {}) => ({
-  type: DELETE_TRANSLATION_FAILURE,
+const deleteLanguageFailure = ({ data, status } = {}) => ({
+  type: DELETE_LANGUAGE_FAILURE,
   error: {
     data,
     status,
@@ -758,8 +742,8 @@ const deleteTranslationFailure = ({ data, status } = {}) => ({
  * @method
  * @return {{type: string}}
  */
-const deleteTranslationSuccess = () => ({
-  type: DELETE_TRANSLATION_SUCCESS,
+const deleteLanguageSuccess = () => ({
+  type: DELETE_LANGUAGE_SUCCESS,
 });
 
 /**
@@ -1211,7 +1195,6 @@ const stopSellSuccess = data => ({
 
 export const actions = {
   changeDefaultLanguage,
-  changeDefaultLanguageCancel,
   changeDefaultLanguageFailure,
   changeDefaultLanguageSuccess,
   clearAvailableTickets,
@@ -1229,9 +1212,9 @@ export const actions = {
   deleteItem,
   deleteItemFailure,
   deleteItemSuccess,
-  deleteTranslation,
-  deleteTranslationFailure,
-  deleteTranslationSuccess,
+  deleteLanguage,
+  deleteLanguageFailure,
+  deleteLanguageSuccess,
   deletePDF,
   deletePDFFailure,
   deletePDFSuccess,
@@ -1563,9 +1546,9 @@ const deleteItemLogic = createLogic({
  * Logic used for handling translation deletion.
  * @method
  */
-const deleteTranslationLogic = createLogic({
+const deleteLanguageLogic = createLogic({
   type: [
-    DELETE_TRANSLATION,
+    DELETE_LANGUAGE,
   ],
   latest: true,
   async process(
@@ -1922,7 +1905,7 @@ export const logic = {
   createMainImageLogic,
   createPDFLogic,
   deleteItemLogic,
-  deleteTranslationLogic,
+  deleteLanguageLogic,
   deletePDFLogic,
   fetchAvailableTicketsLogic,
   fetchItemLogic,
@@ -1983,7 +1966,7 @@ const reducer = (initialState = defaultInitialState) => (state = initialState, a
     case CREATE_MAIN_IMAGE_FAILURE:
     case CREATE_PDF_FAILURE:
     case DELETE_ITEM_FAILURE:
-    case DELETE_TRANSLATION_FAILURE:
+    case DELETE_LANGUAGE_FAILURE:
     case FETCH_ITEM_FAILURE:
     case FETCH_AVAILABLE_TICKETS_FAILURE:
     case FETCH_LIST_FAILURE:
