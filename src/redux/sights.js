@@ -557,7 +557,7 @@ const deleteTranslation = ({
 } = {}) => ({
   type: DELETE_TRANSLATION,
   payload: {
-    url: `${apiURL}/${id}/languageVersion/${language}`,
+    url: `/partner${apiURL}/${id}/languageVersion/${language}`,
     method: 'delete',
     ...options,
   },
