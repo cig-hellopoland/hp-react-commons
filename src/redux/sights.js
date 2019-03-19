@@ -540,7 +540,7 @@ const deleteLanguage = ({
 } = {}) => ({
   type: DELETE_LANGUAGE,
   payload: {
-    url: `${apiURL}/${id}/languageVersion${params.forEach(param => `/${param}`)}`,
+    url: `${apiURL}/${id}/languageVersion/${params.language}`,
     method: 'delete',
     ...options,
   },

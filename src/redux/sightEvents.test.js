@@ -371,12 +371,12 @@ describe('actions', () => {
     const { deleteLanguage } = actions;
     const { DELETE_LANGUAGE } = types;
     const id = 1;
-    const params = ['pl-PL'];
+    const params = { language: 'pl-PL' };
     const options = { b: 2 };
     const expectedValue = {
       type: DELETE_LANGUAGE,
       payload: {
-        url: `${apiURL}/${id}/languageVersion${params.forEach(param => `/${param}`)}`,
+        url: `${apiURL}/${id}/languageVersion/${params.language}`,
         method: 'delete',
       },
     };
