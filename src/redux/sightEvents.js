@@ -41,12 +41,6 @@ const prefix = `commons/${name}/`;
 const CHANGE_DEFAULT_LANGUAGE = `${prefix}CHANGE_DEFAULT_LANGUAGE`;
 
 /**
- * Type used for handling change default language request cancellation.
- * @type {string}
- */
-const CHANGE_DEFAULT_LANGUAGE_CANCEL = `${prefix}CHANGE_DEFAULT_LANGUAGE_CANCEL`;
-
-/**
  * Type used for handling change default language request failure.
  * @type {string}
  */
@@ -166,6 +160,24 @@ const DELETE_ITEM_FAILURE = `${prefix}DELETE_ITEM_FAILURE`;
  * @type {string}
  */
 const DELETE_ITEM_SUCCESS = `${prefix}DELETE_ITEM_SUCCESS`;
+
+/**
+ * Type used for handling translation deletion.
+ * @type {string}
+ */
+const DELETE_LANGUAGE = `${prefix}DELETE_LANGUAGE`;
+
+/**
+ * Type used for handling translation deletion failure.
+ * @type {string}
+ */
+const DELETE_LANGUAGE_FAILURE = `${prefix}DELETE_LANGUAGE_FAILURE`;
+
+/**
+ * Type used for handling translation deletion success.
+ * @type {string}
+ */
+const DELETE_LANGUAGE_SUCCESS = `${prefix}DELETE_LANGUAGE_SUCCESS`;
 
 /**
  * Type used for handling PDF document deletion.
@@ -319,7 +331,6 @@ const STOP_SELL_SUCCESS = `${prefix}STOP_SELL_SUCCESS`;
 
 export const types = {
   CHANGE_DEFAULT_LANGUAGE,
-  CHANGE_DEFAULT_LANGUAGE_CANCEL,
   CHANGE_DEFAULT_LANGUAGE_FAILURE,
   CHANGE_DEFAULT_LANGUAGE_SUCCESS,
   CLEAR_AVAILABLE_TICKETS,
@@ -340,6 +351,9 @@ export const types = {
   DELETE_ITEM,
   DELETE_ITEM_FAILURE,
   DELETE_ITEM_SUCCESS,
+  DELETE_LANGUAGE,
+  DELETE_LANGUAGE_FAILURE,
+  DELETE_LANGUAGE_SUCCESS,
   DELETE_PDF,
   DELETE_PDF_FAILURE,
   DELETE_PDF_SUCCESS,
@@ -399,15 +413,6 @@ const changeDefaultLanguage = ({
   },
   onFailure,
   onSuccess,
-});
-
-/**
- * Creates action for change default language request cancelling.
- * @method
- * @return {{type: string}}
- */
-const changeDefaultLanguageCancel = () => ({
-  type: CHANGE_DEFAULT_LANGUAGE_CANCEL,
 });
 
 /**
@@ -763,6 +768,62 @@ const deleteItemFailure = ({ data, status } = {}) => ({
  */
 const deleteItemSuccess = () => ({
   type: DELETE_ITEM_SUCCESS,
+});
+
+/**
+ * Creates action with translation deletion request details.
+ * @method
+ * @param {Object} params
+ * @param {number} params.id - item id
+ * @param {Object} [params.options] - request config
+ * @param {failureCallback} [params.onFailure] - failure callback
+ * @param {successCallback} [params.onSuccess] - success callback
+ * @return {{
+ *   type: string,
+ *   payload: {url: string, method: string, options: *},
+ *   onFailure: failureCallback,
+ *   onSuccess: successCallback
+ * }}
+ */
+const deleteLanguage = ({
+  id, params, options, onFailure, onSuccess,
+} = {}) => ({
+  type: DELETE_LANGUAGE,
+  payload: {
+    url: `${apiURL}/${id}/languageVersion/${params.language}`,
+    method: 'delete',
+    ...options,
+  },
+  onFailure,
+  onSuccess,
+});
+
+/**
+ * Creates action for translation deletion request failing.
+ * @method
+ * @param {Object} params - axios response schema
+ * @param params.data - response body
+ * @param params.status - response status
+ * @return {{
+ *   type: string,
+ *   error: {data, status: number}
+ * }}
+ */
+const deleteLanguageFailure = ({ data, status } = {}) => ({
+  type: DELETE_LANGUAGE_FAILURE,
+  error: {
+    data,
+    status,
+  },
+});
+
+/**
+ * Creates action for successful translation deletion request.
+ * @method
+ * @return {{type: string}}
+ */
+const deleteLanguageSuccess = () => ({
+  type: DELETE_LANGUAGE_SUCCESS,
 });
 
 /**
@@ -1214,7 +1275,6 @@ const stopSellSuccess = data => ({
 
 export const actions = {
   changeDefaultLanguage,
-  changeDefaultLanguageCancel,
   changeDefaultLanguageFailure,
   changeDefaultLanguageSuccess,
   clearAvailableTickets,
@@ -1235,6 +1295,9 @@ export const actions = {
   deleteItem,
   deleteItemFailure,
   deleteItemSuccess,
+  deleteLanguage,
+  deleteLanguageFailure,
+  deleteLanguageSuccess,
   deletePDF,
   deletePDFFailure,
   deletePDFSuccess,
@@ -1605,6 +1668,48 @@ const deleteItemLogic = createLogic({
   },
 });
 
+/**
+ * Logic used for handling translation deletion.
+ * @method
+ */
+const deleteLanguageLogic = createLogic({
+  type: [
+    DELETE_LANGUAGE,
+  ],
+  latest: true,
+  async process(
+    { action: { payload, onFailure, onSuccess }, httpClient, cancelled$ },
+    dispatch,
+    done,
+  ) {
+    try {
+      const response = await httpClient.cancellable(payload, cancelled$);
+      const { status } = response;
+
+      if (status === 200 || status === 204) {
+        dispatch(deleteItemSuccess());
+
+        if (onSuccess) {
+          onSuccess();
+        }
+      } else {
+        dispatch(deleteItemFailure(response));
+
+        if (onFailure) {
+          onFailure();
+        }
+      }
+    } catch ({ response }) {
+      dispatch(deleteItemFailure(response));
+
+      if (onFailure) {
+        onFailure();
+      }
+    }
+
+    done();
+  },
+});
 
 /**
  * Logic used for handling PDF document deletion.
@@ -1927,6 +2032,7 @@ export const logic = {
   createMainImageLogic,
   createPDFLogic,
   deleteItemLogic,
+  deleteLanguageLogic,
   deletePDFLogic,
   fetchAvailableTicketsLogic,
   fetchItemLogic,
@@ -1988,6 +2094,7 @@ const reducer = (initialState = defaultInitialState) => (state = initialState, a
     case CREATE_PDF_FAILURE:
     case CREATE_TRANSLATION_FAILURE:
     case DELETE_ITEM_FAILURE:
+    case DELETE_LANGUAGE_FAILURE:
     case FETCH_ITEM_FAILURE:
     case FETCH_AVAILABLE_TICKETS_FAILURE:
     case FETCH_LIST_FAILURE:
