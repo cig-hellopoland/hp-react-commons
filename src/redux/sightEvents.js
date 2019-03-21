@@ -35,22 +35,22 @@ const prefix = `commons/${name}/`;
  */
 
 /**
- * Type used for handling change default language request.
+ * Type used for handling content's default translation change.
  * @type {string}
  */
-const CHANGE_DEFAULT_LANGUAGE = `${prefix}CHANGE_DEFAULT_LANGUAGE`;
+const CHANGE_DEFAULT_TRANSLATION = `${prefix}CHANGE_DEFAULT_TRANSLATION`;
 
 /**
- * Type used for handling change default language request failure.
+ * Type used for handling content's default translation change failure.
  * @type {string}
  */
-const CHANGE_DEFAULT_LANGUAGE_FAILURE = `${prefix}CHANGE_DEFAULT_LANGUAGE_FAILURE`;
+const CHANGE_DEFAULT_TRANSLATION_FAILURE = `${prefix}CHANGE_DEFAULT_TRANSLATION_FAILURE`;
 
 /**
- * Type used for handling change default language request success.
+ * Type used for handling content's default translation change success.
  * @type {string}
  */
-const CHANGE_DEFAULT_LANGUAGE_SUCCESS = `${prefix}CHANGE_DEFAULT_LANGUAGE_SUCCESS`;
+const CHANGE_DEFAULT_TRANSLATION_SUCCESS = `${prefix}CHANGE_DEFAULT_TRANSLATION_SUCCESS`;
 
 /**
  * Type used for clearing ticket information for currently loaded entity.
@@ -162,24 +162,6 @@ const DELETE_ITEM_FAILURE = `${prefix}DELETE_ITEM_FAILURE`;
 const DELETE_ITEM_SUCCESS = `${prefix}DELETE_ITEM_SUCCESS`;
 
 /**
- * Type used for handling translation deletion.
- * @type {string}
- */
-const DELETE_LANGUAGE = `${prefix}DELETE_LANGUAGE`;
-
-/**
- * Type used for handling translation deletion failure.
- * @type {string}
- */
-const DELETE_LANGUAGE_FAILURE = `${prefix}DELETE_LANGUAGE_FAILURE`;
-
-/**
- * Type used for handling translation deletion success.
- * @type {string}
- */
-const DELETE_LANGUAGE_SUCCESS = `${prefix}DELETE_LANGUAGE_SUCCESS`;
-
-/**
  * Type used for handling PDF document deletion.
  * @type {string}
  */
@@ -196,6 +178,24 @@ const DELETE_PDF_FAILURE = `${prefix}DELETE_PDF_FAILURE`;
  * @type {string}
  */
 const DELETE_PDF_SUCCESS = `${prefix}DELETE_PDF_SUCCESS`;
+
+/**
+ * Type used for handling translation deletion.
+ * @type {string}
+ */
+const DELETE_TRANSLATION = `${prefix}DELETE_TRANSLATION`;
+
+/**
+ * Type used for handling translation deletion failure.
+ * @type {string}
+ */
+const DELETE_TRANSLATION_FAILURE = `${prefix}DELETE_TRANSLATION_FAILURE`;
+
+/**
+ * Type used for handling translation deletion success.
+ * @type {string}
+ */
+const DELETE_TRANSLATION_SUCCESS = `${prefix}DELETE_TRANSLATION_SUCCESS`;
 
 /**
  * Type used for handling ticket information fetching.
@@ -330,9 +330,9 @@ const STOP_SELL_FAILURE = `${prefix}STOP_SELL_FAILURE`;
 const STOP_SELL_SUCCESS = `${prefix}STOP_SELL_SUCCESS`;
 
 export const types = {
-  CHANGE_DEFAULT_LANGUAGE,
-  CHANGE_DEFAULT_LANGUAGE_FAILURE,
-  CHANGE_DEFAULT_LANGUAGE_SUCCESS,
+  CHANGE_DEFAULT_TRANSLATION,
+  CHANGE_DEFAULT_TRANSLATION_FAILURE,
+  CHANGE_DEFAULT_TRANSLATION_SUCCESS,
   CLEAR_AVAILABLE_TICKETS,
   CLEAR_ITEM,
   CLEAR_SEARCH_RESULTS,
@@ -351,12 +351,12 @@ export const types = {
   DELETE_ITEM,
   DELETE_ITEM_FAILURE,
   DELETE_ITEM_SUCCESS,
-  DELETE_LANGUAGE,
-  DELETE_LANGUAGE_FAILURE,
-  DELETE_LANGUAGE_SUCCESS,
   DELETE_PDF,
   DELETE_PDF_FAILURE,
   DELETE_PDF_SUCCESS,
+  DELETE_TRANSLATION,
+  DELETE_TRANSLATION_FAILURE,
+  DELETE_TRANSLATION_SUCCESS,
   FETCH_AVAILABLE_TICKETS,
   FETCH_AVAILABLE_TICKETS_CANCEL,
   FETCH_AVAILABLE_TICKETS_FAILURE,
@@ -387,25 +387,26 @@ export const types = {
  */
 
 /**
- * Creates action for change default language request.
+ * Creates action for default translation change request.
  * @method
  * @callback failureCallback
  * @callback successCallback
- * @param {Object} params
- * @param {Object} [params.options] - request config
- * @param {failureCallback} [params.onFailure] - failure callback
- * @param {successCallback} [params.onSuccess] - success callback
+ * @param {number} id - item id
+ * @param {Object} options - request config
+ * @param {string} options.headers.content-language - new default translation code
+ * @param {failureCallback} [onFailure] - failure callback
+ * @param {successCallback} [onSuccess] - success callback
  * @return {{
  *   type: string,
- *   payload: {url: string, method: string, data: *, options: *},
+ *   payload: {url: string, method: string, options: *},
  *   onFailure: failureCallback,
  *   onSuccess: successCallback
  * }}
  */
-const changeDefaultLanguage = ({
+const changeDefaultTranslation = ({
   id, options, onFailure, onSuccess,
 } = {}) => ({
-  type: CHANGE_DEFAULT_LANGUAGE,
+  type: CHANGE_DEFAULT_TRANSLATION,
   payload: {
     url: `${apiURL}/${id}/defaultLanguage`,
     method: 'patch',
@@ -426,8 +427,8 @@ const changeDefaultLanguage = ({
  *   error: {data, status: number}
  * }}
  */
-const changeDefaultLanguageFailure = ({ data, status } = {}) => ({
-  type: CHANGE_DEFAULT_LANGUAGE_FAILURE,
+const changeDefaultTranslationFailure = ({ data, status } = {}) => ({
+  type: CHANGE_DEFAULT_TRANSLATION_FAILURE,
   error: {
     data,
     status,
@@ -439,8 +440,8 @@ const changeDefaultLanguageFailure = ({ data, status } = {}) => ({
  * @method
  * @return {{type: string}}
  */
-const changeDefaultLanguageSuccess = () => ({
-  type: CHANGE_DEFAULT_LANGUAGE_SUCCESS,
+const changeDefaultTranslationSuccess = () => ({
+  type: CHANGE_DEFAULT_TRANSLATION_SUCCESS,
 });
 
 /**
@@ -771,62 +772,6 @@ const deleteItemSuccess = () => ({
 });
 
 /**
- * Creates action with translation deletion request details.
- * @method
- * @param {Object} params
- * @param {number} params.id - item id
- * @param {Object} [params.options] - request config
- * @param {failureCallback} [params.onFailure] - failure callback
- * @param {successCallback} [params.onSuccess] - success callback
- * @return {{
- *   type: string,
- *   payload: {url: string, method: string, options: *},
- *   onFailure: failureCallback,
- *   onSuccess: successCallback
- * }}
- */
-const deleteLanguage = ({
-  id, params, options, onFailure, onSuccess,
-} = {}) => ({
-  type: DELETE_LANGUAGE,
-  payload: {
-    url: `${apiURL}/${id}/languageVersion/${params.language}`,
-    method: 'delete',
-    ...options,
-  },
-  onFailure,
-  onSuccess,
-});
-
-/**
- * Creates action for translation deletion request failing.
- * @method
- * @param {Object} params - axios response schema
- * @param params.data - response body
- * @param params.status - response status
- * @return {{
- *   type: string,
- *   error: {data, status: number}
- * }}
- */
-const deleteLanguageFailure = ({ data, status } = {}) => ({
-  type: DELETE_LANGUAGE_FAILURE,
-  error: {
-    data,
-    status,
-  },
-});
-
-/**
- * Creates action for successful translation deletion request.
- * @method
- * @return {{type: string}}
- */
-const deleteLanguageSuccess = () => ({
-  type: DELETE_LANGUAGE_SUCCESS,
-});
-
-/**
  * Creates action with pdf deletion request details.
  * @method
  * @param {Object} params
@@ -880,6 +825,61 @@ const deletePDFFailure = ({ data, status } = {}) => ({
  */
 const deletePDFSuccess = () => ({
   type: DELETE_PDF_SUCCESS,
+});
+
+/**
+ * Creates action with translation deletion request details.
+ * @method
+ * @param {number} id - item id
+ * @param {Object} options - request config
+ * @param {failureCallback} [onFailure] - failure callback
+ * @param {successCallback} [onSuccess] - success callback
+ * @return {{
+ *   type: string,
+ *   payload: {url: string, method: string, options: *},
+ *   onFailure: failureCallback,
+ *   onSuccess: successCallback
+ * }}
+ */
+const deleteTranslation = ({
+  id, params, options, onFailure, onSuccess,
+} = {}) => ({
+  type: DELETE_TRANSLATION,
+  payload: {
+    url: `${apiURL}/${id}/languageVersion/${params.language}`,
+    method: 'delete',
+    ...options,
+  },
+  onFailure,
+  onSuccess,
+});
+
+/**
+ * Creates action for translation deletion request failing.
+ * @method
+ * @param {Object} params - axios response schema
+ * @param params.data - response body
+ * @param params.status - response status
+ * @return {{
+ *   type: string,
+ *   error: {data, status: number}
+ * }}
+ */
+const deleteTranslationFailure = ({ data, status } = {}) => ({
+  type: DELETE_TRANSLATION_FAILURE,
+  error: {
+    data,
+    status,
+  },
+});
+
+/**
+ * Creates action for successful translation deletion request.
+ * @method
+ * @return {{type: string}}
+ */
+const deleteTranslationSuccess = () => ({
+  type: DELETE_TRANSLATION_SUCCESS,
 });
 
 /**
@@ -1274,9 +1274,9 @@ const stopSellSuccess = data => ({
 });
 
 export const actions = {
-  changeDefaultLanguage,
-  changeDefaultLanguageFailure,
-  changeDefaultLanguageSuccess,
+  changeDefaultTranslation,
+  changeDefaultTranslationFailure,
+  changeDefaultTranslationSuccess,
   clearAvailableTickets,
   clearItem,
   clearSearchResults,
@@ -1295,12 +1295,12 @@ export const actions = {
   deleteItem,
   deleteItemFailure,
   deleteItemSuccess,
-  deleteLanguage,
-  deleteLanguageFailure,
-  deleteLanguageSuccess,
   deletePDF,
   deletePDFFailure,
   deletePDFSuccess,
+  deleteTranslation,
+  deleteTranslationFailure,
+  deleteTranslationSuccess,
   fetchAvailableTickets,
   fetchAvailableTicketsCancel,
   fetchAvailableTicketsFailure,
@@ -1402,7 +1402,7 @@ export const selectors = {
  */
 const changeDefaultLanguageLogic = createLogic({
   type: [
-    CHANGE_DEFAULT_LANGUAGE,
+    CHANGE_DEFAULT_TRANSLATION,
   ],
   async process(
     { action: { payload, onFailure, onSuccess }, httpClient, cancelled$ },
@@ -1414,20 +1414,20 @@ const changeDefaultLanguageLogic = createLogic({
       const { status } = response;
 
       if (status === 200 || status === 204) {
-        dispatch(changeDefaultLanguageSuccess());
+        dispatch(changeDefaultTranslationSuccess());
 
         if (onSuccess) {
           onSuccess();
         }
       } else {
-        dispatch(changeDefaultLanguageFailure(response));
+        dispatch(changeDefaultTranslationFailure(response));
 
         if (onFailure) {
           onFailure();
         }
       }
     } catch ({ response }) {
-      dispatch(changeDefaultLanguageFailure(response));
+      dispatch(changeDefaultTranslationFailure(response));
 
       if (onFailure) {
         onFailure();
@@ -1674,7 +1674,7 @@ const deleteItemLogic = createLogic({
  */
 const deleteLanguageLogic = createLogic({
   type: [
-    DELETE_LANGUAGE,
+    DELETE_TRANSLATION,
   ],
   latest: true,
   async process(
@@ -1687,20 +1687,20 @@ const deleteLanguageLogic = createLogic({
       const { status } = response;
 
       if (status === 200 || status === 204) {
-        dispatch(deleteItemSuccess());
+        dispatch(deleteTranslationSuccess());
 
         if (onSuccess) {
           onSuccess();
         }
       } else {
-        dispatch(deleteItemFailure(response));
+        dispatch(deleteTranslationFailure(response));
 
         if (onFailure) {
           onFailure();
         }
       }
     } catch ({ response }) {
-      dispatch(deleteItemFailure(response));
+      dispatch(deleteTranslationFailure(response));
 
       if (onFailure) {
         onFailure();
@@ -2088,13 +2088,13 @@ const reducer = (initialState = defaultInitialState) => (state = initialState, a
         error: initialState.error,
         item: initialState.item,
       };
-    case CHANGE_DEFAULT_LANGUAGE_FAILURE:
+    case CHANGE_DEFAULT_TRANSLATION_FAILURE:
     case CREATE_ITEM_FAILURE:
     case CREATE_MAIN_IMAGE_FAILURE:
     case CREATE_PDF_FAILURE:
     case CREATE_TRANSLATION_FAILURE:
     case DELETE_ITEM_FAILURE:
-    case DELETE_LANGUAGE_FAILURE:
+    case DELETE_TRANSLATION_FAILURE:
     case FETCH_ITEM_FAILURE:
     case FETCH_AVAILABLE_TICKETS_FAILURE:
     case FETCH_LIST_FAILURE:
@@ -2105,6 +2105,7 @@ const reducer = (initialState = defaultInitialState) => (state = initialState, a
         ...state,
         error: action.error,
       };
+    case CHANGE_DEFAULT_TRANSLATION_SUCCESS:
     case CREATE_ITEM_SUCCESS:
     case UPDATE_ITEM_SUCCESS:
       return {
