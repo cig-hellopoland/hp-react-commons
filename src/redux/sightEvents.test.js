@@ -62,6 +62,59 @@ function generateAppState(data) {
  */
 
 describe('actions', () => {
+  it('should creater an action to make change deafault language request', () => {
+    const { changeDefaultLanguage } = actions;
+    const { CHANGE_DEFAULT_LANGUAGE } = types;
+    const options = {
+      headers: {
+        'Content-Language': 'pl-PL',
+      },
+    };
+    const expectedValue = {
+      type: CHANGE_DEFAULT_LANGUAGE,
+      payload: {
+        url: `${apiURL}/3/defaultLanguage`,
+        method: 'patch',
+        ...options,
+      },
+    };
+    expect(changeDefaultLanguage({ id: 3, options })).toEqual(expectedValue);
+
+    expectedValue.onFailure = onFailure;
+    expectedValue.onSuccess = onSuccess;
+
+    expect(changeDefaultLanguage({
+      id: 3, options, onFailure, onSuccess,
+    })).toEqual(expectedValue);
+  });
+
+  it('should create an action to fail change default language request', () => {
+    const { changeDefaultLanguageFailure } = actions;
+    const { CHANGE_DEFAULT_LANGUAGE_FAILURE } = types;
+
+    const expectedValue = {
+      type: CHANGE_DEFAULT_LANGUAGE_FAILURE,
+      error: {},
+    };
+
+    expect(changeDefaultLanguageFailure()).toEqual(expectedValue);
+
+    expectedValue.error = axiosResponseError;
+
+    expect(changeDefaultLanguageFailure(axiosResponseError)).toEqual(expectedValue);
+  });
+
+  it('should create an action to succeed change default language request', () => {
+    const { changeDefaultLanguageSuccess } = actions;
+    const { CHANGE_DEFAULT_LANGUAGE_SUCCESS } = types;
+
+    const expectedValue = {
+      type: CHANGE_DEFAULT_LANGUAGE_SUCCESS,
+    };
+
+    expect(changeDefaultLanguageSuccess()).toEqual(expectedValue);
+  });
+
   it('should create an action to make item create request', () => {
     const { createItem } = actions;
     const { CREATE_ITEM } = types;
@@ -256,6 +309,64 @@ describe('actions', () => {
     };
 
     expect(createPDFSuccess()).toEqual(expectedValue);
+  });
+
+  it('should create an action to make translation create request', () => {
+    const { createTranslation } = actions;
+    const { CREATE_TRANSLATION } = types;
+    const data = { a: 1 };
+    const options = { b: 2 };
+    const expectedValue = {
+      type: CREATE_TRANSLATION,
+      payload: {
+        url: apiURL,
+        method: 'post',
+        data,
+      },
+    };
+
+    expect(createTranslation({ data })).toEqual(expectedValue);
+
+    expectedValue.payload = {
+      ...expectedValue.payload,
+      ...options,
+    };
+
+    expect(createTranslation({ data, options })).toEqual(expectedValue);
+
+    expectedValue.onFailure = onFailure;
+    expectedValue.onSuccess = onSuccess;
+
+    expect(createTranslation({
+      data, options, onFailure, onSuccess,
+    })).toEqual(expectedValue);
+  });
+
+  it('should create an action to fail translation create request', () => {
+    const { createTranslationFailure } = actions;
+    const { CREATE_TRANSLATION_FAILURE } = types;
+    const expectedValue = {
+      type: CREATE_TRANSLATION_FAILURE,
+      error: {},
+    };
+
+    expect(createTranslationFailure()).toEqual(expectedValue);
+
+    expectedValue.error = axiosResponseError;
+
+    expect(createTranslationFailure(axiosResponseError)).toEqual(expectedValue);
+  });
+
+  it('should create an action to succeed item create request', () => {
+    const { createTranslationSuccess } = actions;
+    const { CREATE_TRANSLATION_SUCCESS } = types;
+    const data = { a: 1 };
+    const expectedValue = {
+      type: CREATE_TRANSLATION_SUCCESS,
+      data,
+    };
+
+    expect(createTranslationSuccess(data)).toEqual(expectedValue);
   });
 
   it('should create an action to make item delete request', () => {
