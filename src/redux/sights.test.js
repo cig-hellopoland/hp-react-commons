@@ -677,7 +677,9 @@ describe('actions', () => {
         ...options,
       };
 
-      expect(updateItem({ id, data, pathParams, options })).toEqual(expectedValue);
+      expect(updateItem({
+        id, data, pathParams, options,
+      })).toEqual(expectedValue);
 
       expectedValue.onFailure = onFailure;
       expectedValue.onSuccess = onSuccess;

@@ -896,7 +896,7 @@ const updateItem = ({
     onFailure,
     onSuccess,
   });
-}
+};
 
 /**
  * Creates action for item update request failing.
