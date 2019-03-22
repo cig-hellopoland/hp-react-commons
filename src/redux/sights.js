@@ -606,6 +606,7 @@ const deleteItemSuccess = () => ({
  * @method
  * @param {number} id - item id
  * @param {Object} options - request config
+ * @param {Object} pathParams - URL path params
  * @param {failureCallback} [onFailure] - failure callback
  * @param {successCallback} [onSuccess] - success callback
  * @return {{
@@ -616,17 +617,21 @@ const deleteItemSuccess = () => ({
  * }}
  */
 const deleteTranslation = ({
-  id, params, options, onFailure, onSuccess,
-} = {}) => ({
-  type: DELETE_TRANSLATION,
-  payload: {
-    url: `${apiURL}/${id}/languageVersion/${params.language}`,
-    method: 'delete',
-    ...options,
-  },
-  onFailure,
-  onSuccess,
-});
+  id, pathParams = {}, options, onFailure, onSuccess,
+} = {}) => {
+  const path = Object.entries(pathParams).reduce((acc, [key, value]) => `${acc}/${key}/${value}`, '');
+
+  return ({
+    type: DELETE_TRANSLATION,
+    payload: {
+      url: `${apiURL}/${id}${path}`,
+      method: 'delete',
+      ...options,
+    },
+    onFailure,
+    onSuccess,
+  });
+};
 
 /**
  * Creates action for translation deletion request failing.

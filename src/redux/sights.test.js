@@ -390,30 +390,30 @@ describe('actions', () => {
       const { deleteTranslation } = actions;
       const { DELETE_TRANSLATION } = types;
       const id = 1;
-      const params = { language: 'pl-PL' };
+      const pathParams = { languageVersion: 'pl-PL' };
       const options = { b: 2 };
       const expectedValue = {
         type: DELETE_TRANSLATION,
         payload: {
-          url: `${apiURL}/${id}/languageVersion/${params.language}`,
+          url: `${apiURL}/${id}/languageVersion/${pathParams.languageVersion}`,
           method: 'delete',
         },
       };
 
-      expect(deleteTranslation({ id, params })).toEqual(expectedValue);
+      expect(deleteTranslation({ id, pathParams })).toEqual(expectedValue);
 
       expectedValue.payload = {
         ...expectedValue.payload,
         ...options,
       };
 
-      expect(deleteTranslation({ id, params, options })).toEqual(expectedValue);
+      expect(deleteTranslation({ id, pathParams, options })).toEqual(expectedValue);
 
       expectedValue.onFailure = onFailure;
       expectedValue.onSuccess = onSuccess;
 
       expect(deleteTranslation({
-        id, params, options, onFailure, onSuccess,
+        id, pathParams, options, onFailure, onSuccess,
       })).toEqual(expectedValue);
     });
 
