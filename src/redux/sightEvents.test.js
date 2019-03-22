@@ -526,7 +526,7 @@ describe('actions', () => {
     });
   });
 
-  describe('[x] using deleteTranslation', () => {
+  describe('using deleteTranslation', () => {
     it('should create an action with request payload', () => {
       const { deleteTranslation } = actions;
       const { DELETE_TRANSLATION } = types;
