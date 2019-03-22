@@ -867,30 +867,33 @@ describe('actions', () => {
       const { UPDATE_ITEM } = types;
       const id = 1;
       const data = { a: 1 };
+      const pathParams = { languageVersion: 'pl-PL' };
       const options = { b: 2 };
       const expectedValue = {
         type: UPDATE_ITEM,
         payload: {
-          url: `${apiURL}/${id}`,
+          url: `${apiURL}/${id}/languageVersion/${pathParams.languageVersion}`,
           method: 'put',
           data,
         },
       };
 
-      expect(updateItem({ id, data })).toEqual(expectedValue);
+      expect(updateItem({ id, data, pathParams })).toEqual(expectedValue);
 
       expectedValue.payload = {
         ...expectedValue.payload,
         ...options,
       };
 
-      expect(updateItem({ id, data, options })).toEqual(expectedValue);
+      expect(updateItem({
+        id, data, pathParams, options,
+      })).toEqual(expectedValue);
 
       expectedValue.onFailure = onFailure;
       expectedValue.onSuccess = onSuccess;
 
       expect(updateItem({
-        id, data, options, onFailure, onSuccess,
+        id, data, pathParams, options, onFailure, onSuccess,
       })).toEqual(expectedValue);
     });
 

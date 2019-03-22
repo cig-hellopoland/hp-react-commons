@@ -1160,12 +1160,12 @@ const fetchSearchResultsSuccess = data => ({
 /**
  * Creates action with item update request details.
  * @method
- * @param {Object} params
- * @param {Object} params.id - item id
- * @param {Object} params.data - request body
- * @param {Object} [params.options] - request config
- * @param {failureCallback} [params.onFailure] - failure callback
- * @param {successCallback} [params.onSuccess] - success callback
+ * @param {Object} id - item id
+ * @param {Object} data - request body
+ * @param {Object} pathParams - URL path params
+ * @param {Object} [options] - request config
+ * @param {failureCallback} [onFailure] - failure callback
+ * @param {successCallback} [onSuccess] - success callback
  * @return {{
  *   type: string,
  *   payload: {url: string, method: string, data: *, options: *},
@@ -1174,18 +1174,22 @@ const fetchSearchResultsSuccess = data => ({
  * }}
  */
 const updateItem = ({
-  id, data, options, onFailure, onSuccess,
-} = {}) => ({
-  type: UPDATE_ITEM,
-  payload: {
-    url: `${apiURL}/${id}`,
-    method: 'put',
-    ...options,
-    data,
-  },
-  onFailure,
-  onSuccess,
-});
+  id, data, pathParams, options, onFailure, onSuccess,
+} = {}) => {
+  const path = Object.entries(pathParams).reduce((acc, [key, value]) => `${acc}/${key}/${value}`, '');
+
+  return ({
+    type: UPDATE_ITEM,
+    payload: {
+      url: `${apiURL}/${id}${path}`,
+      method: 'put',
+      ...options,
+      data,
+    },
+    onFailure,
+    onSuccess,
+  });
+}
 
 /**
  * Creates action for item update request failing.
