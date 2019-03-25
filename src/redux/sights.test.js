@@ -268,7 +268,7 @@ describe('actions', () => {
     });
   });
 
-  describe('[x] using createTranslation', () => {
+  describe('using createTranslation', () => {
     it('should create an action with request payload', () => {
       const { createTranslation } = actions;
       const { CREATE_TRANSLATION } = types;
