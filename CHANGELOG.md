@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.10.0
+* Added default translation changing
+
 ## 1.9.1
 * Fixed cart items with 0 quantity.
 

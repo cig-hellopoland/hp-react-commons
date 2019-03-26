@@ -35,9 +35,28 @@ const prefix = `commons/${name}/`;
  */
 
 /**
+ * Type used for handling content's default translation change.
+ * @type {string}
+ */
+const CHANGE_DEFAULT_TRANSLATION = `${prefix}CHANGE_DEFAULT_TRANSLATION`;
+
+/**
+ * Type used for handling content's default translation change failure.
+ * @type {string}
+ */
+const CHANGE_DEFAULT_TRANSLATION_FAILURE = `${prefix}CHANGE_DEFAULT_TRANSLATION_FAILURE`;
+
+/**
+ * Type used for handling content's default translation change success.
+ * @type {string}
+ */
+const CHANGE_DEFAULT_TRANSLATION_SUCCESS = `${prefix}CHANGE_DEFAULT_TRANSLATION_SUCCESS`;
+
+/**
  * Type used for clearing ticket information for currently loaded entity.
  * @type {string}
  */
+
 const CLEAR_AVAILABLE_TICKETS = `${prefix}CLEAR_AVAILABLE_TICKETS`;
 
 /**
@@ -69,6 +88,24 @@ const CREATE_ITEM_FAILURE = `${prefix}CREATE_ITEM_FAILURE`;
  * @type {string}
  */
 const CREATE_ITEM_SUCCESS = `${prefix}CREATE_ITEM_SUCCESS`;
+
+/**
+ * Type used for handling translation creation.
+ * @type {string}
+ */
+const CREATE_TRANSLATION = `${prefix}CREATE_TRANSLATION`;
+
+/**
+ * Type used for handling translation creation failure.
+ * @type {string}
+ */
+const CREATE_TRANSLATION_FAILURE = `${prefix}CREATE_TRANSLATION_FAILURE`;
+
+/**
+ * Type used for handling translation creation success.
+ * @type {string}
+ */
+const CREATE_TRANSLATION_SUCCESS = `${prefix}CREATE_TRANSLATION_SUCCESS`;
 
 /**
  * Type used for handling main image creation.
@@ -141,6 +178,24 @@ const DELETE_PDF_FAILURE = `${prefix}DELETE_PDF_FAILURE`;
  * @type {string}
  */
 const DELETE_PDF_SUCCESS = `${prefix}DELETE_PDF_SUCCESS`;
+
+/**
+ * Type used for handling translation deletion.
+ * @type {string}
+ */
+const DELETE_TRANSLATION = `${prefix}DELETE_TRANSLATION`;
+
+/**
+ * Type used for handling translation deletion failure.
+ * @type {string}
+ */
+const DELETE_TRANSLATION_FAILURE = `${prefix}DELETE_TRANSLATION_FAILURE`;
+
+/**
+ * Type used for handling translation deletion success.
+ * @type {string}
+ */
+const DELETE_TRANSLATION_SUCCESS = `${prefix}DELETE_TRANSLATION_SUCCESS`;
 
 /**
  * Type used for handling ticket information fetching.
@@ -275,12 +330,18 @@ const STOP_SELL_FAILURE = `${prefix}STOP_SELL_FAILURE`;
 const STOP_SELL_SUCCESS = `${prefix}STOP_SELL_SUCCESS`;
 
 export const types = {
+  CHANGE_DEFAULT_TRANSLATION,
+  CHANGE_DEFAULT_TRANSLATION_FAILURE,
+  CHANGE_DEFAULT_TRANSLATION_SUCCESS,
   CLEAR_AVAILABLE_TICKETS,
   CLEAR_ITEM,
   CLEAR_SEARCH_RESULTS,
   CREATE_ITEM,
   CREATE_ITEM_FAILURE,
   CREATE_ITEM_SUCCESS,
+  CREATE_TRANSLATION,
+  CREATE_TRANSLATION_FAILURE,
+  CREATE_TRANSLATION_SUCCESS,
   CREATE_MAIN_IMAGE,
   CREATE_MAIN_IMAGE_FAILURE,
   CREATE_MAIN_IMAGE_SUCCESS,
@@ -293,6 +354,9 @@ export const types = {
   DELETE_PDF,
   DELETE_PDF_FAILURE,
   DELETE_PDF_SUCCESS,
+  DELETE_TRANSLATION,
+  DELETE_TRANSLATION_FAILURE,
+  DELETE_TRANSLATION_SUCCESS,
   FETCH_AVAILABLE_TICKETS,
   FETCH_AVAILABLE_TICKETS_CANCEL,
   FETCH_AVAILABLE_TICKETS_FAILURE,
@@ -321,6 +385,64 @@ export const types = {
 /*
  * ACTIONS
  */
+
+/**
+ * Creates action for default translation change request.
+ * @method
+ * @callback failureCallback
+ * @callback successCallback
+ * @param {number} id - item id
+ * @param {Object} options - request config
+ * @param {string} options.headers.content-language - new default translation code
+ * @param {failureCallback} [onFailure] - failure callback
+ * @param {successCallback} [onSuccess] - success callback
+ * @return {{
+ *   type: string,
+ *   payload: {url: string, method: string, options: *},
+ *   onFailure: failureCallback,
+ *   onSuccess: successCallback
+ * }}
+ */
+const changeDefaultTranslation = ({
+  id, options, onFailure, onSuccess,
+} = {}) => ({
+  type: CHANGE_DEFAULT_TRANSLATION,
+  payload: {
+    url: `${apiURL}/${id}/defaultLanguage`,
+    method: 'patch',
+    ...options,
+  },
+  onFailure,
+  onSuccess,
+});
+
+/**
+ * Creates action for change default language request failing.
+ * @method
+ * @param {Object} params - axios response schema
+ * @param params.data - response body
+ * @param params.status - response status
+ * @return {{
+ *   type: string,
+ *   error: {data, status: number}
+ * }}
+ */
+const changeDefaultTranslationFailure = ({ data, status } = {}) => ({
+  type: CHANGE_DEFAULT_TRANSLATION_FAILURE,
+  error: {
+    data,
+    status,
+  },
+});
+
+/**
+ * Creates action for successful change default language request.
+ * @method
+ * @return {{type: string}}
+ */
+const changeDefaultTranslationSuccess = () => ({
+  type: CHANGE_DEFAULT_TRANSLATION_SUCCESS,
+});
 
 /**
  * Creates action for item removal.
@@ -405,6 +527,65 @@ const createItemFailure = ({ data, status } = {}) => ({
  */
 const createItemSuccess = data => ({
   type: CREATE_ITEM_SUCCESS,
+  data,
+});
+
+/**
+ * Creates action with translation creation request details.
+ * @method
+ * @param {Object} params
+ * @param {Object} params.data - request data
+ * @param {Object} [params.options] - request config
+ * @param {failureCallback} [params.onFailure] - failure callback
+ * @param {successCallback} [params.onSuccess] - success callback
+ * @return {{
+ *   type: string,
+ *   payload: {url: string, method: string, data: *, options: *},
+ *   onFailure: failureCallback,
+ *   onSuccess: successCallback
+ * }}
+ */
+const createTranslation = ({
+  data, options, onFailure, onSuccess,
+} = {}) => ({
+  type: CREATE_TRANSLATION,
+  payload: {
+    url: apiURL,
+    method: 'post',
+    ...options,
+    data,
+  },
+  onFailure,
+  onSuccess,
+});
+
+/**
+ * Creates action for translation creation request failing.
+ * @method
+ * @param {Object} params - axios response schema
+ * @param params.data - response body
+ * @param params.status - response status
+ * @return {{
+ *   type: string,
+ *   error: {data, status: number}
+ * }}
+ */
+const createTranslationFailure = ({ data, status } = {}) => ({
+  type: CREATE_TRANSLATION_FAILURE,
+  error: {
+    data,
+    status,
+  },
+});
+
+/**
+ * Creates action for successful translation creation request.
+ * @method
+ * @param {Object} data - response body
+ * @return {{type: string, data: *}}
+ */
+const createTranslationSuccess = data => ({
+  type: CREATE_TRANSLATION_SUCCESS,
   data,
 });
 
@@ -644,6 +825,66 @@ const deletePDFFailure = ({ data, status } = {}) => ({
  */
 const deletePDFSuccess = () => ({
   type: DELETE_PDF_SUCCESS,
+});
+
+/**
+ * Creates action with translation deletion request details.
+ * @method
+ * @param {number} id - item id
+ * @param {Object} pathParams - URL path params
+ * @param {Object} options - request config
+ * @param {failureCallback} [onFailure] - failure callback
+ * @param {successCallback} [onSuccess] - success callback
+ * @return {{
+ *   type: string,
+ *   payload: {url: string, method: string, options: *},
+ *   onFailure: failureCallback,
+ *   onSuccess: successCallback
+ * }}
+ */
+const deleteTranslation = ({
+  id, pathParams, options, onFailure, onSuccess,
+} = {}) => {
+  const path = Object.entries(pathParams).reduce((acc, [key, value]) => `${acc}/${key}/${value}`, '');
+
+  return ({
+    type: DELETE_TRANSLATION,
+    payload: {
+      url: `${apiURL}/${id}${path}`,
+      method: 'delete',
+      ...options,
+    },
+    onFailure,
+    onSuccess,
+  });
+};
+
+/**
+ * Creates action for translation deletion request failing.
+ * @method
+ * @param {Object} params - axios response schema
+ * @param params.data - response body
+ * @param params.status - response status
+ * @return {{
+ *   type: string,
+ *   error: {data, status: number}
+ * }}
+ */
+const deleteTranslationFailure = ({ data, status } = {}) => ({
+  type: DELETE_TRANSLATION_FAILURE,
+  error: {
+    data,
+    status,
+  },
+});
+
+/**
+ * Creates action for successful translation deletion request.
+ * @method
+ * @return {{type: string}}
+ */
+const deleteTranslationSuccess = () => ({
+  type: DELETE_TRANSLATION_SUCCESS,
 });
 
 /**
@@ -919,12 +1160,12 @@ const fetchSearchResultsSuccess = data => ({
 /**
  * Creates action with item update request details.
  * @method
- * @param {Object} params
- * @param {Object} params.id - item id
- * @param {Object} params.data - request body
- * @param {Object} [params.options] - request config
- * @param {failureCallback} [params.onFailure] - failure callback
- * @param {successCallback} [params.onSuccess] - success callback
+ * @param {Object} id - item id
+ * @param {Object} data - request body
+ * @param {Object} pathParams - URL path params
+ * @param {Object} [options] - request config
+ * @param {failureCallback} [onFailure] - failure callback
+ * @param {successCallback} [onSuccess] - success callback
  * @return {{
  *   type: string,
  *   payload: {url: string, method: string, data: *, options: *},
@@ -933,18 +1174,22 @@ const fetchSearchResultsSuccess = data => ({
  * }}
  */
 const updateItem = ({
-  id, data, options, onFailure, onSuccess,
-} = {}) => ({
-  type: UPDATE_ITEM,
-  payload: {
-    url: `${apiURL}/${id}`,
-    method: 'put',
-    ...options,
-    data,
-  },
-  onFailure,
-  onSuccess,
-});
+  id, data, pathParams, options, onFailure, onSuccess,
+} = {}) => {
+  const path = Object.entries(pathParams).reduce((acc, [key, value]) => `${acc}/${key}/${value}`, '');
+
+  return ({
+    type: UPDATE_ITEM,
+    payload: {
+      url: `${apiURL}/${id}${path}`,
+      method: 'put',
+      ...options,
+      data,
+    },
+    onFailure,
+    onSuccess,
+  });
+};
 
 /**
  * Creates action for item update request failing.
@@ -1038,12 +1283,18 @@ const stopSellSuccess = data => ({
 });
 
 export const actions = {
+  changeDefaultTranslation,
+  changeDefaultTranslationFailure,
+  changeDefaultTranslationSuccess,
   clearAvailableTickets,
   clearItem,
   clearSearchResults,
   createItem,
   createItemFailure,
   createItemSuccess,
+  createTranslation,
+  createTranslationFailure,
+  createTranslationSuccess,
   createMainImage,
   createMainImageFailure,
   createMainImageSuccess,
@@ -1056,6 +1307,9 @@ export const actions = {
   deletePDF,
   deletePDFFailure,
   deletePDFSuccess,
+  deleteTranslation,
+  deleteTranslationFailure,
+  deleteTranslationSuccess,
   fetchAvailableTickets,
   fetchAvailableTicketsCancel,
   fetchAvailableTicketsFailure,
@@ -1152,6 +1406,47 @@ export const selectors = {
  */
 
 /**
+ * Logic used for handling change default language request.
+ * @method
+ */
+const changeDefaultLanguageLogic = createLogic({
+  type: [
+    CHANGE_DEFAULT_TRANSLATION,
+  ],
+  async process(
+    { action: { payload, onFailure, onSuccess }, httpClient, cancelled$ },
+    dispatch,
+    done,
+  ) {
+    try {
+      const response = await httpClient.cancellable(payload, cancelled$);
+      const { status } = response;
+
+      if (status === 200 || status === 204) {
+        dispatch(changeDefaultTranslationSuccess());
+
+        if (onSuccess) {
+          onSuccess();
+        }
+      } else {
+        dispatch(changeDefaultTranslationFailure(response));
+
+        if (onFailure) {
+          onFailure();
+        }
+      }
+    } catch ({ response }) {
+      dispatch(changeDefaultTranslationFailure(response));
+
+      if (onFailure) {
+        onFailure();
+      }
+    }
+
+    done();
+  },
+});
+/**
  * Logic used for handling entity search results clearing.
  * @method
  */
@@ -1174,6 +1469,49 @@ const clearSearchResultsLogic = createLogic({
 const createItemLogic = createLogic({
   type: [
     CREATE_ITEM,
+  ],
+  latest: true,
+  async process(
+    { action: { payload, onFailure, onSuccess }, httpClient, cancelled$ },
+    dispatch,
+    done,
+  ) {
+    try {
+      const response = await httpClient.cancellable(payload, cancelled$);
+      const { data, status } = response;
+
+      if (status === 200 || status === 204) {
+        dispatch(createItemSuccess(data));
+
+        if (onSuccess) {
+          onSuccess();
+        }
+      } else {
+        dispatch(createItemFailure(response));
+
+        if (onFailure) {
+          onFailure();
+        }
+      }
+    } catch ({ response }) {
+      dispatch(createItemFailure(response));
+
+      if (onFailure) {
+        onFailure();
+      }
+    }
+
+    done();
+  },
+});
+
+/**
+ * Logic used for handling translation creation.
+ * @method
+ */
+const createTranslationLogic = createLogic({
+  type: [
+    CREATE_TRANSLATION,
   ],
   latest: true,
   async process(
@@ -1339,6 +1677,48 @@ const deleteItemLogic = createLogic({
   },
 });
 
+/**
+ * Logic used for handling translation deletion.
+ * @method
+ */
+const deleteLanguageLogic = createLogic({
+  type: [
+    DELETE_TRANSLATION,
+  ],
+  latest: true,
+  async process(
+    { action: { payload, onFailure, onSuccess }, httpClient, cancelled$ },
+    dispatch,
+    done,
+  ) {
+    try {
+      const response = await httpClient.cancellable(payload, cancelled$);
+      const { status } = response;
+
+      if (status === 200 || status === 204) {
+        dispatch(deleteTranslationSuccess());
+
+        if (onSuccess) {
+          onSuccess();
+        }
+      } else {
+        dispatch(deleteTranslationFailure(response));
+
+        if (onFailure) {
+          onFailure();
+        }
+      }
+    } catch ({ response }) {
+      dispatch(deleteTranslationFailure(response));
+
+      if (onFailure) {
+        onFailure();
+      }
+    }
+
+    done();
+  },
+});
 
 /**
  * Logic used for handling PDF document deletion.
@@ -1654,11 +2034,14 @@ const stopSellLogic = createLogic({
 });
 
 export const logic = {
+  changeDefaultLanguageLogic,
   clearSearchResultsLogic,
   createItemLogic,
+  createTranslationLogic,
   createMainImageLogic,
   createPDFLogic,
   deleteItemLogic,
+  deleteLanguageLogic,
   deletePDFLogic,
   fetchAvailableTicketsLogic,
   fetchItemLogic,
@@ -1714,10 +2097,13 @@ const reducer = (initialState = defaultInitialState) => (state = initialState, a
         error: initialState.error,
         item: initialState.item,
       };
+    case CHANGE_DEFAULT_TRANSLATION_FAILURE:
     case CREATE_ITEM_FAILURE:
     case CREATE_MAIN_IMAGE_FAILURE:
     case CREATE_PDF_FAILURE:
+    case CREATE_TRANSLATION_FAILURE:
     case DELETE_ITEM_FAILURE:
+    case DELETE_TRANSLATION_FAILURE:
     case FETCH_ITEM_FAILURE:
     case FETCH_AVAILABLE_TICKETS_FAILURE:
     case FETCH_LIST_FAILURE:
@@ -1728,6 +2114,7 @@ const reducer = (initialState = defaultInitialState) => (state = initialState, a
         ...state,
         error: action.error,
       };
+    case CHANGE_DEFAULT_TRANSLATION_SUCCESS:
     case CREATE_ITEM_SUCCESS:
     case UPDATE_ITEM_SUCCESS:
       return {
