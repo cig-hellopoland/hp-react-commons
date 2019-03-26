@@ -117,6 +117,56 @@ describe('actions', () => {
     });
   });
 
+  describe('using changePromotion', () => {
+    it('should create an action with request payload', () => {
+      const { changePromotion } = actions;
+      const { CHANGE_PROMOTION } = types;
+      const id = 3;
+      const value = 1;
+      const expectedValue = {
+        type: CHANGE_PROMOTION,
+        payload: {
+          url: `${apiURL}/${id}/promotion/${value}`,
+          method: 'patch',
+        },
+      };
+      expect(changePromotion({ id, value })).toEqual(expectedValue);
+
+      expectedValue.onFailure = onFailure;
+      expectedValue.onSuccess = onSuccess;
+
+      expect(changePromotion({
+        id, value, onFailure, onSuccess,
+      })).toEqual(expectedValue);
+    });
+
+    it('should create an action for failed request', () => {
+      const { changePromotionFailure } = actions;
+      const { CHANGE_PROMOTION_FAILURE } = types;
+
+      const expectedValue = {
+        type: CHANGE_PROMOTION_FAILURE,
+        error: {},
+      };
+
+      expect(changePromotionFailure()).toEqual(expectedValue);
+
+      expectedValue.error = axiosResponseError;
+
+      expect(changePromotionFailure(axiosResponseError)).toEqual(expectedValue);
+    });
+
+    it('should create an action for successful request', () => {
+      const { changePromotionSuccess } = actions;
+      const { CHANGE_PROMOTION_SUCCESS } = types;
+      const expectedValue = {
+        type: CHANGE_PROMOTION_SUCCESS,
+      };
+
+      expect(changePromotionSuccess()).toEqual(expectedValue);
+    });
+  });
+
   describe('using clear', () => {
     it('should create an action to clear available tickets from state', () => {
       const { clearAvailableTickets } = actions;

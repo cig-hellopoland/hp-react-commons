@@ -53,6 +53,24 @@ const CHANGE_DEFAULT_TRANSLATION_FAILURE = `${prefix}CHANGE_DEFAULT_TRANSLATION_
 const CHANGE_DEFAULT_TRANSLATION_SUCCESS = `${prefix}CHANGE_DEFAULT_TRANSLATION_SUCCESS`;
 
 /**
+* Type used for handling content's promotion value change.
+* @type {string}
+*/
+const CHANGE_PROMOTION = `${prefix}CHANGE_PROMOTION`;
+
+/**
+ * Type used for handling content's promotion value change failure.
+ * @type {string}
+ */
+const CHANGE_PROMOTION_FAILURE = `${prefix}CHANGE_PROMOTION_FAILURE`;
+
+/**
+ * Type used for handling content's promotion value change success.
+ * @type {string}
+ */
+const CHANGE_PROMOTION_SUCCESS = `${prefix}CHANGE_PROMOTION_SUCCESS`;
+
+/**
  * Type used for clearing ticket information for currently loaded entity.
  * @type {string}
  */
@@ -333,6 +351,9 @@ export const types = {
   CHANGE_DEFAULT_TRANSLATION,
   CHANGE_DEFAULT_TRANSLATION_FAILURE,
   CHANGE_DEFAULT_TRANSLATION_SUCCESS,
+  CHANGE_PROMOTION,
+  CHANGE_PROMOTION_FAILURE,
+  CHANGE_PROMOTION_SUCCESS,
   CLEAR_AVAILABLE_TICKETS,
   CLEAR_ITEM,
   CLEAR_SEARCH_RESULTS,
@@ -442,6 +463,65 @@ const changeDefaultTranslationFailure = ({ data, status } = {}) => ({
  */
 const changeDefaultTranslationSuccess = () => ({
   type: CHANGE_DEFAULT_TRANSLATION_SUCCESS,
+});
+
+/**
+ * Creates action for promotion value change request.
+ * @method
+ * @callback failureCallback
+ * @callback successCallback
+ * @param {number} id - item id
+ * @param {number} value - promotion value int 1-3
+ * @param {Object} options - request config
+ * @param {string} options.headers.content-language - new default translation code
+ * @param {failureCallback} [onFailure] - failure callback
+ * @param {successCallback} [onSuccess] - success callback
+ * @return {{
+ *   type: string,
+ *   payload: {url: string, method: string, options: *},
+ *   onFailure: failureCallback,
+ *   onSuccess: successCallback
+ * }}
+ */
+const changePromotion = ({
+  id, value, options, onFailure, onSuccess,
+} = {}) => ({
+  type: CHANGE_PROMOTION,
+  payload: {
+    url: `${apiURL}/${id}/promotion/${value}`,
+    method: 'patch',
+    ...options,
+  },
+  onFailure,
+  onSuccess,
+});
+
+/**
+ * Creates action for promotion value change request failing.
+ * @method
+ * @param {Object} params - axios response schema
+ * @param params.data - response body
+ * @param params.status - response status
+ * @return {{
+ *   type: string,
+ *   error: {data, status: number}
+ * }}
+ */
+const changePromotionFailure = ({ data, status } = {}) => ({
+  type: CHANGE_PROMOTION_FAILURE,
+  error: {
+    data,
+    status,
+  },
+});
+
+/**
+ * Creates action for successful promotion value change request.
+ * @method
+ * @return {{type: string}}
+ */
+const changePromotionSuccess = () => ({
+  type: CHANGE_PROMOTION_SUCCESS,
 });
 
 /**
@@ -1286,6 +1366,9 @@ export const actions = {
   changeDefaultTranslation,
   changeDefaultTranslationFailure,
   changeDefaultTranslationSuccess,
+  changePromotion,
+  changePromotionFailure,
+  changePromotionSuccess,
   clearAvailableTickets,
   clearItem,
   clearSearchResults,
@@ -1446,6 +1529,49 @@ const changeDefaultLanguageLogic = createLogic({
     done();
   },
 });
+
+/**
+ * Logic used for handling change default language request.
+ * @method
+ */
+const changePromotionLogic = createLogic({
+  type: [
+    CHANGE_PROMOTION,
+  ],
+  async process(
+    { action: { payload, onFailure, onSuccess }, httpClient, cancelled$ },
+    dispatch,
+    done,
+  ) {
+    try {
+      const response = await httpClient.cancellable(payload, cancelled$);
+      const { status } = response;
+
+      if (status === 200 || status === 204) {
+        dispatch(changePromotionSuccess());
+
+        if (onSuccess) {
+          onSuccess();
+        }
+      } else {
+        dispatch(changePromotionFailure(response));
+
+        if (onFailure) {
+          onFailure();
+        }
+      }
+    } catch ({ response }) {
+      dispatch(changePromotionFailure(response));
+
+      if (onFailure) {
+        onFailure();
+      }
+    }
+
+    done();
+  },
+});
+
 /**
  * Logic used for handling entity search results clearing.
  * @method
@@ -2035,6 +2161,7 @@ const stopSellLogic = createLogic({
 
 export const logic = {
   changeDefaultLanguageLogic,
+  changePromotionLogic,
   clearSearchResultsLogic,
   createItemLogic,
   createTranslationLogic,
@@ -2098,6 +2225,7 @@ const reducer = (initialState = defaultInitialState) => (state = initialState, a
         item: initialState.item,
       };
     case CHANGE_DEFAULT_TRANSLATION_FAILURE:
+    case CHANGE_PROMOTION_FAILURE:
     case CREATE_ITEM_FAILURE:
     case CREATE_MAIN_IMAGE_FAILURE:
     case CREATE_PDF_FAILURE:
@@ -2115,6 +2243,7 @@ const reducer = (initialState = defaultInitialState) => (state = initialState, a
         error: action.error,
       };
     case CHANGE_DEFAULT_TRANSLATION_SUCCESS:
+    case CHANGE_PROMOTION_SUCCESS:
     case CREATE_ITEM_SUCCESS:
     case UPDATE_ITEM_SUCCESS:
       return {
