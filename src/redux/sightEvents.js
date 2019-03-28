@@ -470,8 +470,7 @@ const changeDefaultTranslationSuccess = () => ({
  * @method
  * @callback failureCallback
  * @callback successCallback
- * @param {number} id - item id
- * @param {number} value - promotion value int 1-3
+ * @param {Object}  params - { id: item id, value: promotion value int 1-3, }
  * @param {Object} options - request config
  * @param {string} options.headers.content-language - new default translation code
  * @param {failureCallback} [onFailure] - failure callback
@@ -484,7 +483,7 @@ const changeDefaultTranslationSuccess = () => ({
  * }}
  */
 const changePromotion = ({
-  id, value, options, onFailure, onSuccess,
+  params: { id, value }, options, onFailure, onSuccess,
 } = {}) => ({
   type: CHANGE_PROMOTION,
   payload: {
