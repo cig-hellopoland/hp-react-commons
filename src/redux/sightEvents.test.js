@@ -122,7 +122,7 @@ describe('actions', () => {
       const { changePromotion } = actions;
       const { CHANGE_PROMOTION } = types;
       const pathParams = { promotion: 3 };
-      const id = 5 ;
+      const id = 5;
       const expectedValue = {
         type: CHANGE_PROMOTION,
         payload: {
