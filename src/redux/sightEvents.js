@@ -198,6 +198,24 @@ const DELETE_PDF_FAILURE = `${prefix}DELETE_PDF_FAILURE`;
 const DELETE_PDF_SUCCESS = `${prefix}DELETE_PDF_SUCCESS`;
 
 /**
+* Type used for handling content's promotion value deletion.
+* @type {string}
+*/
+const DELETE_PROMOTION = `${prefix}DELETE_PROMOTION`;
+
+/**
+ * Type used for handling content's promotion value deletion failure.
+ * @type {string}
+ */
+const DELETE_PROMOTION_FAILURE = `${prefix}DELETE_PROMOTION_FAILURE`;
+
+/**
+ * Type used for handling content's promotion value deletion success.
+ * @type {string}
+ */
+const DELETE_PROMOTION_SUCCESS = `${prefix}DELETE_PROMOTION_SUCCESS`;
+
+/**
  * Type used for handling translation deletion.
  * @type {string}
  */
@@ -375,6 +393,9 @@ export const types = {
   DELETE_PDF,
   DELETE_PDF_FAILURE,
   DELETE_PDF_SUCCESS,
+  DELETE_PROMOTION,
+  DELETE_PROMOTION_FAILURE,
+  DELETE_PROMOTION_SUCCESS,
   DELETE_TRANSLATION,
   DELETE_TRANSLATION_FAILURE,
   DELETE_TRANSLATION_SUCCESS,
@@ -910,6 +931,65 @@ const deletePDFSuccess = () => ({
 });
 
 /**
+ * Creates action for promotion value deletion request.
+ * @method
+ * @callback failureCallback
+ * @callback successCallback
+ * @param {number}  id - item id
+ * @param {Object} options - request config
+ * @param {string} options.headers.content-language - new default translation code
+ * @param {failureCallback} [onFailure] - failure callback
+ * @param {successCallback} [onSuccess] - success callback
+ * @return {{
+ *   type: string,
+ *   payload: {url: string, method: string, options: *},
+ *   onFailure: failureCallback,
+ *   onSuccess: successCallback
+ * }}
+ */
+const deletePromotion = ({
+  id, options, onFailure, onSuccess,
+} = {}) => ({
+  type: DELETE_PROMOTION,
+  payload: {
+    url: `${apiURL}/${id}/promotion`,
+    method: 'delete',
+    ...options,
+  },
+  onFailure,
+  onSuccess,
+});
+
+/**
+ * Creates action for promotion value deletion request failing.
+ * @method
+ * @param {Object} params - axios response schema
+ * @param params.data - response body
+ * @param params.status - response status
+ * @return {{
+ *   type: string,
+ *   error: {data, status: number}
+ * }}
+ */
+const deletePromotionFailure = ({ data, status } = {}) => ({
+  type: DELETE_PROMOTION_FAILURE,
+  error: {
+    data,
+    status,
+  },
+});
+
+/**
+ * Creates action for successful promotion value deletion request.
+ * @method
+ * @return {{type: string}}
+ */
+const deletePromotionSuccess = () => ({
+  type: DELETE_PROMOTION_SUCCESS,
+});
+
+
+/**
  * Creates action with translation deletion request details.
  * @method
  * @param {number} id - item id
@@ -1392,6 +1472,9 @@ export const actions = {
   deletePDF,
   deletePDFFailure,
   deletePDFSuccess,
+  deletePromotion,
+  deletePromotionFailure,
+  deletePromotionSuccess,
   deleteTranslation,
   deleteTranslationFailure,
   deleteTranslationSuccess,
@@ -1892,6 +1975,49 @@ const deletePDFLogic = createLogic({
 });
 
 /**
+ * Logic used for handling promotion deletion.
+ * @method
+ */
+const deletePromotionLogic = createLogic({
+  type: [
+    DELETE_PROMOTION,
+  ],
+  latest: true,
+  async process(
+    { action: { payload, onFailure, onSuccess }, httpClient, cancelled$ },
+    dispatch,
+    done,
+  ) {
+    try {
+      const response = await httpClient.cancellable(payload, cancelled$);
+      const { status } = response;
+
+      if (status === 200 || status === 204) {
+        dispatch(deletePromotionSuccess());
+
+        if (onSuccess) {
+          onSuccess();
+        }
+      } else {
+        dispatch(deletePromotionFailure(response));
+
+        if (onFailure) {
+          onFailure();
+        }
+      }
+    } catch ({ response }) {
+      dispatch(deletePromotionFailure(response));
+
+      if (onFailure) {
+        onFailure();
+      }
+    }
+
+    done();
+  },
+});
+
+/**
  * Logic used for fetching information about available tickest.
  * @method
  */
@@ -2172,6 +2298,7 @@ export const logic = {
   deleteItemLogic,
   deleteLanguageLogic,
   deletePDFLogic,
+  deletePromotionLogic,
   fetchAvailableTicketsLogic,
   fetchItemLogic,
   fetchListLogic,
