@@ -483,17 +483,20 @@ const changeDefaultTranslationSuccess = () => ({
  * }}
  */
 const changePromotion = ({
-  params: { id, value }, options, onFailure, onSuccess,
-} = {}) => ({
-  type: CHANGE_PROMOTION,
-  payload: {
-    url: `${apiURL}/${id}/promotion/${value}`,
-    method: 'patch',
-    ...options,
-  },
-  onFailure,
-  onSuccess,
-});
+  id, pathParams, options, onFailure, onSuccess,
+} = {}) => {
+  const path = Object.entries(pathParams).reduce((acc, [key, value]) => `${acc}/${key}/${value}`, '');
+  return {
+    type: CHANGE_PROMOTION,
+    payload: {
+      url: `${apiURL}/${id}${path}`,
+      method: 'patch',
+      ...options,
+    },
+    onFailure,
+    onSuccess,
+  };
+};
 
 /**
  * Creates action for promotion value change request failing.

@@ -121,21 +121,22 @@ describe('actions', () => {
     it('should create an action with request payload', () => {
       const { changePromotion } = actions;
       const { CHANGE_PROMOTION } = types;
-      const params = { value: 1, id: 5 };
+      const pathParams = { promotion: 3 };
+      const id = 5 ;
       const expectedValue = {
         type: CHANGE_PROMOTION,
         payload: {
-          url: `${apiURL}/${params.id}/promotion/${params.value}`,
+          url: `${apiURL}/${id}/promotion/${pathParams.promotion}`,
           method: 'patch',
         },
       };
-      expect(changePromotion({ params })).toEqual(expectedValue);
+      expect(changePromotion({ id, pathParams })).toEqual(expectedValue);
 
       expectedValue.onFailure = onFailure;
       expectedValue.onSuccess = onSuccess;
 
       expect(changePromotion({
-        params, onFailure, onSuccess,
+        id, pathParams, onFailure, onSuccess,
       })).toEqual(expectedValue);
     });
 
