@@ -12,6 +12,7 @@ import getHours from 'date-fns/get_hours';
 import getSeconds from 'date-fns/get_seconds';
 import getYear from 'date-fns/get_year';
 import isAfter from 'date-fns/is_after';
+import isDate from 'date-fns/is_date';
 import isBefore from 'date-fns/is_before';
 import isEqual from 'date-fns/is_equal';
 import isSameDay from 'date-fns/is_same_day';
@@ -115,7 +116,13 @@ class MuiPickersDateFnsUtils {
    * @param {object} options - the object with options. @see date-fns.
    * @return {boolean} the date is valid
    */
-  isValid = isValid;
+  isValid = (date, ...options) => {
+    if (!isDate(date)) {
+      return false;
+    }
+
+    return isValid(date, ...options);
+  };
 
   /**
    * Get the number of milliseconds between the given dates.

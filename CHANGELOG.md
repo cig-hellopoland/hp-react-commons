@@ -1,7 +1,10 @@
 # Changelog
 
+## 1.10.1
+* Changed MuiPickersDateFnsUtils isValid method implementation to avoid null date errors. 
+
 ## 1.10.0
-* Added default translation changing
+* Added translation API support.
 
 ## 1.9.1
 * Fixed cart items with 0 quantity.
