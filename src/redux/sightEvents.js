@@ -53,6 +53,24 @@ const CHANGE_DEFAULT_TRANSLATION_FAILURE = `${prefix}CHANGE_DEFAULT_TRANSLATION_
 const CHANGE_DEFAULT_TRANSLATION_SUCCESS = `${prefix}CHANGE_DEFAULT_TRANSLATION_SUCCESS`;
 
 /**
+* Type used for handling content's promotion value change.
+* @type {string}
+*/
+const CHANGE_PROMOTION = `${prefix}CHANGE_PROMOTION`;
+
+/**
+ * Type used for handling content's promotion value change failure.
+ * @type {string}
+ */
+const CHANGE_PROMOTION_FAILURE = `${prefix}CHANGE_PROMOTION_FAILURE`;
+
+/**
+ * Type used for handling content's promotion value change success.
+ * @type {string}
+ */
+const CHANGE_PROMOTION_SUCCESS = `${prefix}CHANGE_PROMOTION_SUCCESS`;
+
+/**
  * Type used for clearing ticket information for currently loaded entity.
  * @type {string}
  */
@@ -178,6 +196,24 @@ const DELETE_PDF_FAILURE = `${prefix}DELETE_PDF_FAILURE`;
  * @type {string}
  */
 const DELETE_PDF_SUCCESS = `${prefix}DELETE_PDF_SUCCESS`;
+
+/**
+* Type used for handling content's promotion value deletion.
+* @type {string}
+*/
+const DELETE_PROMOTION = `${prefix}DELETE_PROMOTION`;
+
+/**
+ * Type used for handling content's promotion value deletion failure.
+ * @type {string}
+ */
+const DELETE_PROMOTION_FAILURE = `${prefix}DELETE_PROMOTION_FAILURE`;
+
+/**
+ * Type used for handling content's promotion value deletion success.
+ * @type {string}
+ */
+const DELETE_PROMOTION_SUCCESS = `${prefix}DELETE_PROMOTION_SUCCESS`;
 
 /**
  * Type used for handling translation deletion.
@@ -333,6 +369,9 @@ export const types = {
   CHANGE_DEFAULT_TRANSLATION,
   CHANGE_DEFAULT_TRANSLATION_FAILURE,
   CHANGE_DEFAULT_TRANSLATION_SUCCESS,
+  CHANGE_PROMOTION,
+  CHANGE_PROMOTION_FAILURE,
+  CHANGE_PROMOTION_SUCCESS,
   CLEAR_AVAILABLE_TICKETS,
   CLEAR_ITEM,
   CLEAR_SEARCH_RESULTS,
@@ -354,6 +393,9 @@ export const types = {
   DELETE_PDF,
   DELETE_PDF_FAILURE,
   DELETE_PDF_SUCCESS,
+  DELETE_PROMOTION,
+  DELETE_PROMOTION_FAILURE,
+  DELETE_PROMOTION_SUCCESS,
   DELETE_TRANSLATION,
   DELETE_TRANSLATION_FAILURE,
   DELETE_TRANSLATION_SUCCESS,
@@ -442,6 +484,67 @@ const changeDefaultTranslationFailure = ({ data, status } = {}) => ({
  */
 const changeDefaultTranslationSuccess = () => ({
   type: CHANGE_DEFAULT_TRANSLATION_SUCCESS,
+});
+
+/**
+ * Creates action for promotion value change request.
+ * @method
+ * @callback failureCallback
+ * @callback successCallback
+ * @param {Object}  params - { id: item id, value: promotion value int 1-3, }
+ * @param {Object} options - request config
+ * @param {string} options.headers.content-language - new default translation code
+ * @param {failureCallback} [onFailure] - failure callback
+ * @param {successCallback} [onSuccess] - success callback
+ * @return {{
+ *   type: string,
+ *   payload: {url: string, method: string, options: *},
+ *   onFailure: failureCallback,
+ *   onSuccess: successCallback
+ * }}
+ */
+const changePromotion = ({
+  id, pathParams, options, onFailure, onSuccess,
+} = {}) => {
+  const path = Object.entries(pathParams).reduce((acc, [key, value]) => `${acc}/${key}/${value}`, '');
+  return {
+    type: CHANGE_PROMOTION,
+    payload: {
+      url: `${apiURL}/${id}${path}`,
+      method: 'patch',
+      ...options,
+    },
+    onFailure,
+    onSuccess,
+  };
+};
+
+/**
+ * Creates action for promotion value change request failing.
+ * @method
+ * @param {Object} params - axios response schema
+ * @param params.data - response body
+ * @param params.status - response status
+ * @return {{
+ *   type: string,
+ *   error: {data, status: number}
+ * }}
+ */
+const changePromotionFailure = ({ data, status } = {}) => ({
+  type: CHANGE_PROMOTION_FAILURE,
+  error: {
+    data,
+    status,
+  },
+});
+
+/**
+ * Creates action for successful promotion value change request.
+ * @method
+ * @return {{type: string}}
+ */
+const changePromotionSuccess = () => ({
+  type: CHANGE_PROMOTION_SUCCESS,
 });
 
 /**
@@ -826,6 +929,65 @@ const deletePDFFailure = ({ data, status } = {}) => ({
 const deletePDFSuccess = () => ({
   type: DELETE_PDF_SUCCESS,
 });
+
+/**
+ * Creates action for promotion value deletion request.
+ * @method
+ * @callback failureCallback
+ * @callback successCallback
+ * @param {number}  id - item id
+ * @param {Object} options - request config
+ * @param {string} options.headers.content-language - new default translation code
+ * @param {failureCallback} [onFailure] - failure callback
+ * @param {successCallback} [onSuccess] - success callback
+ * @return {{
+ *   type: string,
+ *   payload: {url: string, method: string, options: *},
+ *   onFailure: failureCallback,
+ *   onSuccess: successCallback
+ * }}
+ */
+const deletePromotion = ({
+  id, options, onFailure, onSuccess,
+} = {}) => ({
+  type: DELETE_PROMOTION,
+  payload: {
+    url: `${apiURL}/${id}/promotion`,
+    method: 'delete',
+    ...options,
+  },
+  onFailure,
+  onSuccess,
+});
+
+/**
+ * Creates action for promotion value deletion request failing.
+ * @method
+ * @param {Object} params - axios response schema
+ * @param params.data - response body
+ * @param params.status - response status
+ * @return {{
+ *   type: string,
+ *   error: {data, status: number}
+ * }}
+ */
+const deletePromotionFailure = ({ data, status } = {}) => ({
+  type: DELETE_PROMOTION_FAILURE,
+  error: {
+    data,
+    status,
+  },
+});
+
+/**
+ * Creates action for successful promotion value deletion request.
+ * @method
+ * @return {{type: string}}
+ */
+const deletePromotionSuccess = () => ({
+  type: DELETE_PROMOTION_SUCCESS,
+});
+
 
 /**
  * Creates action with translation deletion request details.
@@ -1286,6 +1448,9 @@ export const actions = {
   changeDefaultTranslation,
   changeDefaultTranslationFailure,
   changeDefaultTranslationSuccess,
+  changePromotion,
+  changePromotionFailure,
+  changePromotionSuccess,
   clearAvailableTickets,
   clearItem,
   clearSearchResults,
@@ -1307,6 +1472,9 @@ export const actions = {
   deletePDF,
   deletePDFFailure,
   deletePDFSuccess,
+  deletePromotion,
+  deletePromotionFailure,
+  deletePromotionSuccess,
   deleteTranslation,
   deleteTranslationFailure,
   deleteTranslationSuccess,
@@ -1446,6 +1614,49 @@ const changeDefaultLanguageLogic = createLogic({
     done();
   },
 });
+
+/**
+ * Logic used for handling change default language request.
+ * @method
+ */
+const changePromotionLogic = createLogic({
+  type: [
+    CHANGE_PROMOTION,
+  ],
+  async process(
+    { action: { payload, onFailure, onSuccess }, httpClient, cancelled$ },
+    dispatch,
+    done,
+  ) {
+    try {
+      const response = await httpClient.cancellable(payload, cancelled$);
+      const { status } = response;
+
+      if (status === 200 || status === 204) {
+        dispatch(changePromotionSuccess());
+
+        if (onSuccess) {
+          onSuccess();
+        }
+      } else {
+        dispatch(changePromotionFailure(response));
+
+        if (onFailure) {
+          onFailure();
+        }
+      }
+    } catch ({ response }) {
+      dispatch(changePromotionFailure(response));
+
+      if (onFailure) {
+        onFailure();
+      }
+    }
+
+    done();
+  },
+});
+
 /**
  * Logic used for handling entity search results clearing.
  * @method
@@ -1764,6 +1975,49 @@ const deletePDFLogic = createLogic({
 });
 
 /**
+ * Logic used for handling promotion deletion.
+ * @method
+ */
+const deletePromotionLogic = createLogic({
+  type: [
+    DELETE_PROMOTION,
+  ],
+  latest: true,
+  async process(
+    { action: { payload, onFailure, onSuccess }, httpClient, cancelled$ },
+    dispatch,
+    done,
+  ) {
+    try {
+      const response = await httpClient.cancellable(payload, cancelled$);
+      const { status } = response;
+
+      if (status === 200 || status === 204) {
+        dispatch(deletePromotionSuccess());
+
+        if (onSuccess) {
+          onSuccess();
+        }
+      } else {
+        dispatch(deletePromotionFailure(response));
+
+        if (onFailure) {
+          onFailure();
+        }
+      }
+    } catch ({ response }) {
+      dispatch(deletePromotionFailure(response));
+
+      if (onFailure) {
+        onFailure();
+      }
+    }
+
+    done();
+  },
+});
+
+/**
  * Logic used for fetching information about available tickest.
  * @method
  */
@@ -2035,6 +2289,7 @@ const stopSellLogic = createLogic({
 
 export const logic = {
   changeDefaultLanguageLogic,
+  changePromotionLogic,
   clearSearchResultsLogic,
   createItemLogic,
   createTranslationLogic,
@@ -2043,6 +2298,7 @@ export const logic = {
   deleteItemLogic,
   deleteLanguageLogic,
   deletePDFLogic,
+  deletePromotionLogic,
   fetchAvailableTicketsLogic,
   fetchItemLogic,
   fetchListLogic,
@@ -2098,6 +2354,7 @@ const reducer = (initialState = defaultInitialState) => (state = initialState, a
         item: initialState.item,
       };
     case CHANGE_DEFAULT_TRANSLATION_FAILURE:
+    case CHANGE_PROMOTION_FAILURE:
     case CREATE_ITEM_FAILURE:
     case CREATE_MAIN_IMAGE_FAILURE:
     case CREATE_PDF_FAILURE:
@@ -2115,6 +2372,7 @@ const reducer = (initialState = defaultInitialState) => (state = initialState, a
         error: action.error,
       };
     case CHANGE_DEFAULT_TRANSLATION_SUCCESS:
+    case CHANGE_PROMOTION_SUCCESS:
     case CREATE_ITEM_SUCCESS:
     case UPDATE_ITEM_SUCCESS:
       return {

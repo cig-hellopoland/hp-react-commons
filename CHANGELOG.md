@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.11.0
+* Added sight events promotion API support.
+
 ## 1.10.1
 * Changed MuiPickersDateFnsUtils isValid method implementation to avoid null date errors. 
 

@@ -117,6 +117,56 @@ describe('actions', () => {
     });
   });
 
+  describe('using changePromotion', () => {
+    it('should create an action with request payload', () => {
+      const { changePromotion } = actions;
+      const { CHANGE_PROMOTION } = types;
+      const pathParams = { promotion: 3 };
+      const id = 5;
+      const expectedValue = {
+        type: CHANGE_PROMOTION,
+        payload: {
+          url: `${apiURL}/${id}/promotion/${pathParams.promotion}`,
+          method: 'patch',
+        },
+      };
+      expect(changePromotion({ id, pathParams })).toEqual(expectedValue);
+
+      expectedValue.onFailure = onFailure;
+      expectedValue.onSuccess = onSuccess;
+
+      expect(changePromotion({
+        id, pathParams, onFailure, onSuccess,
+      })).toEqual(expectedValue);
+    });
+
+    it('should create an action for failed request', () => {
+      const { changePromotionFailure } = actions;
+      const { CHANGE_PROMOTION_FAILURE } = types;
+
+      const expectedValue = {
+        type: CHANGE_PROMOTION_FAILURE,
+        error: {},
+      };
+
+      expect(changePromotionFailure()).toEqual(expectedValue);
+
+      expectedValue.error = axiosResponseError;
+
+      expect(changePromotionFailure(axiosResponseError)).toEqual(expectedValue);
+    });
+
+    it('should create an action for successful request', () => {
+      const { changePromotionSuccess } = actions;
+      const { CHANGE_PROMOTION_SUCCESS } = types;
+      const expectedValue = {
+        type: CHANGE_PROMOTION_SUCCESS,
+      };
+
+      expect(changePromotionSuccess()).toEqual(expectedValue);
+    });
+  });
+
   describe('using clear', () => {
     it('should create an action to clear available tickets from state', () => {
       const { clearAvailableTickets } = actions;
@@ -495,6 +545,64 @@ describe('actions', () => {
       expectedValue.onSuccess = onSuccess;
 
       expect(deletePDF({
+        id, options, onFailure, onSuccess,
+      })).toEqual(expectedValue);
+    });
+
+
+    it('should create an action for failed request', () => {
+      const { deletePDFFailure } = actions;
+      const { DELETE_PDF_FAILURE } = types;
+      const expectedValue = {
+        type: DELETE_PDF_FAILURE,
+        error: {},
+      };
+
+      expect(deletePDFFailure()).toEqual(expectedValue);
+
+      expectedValue.error = axiosResponseError;
+
+      expect(deletePDFFailure(axiosResponseError)).toEqual(expectedValue);
+    });
+
+    it('should create an action for successful request', () => {
+      const { deletePDFSuccess } = actions;
+      const { DELETE_PDF_SUCCESS } = types;
+      const expectedValue = {
+        type: DELETE_PDF_SUCCESS,
+      };
+
+      expect(deletePDFSuccess()).toEqual(expectedValue);
+    });
+  });
+
+  describe('using deletePromotion', () => {
+    it('should create an action with request payload', () => {
+      const { deletePromotion } = actions;
+      const { DELETE_PROMOTION } = types;
+      const id = 1;
+      const options = { b: 2 };
+      const expectedValue = {
+        type: DELETE_PROMOTION,
+        payload: {
+          url: `${apiURL}/${id}/promotion`,
+          method: 'delete',
+        },
+      };
+
+      expect(deletePromotion({ id })).toEqual(expectedValue);
+
+      expectedValue.payload = {
+        ...expectedValue.payload,
+        ...options,
+      };
+
+      expect(deletePromotion({ id, options })).toEqual(expectedValue);
+
+      expectedValue.onFailure = onFailure;
+      expectedValue.onSuccess = onSuccess;
+
+      expect(deletePromotion({
         id, options, onFailure, onSuccess,
       })).toEqual(expectedValue);
     });
