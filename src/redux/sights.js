@@ -74,7 +74,7 @@ const CREATE_MAIN_IMAGE = `${prefix}CREATE_MAIN_IMAGE`;
  * Type used for handling entity fetching cancellation.
  * @type {string}
  */
-var CREATE_MAIN_IMAGE_CANCEL = "".concat(prefix, "CREATE_MAIN_IMAGE_CANCEL");
+const CREATE_MAIN_IMAGE_CANCEL = ''.concat(prefix, 'CREATE_MAIN_IMAGE_CANCEL');
 
 /**
  * Type used for handling main image creation failure.
@@ -469,9 +469,9 @@ const createMainImage = ({
  * @return {{type: string}}
  */
 
-var createMainImageCancel = function createMainImageCancel() {
+const createMainImageCancel = function createMainImageCancel() {
   return {
-    type: CREATE_MAIN_IMAGE_CANCEL
+    type: CREATE_MAIN_IMAGE_CANCEL,
   };
 };
 
@@ -1157,7 +1157,7 @@ const createMainImageLogic = createLogic({
     CREATE_MAIN_IMAGE,
   ],
   cancelType: [
-    CREATE_MAIN_IMAGE_CANCEL 
+    CREATE_MAIN_IMAGE_CANCEL,
   ],
   latest: true,
   async process(
