@@ -132,7 +132,7 @@ const CREATE_TRANSLATION_SUCCESS = `${prefix}CREATE_TRANSLATION_SUCCESS`;
 const CREATE_MAIN_IMAGE = `${prefix}CREATE_MAIN_IMAGE`;
 
 /**
- * Type used for handling entity fetching cancellation.
+ * Type used for handling main image fetching cancellation.
  * @type {string}
  */
 const CREATE_MAIN_IMAGE_CANCEL = ''.concat(prefix, 'CREATE_MAIN_IMAGE_CANCEL');
@@ -154,6 +154,12 @@ const CREATE_MAIN_IMAGE_SUCCESS = `${prefix}CREATE_MAIN_IMAGE_SUCCESS`;
  * @type {string}
  */
 const CREATE_PDF = `${prefix}CREATE_PDF`;
+
+/**
+ * Type used for handling pdf creation fetching cancellation.
+ * @type {string}
+ */
+const CREATE_PDF_CANCEL = ''.concat(prefix, 'CREATE_PDF_CANCEL');
 
 /**
  * Type used for handling PDF document creation failure.
@@ -392,6 +398,7 @@ export const types = {
   CREATE_MAIN_IMAGE_FAILURE,
   CREATE_MAIN_IMAGE_SUCCESS,
   CREATE_PDF,
+  CREATE_PDF_CANCEL,
   CREATE_PDF_FAILURE,
   CREATE_PDF_SUCCESS,
   DELETE_ITEM,
@@ -805,6 +812,18 @@ const createPDF = ({
   onFailure,
   onSuccess,
 });
+
+/**
+ * Creates action for creating PDF creation request cancelling.
+ * @method
+ * @return {{type: string}}
+ */
+
+const createPDFCancel = function createPDFCancel() {
+  return {
+    type: CREATE_PDF_CANCEL,
+  };
+};
 
 /**
  * Creates action for PDF document creation request failing.
@@ -1483,6 +1502,7 @@ export const actions = {
   createMainImageFailure,
   createMainImageSuccess,
   createPDF,
+  createPDFCancel,
   createPDFFailure,
   createPDFSuccess,
   deleteItem,
@@ -1831,6 +1851,9 @@ const createMainImageLogic = createLogic({
 const createPDFLogic = createLogic({
   type: [
     CREATE_PDF,
+  ],
+  cancelType: [
+    CREATE_PDF_CANCEL,
   ],
   latest: true,
   async process(
