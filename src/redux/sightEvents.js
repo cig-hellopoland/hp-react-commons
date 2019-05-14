@@ -132,6 +132,12 @@ const CREATE_TRANSLATION_SUCCESS = `${prefix}CREATE_TRANSLATION_SUCCESS`;
 const CREATE_MAIN_IMAGE = `${prefix}CREATE_MAIN_IMAGE`;
 
 /**
+ * Type used for handling entity fetching cancellation.
+ * @type {string}
+ */
+var CREATE_MAIN_IMAGE_CANCEL = "".concat(prefix, "CREATE_MAIN_IMAGE_CANCEL");
+
+/**
  * Type used for handling main image creation failure.
  * @type {string}
  */
@@ -382,6 +388,7 @@ export const types = {
   CREATE_TRANSLATION_FAILURE,
   CREATE_TRANSLATION_SUCCESS,
   CREATE_MAIN_IMAGE,
+  CREATE_MAIN_IMAGE_CANCEL,
   CREATE_MAIN_IMAGE_FAILURE,
   CREATE_MAIN_IMAGE_SUCCESS,
   CREATE_PDF,
@@ -724,6 +731,17 @@ const createMainImage = ({
   onFailure,
   onSuccess,
 });
+
+/**
+ * Creates action for creating main image request cancelling.
+ * @method
+ * @return {{type: string}}
+ */
+var createMainImageCancel = function createMainImageCancel() {
+  return {
+    type: CREATE_MAIN_IMAGE_CANCEL
+  };
+};
 
 /**
  * Creates action for main image creation request failing.
@@ -1461,6 +1479,7 @@ export const actions = {
   createTranslationFailure,
   createTranslationSuccess,
   createMainImage,
+  createMainImageCancel,
   createMainImageFailure,
   createMainImageSuccess,
   createPDF,
@@ -1766,6 +1785,9 @@ const createTranslationLogic = createLogic({
 const createMainImageLogic = createLogic({
   type: [
     CREATE_MAIN_IMAGE,
+  ],
+  cancelType: [
+    CREATE_MAIN_IMAGE_CANCEL 
   ],
   latest: true,
   async process(
