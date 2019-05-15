@@ -135,7 +135,7 @@ const CREATE_MAIN_IMAGE = `${prefix}CREATE_MAIN_IMAGE`;
  * Type used for handling main image fetching cancellation.
  * @type {string}
  */
-const CREATE_MAIN_IMAGE_CANCEL = ''.concat(prefix, 'CREATE_MAIN_IMAGE_CANCEL');
+const CREATE_MAIN_IMAGE_CANCEL = `${prefix}CREATE_MAIN_IMAGE_CANCEL`;
 
 /**
  * Type used for handling main image creation failure.
@@ -159,7 +159,7 @@ const CREATE_PDF = `${prefix}CREATE_PDF`;
  * Type used for handling pdf creation fetching cancellation.
  * @type {string}
  */
-const CREATE_PDF_CANCEL = ''.concat(prefix, 'CREATE_PDF_CANCEL');
+const CREATE_PDF_CANCEL = `${prefix}CREATE_PDF_CANCEL`;
 
 /**
  * Type used for handling PDF document creation failure.
