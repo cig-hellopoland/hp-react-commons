@@ -304,6 +304,16 @@ describe('actions', () => {
       })).toEqual(expectedValue);
     });
 
+    it('should create an action for cancelled create main image request', () => {
+      const { createMainImageCancel } = actions;
+      const { CREATE_MAIN_IMAGE_CANCEL } = types;
+      const expectedValue = {
+        type: CREATE_MAIN_IMAGE_CANCEL,
+      };
+
+      expect(createMainImageCancel()).toEqual(expectedValue);
+    });
+
     it('should create an action for failed request', () => {
       const { createMainImageFailure } = actions;
       const { CREATE_MAIN_IMAGE_FAILURE } = types;
@@ -373,6 +383,16 @@ describe('actions', () => {
       expect(createPDF({
         id, data, options, onFailure, onSuccess,
       })).toEqual(expectedValue);
+    });
+
+    it('should create an action for cancelled pdf request', () => {
+      const { createPDFCancel } = actions;
+      const { CREATE_PDF_CANCEL } = types;
+      const expectedValue = {
+        type: CREATE_PDF_CANCEL,
+      };
+
+      expect(createPDFCancel()).toEqual(expectedValue);
     });
 
     it('should create an action for failed request', () => {
