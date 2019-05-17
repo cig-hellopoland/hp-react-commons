@@ -71,6 +71,12 @@ const CLEAR_ITEM = `${prefix}CLEAR_ITEM`;
 const CREATE_MAIN_IMAGE = `${prefix}CREATE_MAIN_IMAGE`;
 
 /**
+ * Type used for handling entity fetching cancellation.
+ * @type {string}
+ */
+const CREATE_MAIN_IMAGE_CANCEL = ''.concat(prefix, 'CREATE_MAIN_IMAGE_CANCEL');
+
+/**
  * Type used for handling main image creation failure.
  * @type {string}
  */
@@ -251,6 +257,7 @@ export const types = {
   CLEAR_SEARCH_RESULTS,
   CLEAR_ITEM,
   CREATE_MAIN_IMAGE,
+  CREATE_MAIN_IMAGE_CANCEL,
   CREATE_MAIN_IMAGE_FAILURE,
   CREATE_MAIN_IMAGE_SUCCESS,
   CREATE_ITEM,
@@ -455,6 +462,18 @@ const createMainImage = ({
   onFailure,
   onSuccess,
 });
+
+/**
+ * Creates action for creating main image request cancelling.
+ * @method
+ * @return {{type: string}}
+ */
+
+const createMainImageCancel = function createMainImageCancel() {
+  return {
+    type: CREATE_MAIN_IMAGE_CANCEL,
+  };
+};
 
 /**
  * Creates action for main image creation request failing.
@@ -935,6 +954,7 @@ export const actions = {
   clearSearchResults,
   clearItem,
   createMainImage,
+  createMainImageCancel,
   createMainImageFailure,
   createMainImageSuccess,
   createItem,
@@ -1135,6 +1155,9 @@ const createItemLogic = createLogic({
 const createMainImageLogic = createLogic({
   type: [
     CREATE_MAIN_IMAGE,
+  ],
+  cancelType: [
+    CREATE_MAIN_IMAGE_CANCEL,
   ],
   latest: true,
   async process(

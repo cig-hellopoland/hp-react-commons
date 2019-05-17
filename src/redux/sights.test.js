@@ -242,6 +242,16 @@ describe('actions', () => {
       })).toEqual(expectedValue);
     });
 
+    it('should create an action for cancelled create main image request', () => {
+      const { createMainImageCancel } = actions;
+      const { CREATE_MAIN_IMAGE_CANCEL } = types;
+      const expectedValue = {
+        type: CREATE_MAIN_IMAGE_CANCEL,
+      };
+
+      expect(createMainImageCancel()).toEqual(expectedValue);
+    });
+
     it('should create an action for failed request', () => {
       const { createMainImageFailure } = actions;
       const { CREATE_MAIN_IMAGE_FAILURE } = types;
