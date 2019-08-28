@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.12.1
+* Fixed issue with incorrect date parsing in `extendDateWithEventTime`.
+
+## 1.12.0
+* Added upload cancelling actions to Sights and SightEvents.
+
 ## 1.11.0
 * Added sight events promotion API support.
 
