@@ -1,7 +1,10 @@
 # Changelog
 
-## 1.12.1
+## 1.13.1
 * Fixed issue with incorrect date parsing in `extendDateWithEventTime`.
+
+## 1.13.0
+* Added booking management reducer.
 
 ## 1.12.0
 * Added upload cancelling actions to Sights and SightEvents.
