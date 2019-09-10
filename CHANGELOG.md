@@ -3,6 +3,7 @@
 ## 1.14.0
 * Added error clearing capabilities to Sights and SightEvents.
 * Added categories reducer.
+* Added ticket definitions reducer.
 
 ## 1.13.1
 * Fixed issue with incorrect date parsing in `extendDateWithEventTime`.
