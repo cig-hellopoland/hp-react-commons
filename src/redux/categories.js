@@ -250,8 +250,8 @@ export const types = {
  * }}
  */
 const changeDefaultTranslation = ({
-                                    id, options, onFailure, onSuccess,
-                                  } = {}) => ({
+  id, options, onFailure, onSuccess,
+} = {}) => ({
   type: CHANGE_DEFAULT_TRANSLATION,
   payload: {
     url: `${apiURL}/${id}/defaultLanguage`,
@@ -325,8 +325,8 @@ const clearItem = () => ({
  * }}
  */
 const createItem = ({
-                      options, data, onFailure, onSuccess,
-                    } = {}) => ({
+  options, data, onFailure, onSuccess,
+} = {}) => ({
   type: CREATE_ITEM,
   payload: {
     url: `${apiURL}`,
@@ -383,8 +383,8 @@ const createItemSuccess = data => ({
  * }}
  */
 const createTranslation = ({
-                             data, options, onFailure, onSuccess,
-                           } = {}) => ({
+  data, options, onFailure, onSuccess,
+} = {}) => ({
   type: CREATE_TRANSLATION,
   payload: {
     url: apiURL,
@@ -443,8 +443,8 @@ const createTranslationSuccess = data => ({
  * }}
  */
 const deleteItem = ({
-                      id, options, onFailure, onSuccess,
-                    } = {}) => ({
+  id, options, onFailure, onSuccess,
+} = {}) => ({
   type: DELETE_ITEM,
   payload: {
     url: `${apiURL}/${id}`,
@@ -499,8 +499,8 @@ const deleteItemSuccess = () => ({
  * }}
  */
 const deleteTranslation = ({
-                             id, pathParams, options, onFailure, onSuccess,
-                           } = {}) => {
+  id, pathParams, options, onFailure, onSuccess,
+} = {}) => {
   let path = '';
 
   if (pathParams) {
@@ -563,8 +563,8 @@ const deleteTranslationSuccess = () => ({
  * }}
  */
 const fetchItem = ({
-                     id, options, onFailure, onSuccess,
-                   } = {}) => ({
+  id, options, onFailure, onSuccess,
+} = {}) => ({
   type: FETCH_ITEM,
   payload: {
     url: `${apiURL}/${id}`,
@@ -630,8 +630,8 @@ const fetchItemSuccess = data => ({
  * }}
  */
 const fetchList = ({
-                     data, options, onFailure, onSuccess,
-                   } = {}) => ({
+  data, options, onFailure, onSuccess,
+} = {}) => ({
   type: FETCH_LIST,
   payload: {
     url: apiURL,
@@ -700,8 +700,8 @@ const fetchListSuccess = data => ({
  * }}
  */
 const updateItem = ({
-                      id, data, pathParams, options, onFailure, onSuccess,
-                    } = {}) => {
+  id, data, pathParams, options, onFailure, onSuccess,
+} = {}) => {
   let path = '';
 
   if (pathParams) {
