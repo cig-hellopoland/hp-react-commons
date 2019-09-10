@@ -74,8 +74,13 @@ const CHANGE_PROMOTION_SUCCESS = `${prefix}CHANGE_PROMOTION_SUCCESS`;
  * Type used for clearing ticket information for currently loaded entity.
  * @type {string}
  */
-
 const CLEAR_AVAILABLE_TICKETS = `${prefix}CLEAR_AVAILABLE_TICKETS`;
+
+/**
+ * Type used for clear error.
+ * @type {string}
+ */
+const CLEAR_ERROR = `${prefix}CLEAR_ERROR`;
 
 /**
  * Type used for clearing currently loaded entity.
@@ -385,6 +390,7 @@ export const types = {
   CHANGE_PROMOTION_FAILURE,
   CHANGE_PROMOTION_SUCCESS,
   CLEAR_AVAILABLE_TICKETS,
+  CLEAR_ERROR,
   CLEAR_ITEM,
   CLEAR_SEARCH_RESULTS,
   CREATE_ITEM,
@@ -568,6 +574,15 @@ const changePromotionSuccess = () => ({
  */
 const clearAvailableTickets = () => ({
   type: CLEAR_AVAILABLE_TICKETS,
+});
+
+/**
+ * Creates action for clear error
+ * @method
+ * @return {{type: string}}
+ */
+const clearError = () => ({
+  type: CLEAR_ERROR,
 });
 
 /**
@@ -1489,6 +1504,7 @@ export const actions = {
   changePromotionFailure,
   changePromotionSuccess,
   clearAvailableTickets,
+  clearError,
   clearItem,
   clearSearchResults,
   createItem,
@@ -2418,6 +2434,7 @@ const reducer = (initialState = defaultInitialState) => (state = initialState, a
       };
     case CHANGE_DEFAULT_TRANSLATION_SUCCESS:
     case CHANGE_PROMOTION_SUCCESS:
+    case CLEAR_ERROR:
     case CREATE_ITEM_SUCCESS:
     case UPDATE_ITEM_SUCCESS:
       return {
