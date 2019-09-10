@@ -115,7 +115,19 @@ describe('actions', () => {
     });
   });
 
-  describe('using clear', () => {
+  describe('using clearError', () => {
+    it('should create an action to clear error from state', () => {
+      const { clearError } = actions;
+      const { CLEAR_ERROR } = types;
+      const expectedValue = {
+        type: CLEAR_ERROR,
+      };
+
+      expect(clearError()).toEqual(expectedValue);
+    });
+  });
+
+  describe('using clearItem', () => {
     it('should create an action to clear item from state', () => {
       const { clearItem } = actions;
       const { CLEAR_ITEM } = types;
@@ -125,7 +137,9 @@ describe('actions', () => {
 
       expect(clearItem()).toEqual(expectedValue);
     });
+  });
 
+  describe('using clearSearchResults', () => {
     it('should create an action to clear search results from state', () => {
       const { clearSearchResults } = actions;
       const { CLEAR_SEARCH_RESULTS } = types;
@@ -823,8 +837,8 @@ describe('reducer', () => {
     expect(reducer()(initialState, { type: 'INVALID_TYPE' })).toEqual(initialState);
   });
 
-  it('should handle CLEAR_SEARCH_RESULTS', () => {
-    const action = actions.clearSearchResults();
+  it('should handle CLEAR_ERROR', () => {
+    const action = actions.clearError();
     const expectedValue = {
       ...defaultInitialState,
     };
@@ -834,6 +848,15 @@ describe('reducer', () => {
 
   it('should handle CLEAR_ITEM', () => {
     const action = actions.clearItem();
+    const expectedValue = {
+      ...defaultInitialState,
+    };
+
+    expect(reducer()(defaultInitialState, action)).toEqual(expectedValue);
+  });
+
+  it('should handle CLEAR_SEARCH_RESULTS', () => {
+    const action = actions.clearSearchResults();
     const expectedValue = {
       ...defaultInitialState,
     };

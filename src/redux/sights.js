@@ -53,16 +53,22 @@ const CHANGE_DEFAULT_TRANSLATION_FAILURE = `${prefix}CHANGE_DEFAULT_TRANSLATION_
 const CHANGE_DEFAULT_TRANSLATION_SUCCESS = `${prefix}CHANGE_DEFAULT_TRANSLATION_SUCCESS`;
 
 /**
- * Type used for clearing search results.
+ * Type used for clear error.
  * @type {string}
  */
-const CLEAR_SEARCH_RESULTS = `${prefix}CLEAR_SEARCH_RESULTS`;
+const CLEAR_ERROR = `${prefix}CLEAR_ERROR`;
 
 /**
  * Type used for clearing currently loaded entity.
  * @type {string}
  */
 const CLEAR_ITEM = `${prefix}CLEAR_ITEM`;
+
+/**
+ * Type used for clearing search results.
+ * @type {string}
+ */
+const CLEAR_SEARCH_RESULTS = `${prefix}CLEAR_SEARCH_RESULTS`;
 
 /**
  * Type used for handling main image creation.
@@ -254,8 +260,9 @@ export const types = {
   CHANGE_DEFAULT_TRANSLATION,
   CHANGE_DEFAULT_TRANSLATION_FAILURE,
   CHANGE_DEFAULT_TRANSLATION_SUCCESS,
-  CLEAR_SEARCH_RESULTS,
+  CLEAR_ERROR,
   CLEAR_ITEM,
+  CLEAR_SEARCH_RESULTS,
   CREATE_MAIN_IMAGE,
   CREATE_MAIN_IMAGE_CANCEL,
   CREATE_MAIN_IMAGE_FAILURE,
@@ -353,12 +360,12 @@ const changeDefaultTranslationSuccess = () => ({
 });
 
 /**
- * Creates action for search results removal.
+ * Creates action for clear error
  * @method
  * @return {{type: string}}
  */
-const clearSearchResults = () => ({
-  type: CLEAR_SEARCH_RESULTS,
+const clearError = () => ({
+  type: CLEAR_ERROR,
 });
 
 /**
@@ -368,6 +375,15 @@ const clearSearchResults = () => ({
  */
 const clearItem = () => ({
   type: CLEAR_ITEM,
+});
+
+/**
+ * Creates action for search results removal.
+ * @method
+ * @return {{type: string}}
+ */
+const clearSearchResults = () => ({
+  type: CLEAR_SEARCH_RESULTS,
 });
 
 /**
@@ -951,8 +967,9 @@ export const actions = {
   changeDefaultTranslation,
   changeDefaultTranslationFailure,
   changeDefaultTranslationSuccess,
-  clearSearchResults,
+  clearError,
   clearItem,
+  clearSearchResults,
   createMainImage,
   createMainImageCancel,
   createMainImageFailure,
@@ -1571,6 +1588,7 @@ const reducer = (initialState = defaultInitialState) => (state = initialState, a
         error: action.error,
       };
     case CHANGE_DEFAULT_TRANSLATION_SUCCESS:
+    case CLEAR_ERROR:
     case CREATE_ITEM_SUCCESS:
     case CREATE_MAIN_IMAGE_SUCCESS:
     case DELETE_TRANSLATION_SUCCESS:
