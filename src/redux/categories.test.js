@@ -2,21 +2,15 @@ import reducer, {
   actions,
   apiURL,
   name,
-  selectors,
   types,
+  selectors,
   defaultInitialState,
-} from './sights';
-
+} from './categories';
 
 /*
  * Initial state
  */
-
-const initialState = {
-  error: null,
-  item: null,
-  list: null,
-};
+const initialState = defaultInitialState;
 
 const appState = {
   config: {},
@@ -32,7 +26,6 @@ const axiosResponseError = {
   },
   status: 500,
 };
-
 
 /*
  * Helper functions
@@ -53,7 +46,6 @@ function generateAppState(data) {
     },
   };
 }
-
 
 /*
  * Tests
@@ -139,18 +131,6 @@ describe('actions', () => {
     });
   });
 
-  describe('using clearSearchResults', () => {
-    it('should create an action to clear search results from state', () => {
-      const { clearSearchResults } = actions;
-      const { CLEAR_SEARCH_RESULTS } = types;
-      const expectedValue = {
-        type: CLEAR_SEARCH_RESULTS,
-      };
-
-      expect(clearSearchResults()).toEqual(expectedValue);
-    });
-  });
-
   describe('using createItem', () => {
     it('should create an action with request payload', () => {
       const { createItem } = actions;
@@ -208,87 +188,6 @@ describe('actions', () => {
       };
 
       expect(createItemSuccess(data)).toEqual(expectedValue);
-    });
-  });
-
-  describe('using createMainImage', () => {
-    it('should create an action with request payload', () => {
-      const { createMainImage } = actions;
-      const { CREATE_MAIN_IMAGE } = types;
-      const id = 1;
-      const data = 'omfrefiywuyuwef';
-      const options = {
-        a: 1,
-        headers: {
-          b: 2,
-        },
-      };
-      const expectedValue = {
-        type: CREATE_MAIN_IMAGE,
-        payload: {
-          url: `${apiURL}/${id}/mainImage`,
-          method: 'put',
-          headers: {
-            'content-type': 'image/jpeg',
-          },
-          data,
-        },
-      };
-
-      expect(createMainImage({ id, data })).toEqual(expectedValue);
-
-      expectedValue.payload = {
-        ...expectedValue.payload,
-        ...options,
-        headers: {
-          ...expectedValue.payload.headers,
-          ...options.headers,
-        },
-      };
-
-      expect(createMainImage({ id, data, options })).toEqual(expectedValue);
-
-      expectedValue.onFailure = onFailure;
-      expectedValue.onSuccess = onSuccess;
-
-      expect(createMainImage({
-        id, data, options, onFailure, onSuccess,
-      })).toEqual(expectedValue);
-    });
-
-    it('should create an action for cancelled create main image request', () => {
-      const { createMainImageCancel } = actions;
-      const { CREATE_MAIN_IMAGE_CANCEL } = types;
-      const expectedValue = {
-        type: CREATE_MAIN_IMAGE_CANCEL,
-      };
-
-      expect(createMainImageCancel()).toEqual(expectedValue);
-    });
-
-    it('should create an action for failed request', () => {
-      const { createMainImageFailure } = actions;
-      const { CREATE_MAIN_IMAGE_FAILURE } = types;
-      const expectedValue = {
-        type: CREATE_MAIN_IMAGE_FAILURE,
-        error: {},
-      };
-
-      expect(createMainImageFailure()).toEqual(expectedValue);
-
-      expectedValue.error = axiosResponseError;
-
-      expect(createMainImageFailure(axiosResponseError)).toEqual(expectedValue);
-    });
-
-    it('should create an action for successful request', () => {
-      const { createMainImageSuccess } = actions;
-      const { CREATE_MAIN_IMAGE_SUCCESS } = types;
-      const expectedValue = {
-        type: CREATE_MAIN_IMAGE_SUCCESS,
-      };
-
-      expect(createMainImageSuccess()).toEqual(expectedValue);
     });
   });
 
@@ -607,76 +506,6 @@ describe('actions', () => {
     });
   });
 
-  describe('using fetchSearchResults', () => {
-    it('should create an action with request payload', () => {
-      const { fetchSearchResults } = actions;
-      const { FETCH_SEARCH_RESULTS } = types;
-      const params = { a: 1 };
-      const options = { b: 2 };
-      const expectedValue = {
-        type: FETCH_SEARCH_RESULTS,
-        payload: {
-          url: `${apiURL}/search`,
-          method: 'get',
-          params,
-        },
-      };
-
-      expect(fetchSearchResults({ params })).toEqual(expectedValue);
-
-      expectedValue.payload = {
-        ...expectedValue.payload,
-        ...options,
-      };
-
-      expect(fetchSearchResults({ options, params })).toEqual(expectedValue);
-
-      expectedValue.onFailure = onFailure;
-      expectedValue.onSuccess = onSuccess;
-
-      expect(fetchSearchResults({
-        options, params, onFailure, onSuccess,
-      })).toEqual(expectedValue);
-    });
-
-    it('should create an action for cancelled request', () => {
-      const { fetchSearchResultsCancel } = actions;
-      const { FETCH_SEARCH_RESULTS_CANCEL } = types;
-      const expectedValue = {
-        type: FETCH_SEARCH_RESULTS_CANCEL,
-      };
-
-      expect(fetchSearchResultsCancel()).toEqual(expectedValue);
-    });
-
-    it('should create an action for failed request', () => {
-      const { fetchSearchResultsFailure } = actions;
-      const { FETCH_SEARCH_RESULTS_FAILURE } = types;
-      const expectedValue = {
-        type: FETCH_SEARCH_RESULTS_FAILURE,
-        error: {},
-      };
-
-      expect(fetchSearchResultsFailure()).toEqual(expectedValue);
-
-      expectedValue.error = axiosResponseError;
-
-      expect(fetchSearchResultsFailure(axiosResponseError)).toEqual(expectedValue);
-    });
-
-    it('should create an action for successful request', () => {
-      const { fetchSearchResultsSuccess } = actions;
-      const { FETCH_SEARCH_RESULTS_SUCCESS } = types;
-      const data = { a: 1 };
-      const expectedValue = {
-        type: FETCH_SEARCH_RESULTS_SUCCESS,
-        data,
-      };
-
-      expect(fetchSearchResultsSuccess(data)).toEqual(expectedValue);
-    });
-  });
-
   describe('using updateItem', () => {
     it('should create an action with request payload', () => {
       const { updateItem } = actions;
@@ -744,22 +573,21 @@ describe('actions', () => {
 
 describe('selectors', () => {
   describe('using getState', () => {
-    it(`should return ${name} state`, () => {
-      const { getState } = selectors;
+    const { getState } = selectors;
 
+    it(`should return ${name} state`, () => {
       expect(getState(appState)).toEqual(initialState);
     });
   });
 
   describe('using getError', () => {
-    it('should return null if there was no error', () => {
-      const { getError } = selectors;
+    const { getError } = selectors;
 
+    it('should return null if there was no error', () => {
       expect(getError(appState)).toBeNull();
     });
 
     it('should return some error message if there was an error', () => {
-      const { getError } = selectors;
       const error = 'omg';
       const state = generateAppState({ error });
 
@@ -767,59 +595,39 @@ describe('selectors', () => {
     });
   });
 
-  describe('using getSight', () => {
+  describe('using getItem', () => {
     it('should return null if there is no item data', () => {
-      const { getSight } = selectors;
+      const { getItem } = selectors;
 
-      expect(getSight(appState)).toBeNull();
+      expect(getItem(appState)).toBeNull();
     });
 
     it('should return item data', () => {
-      const { getSight } = selectors;
+      const { getItem } = selectors;
       const expectedValue = { id: 1 };
       const state = generateAppState({ item: expectedValue });
 
-      expect(getSight(state)).toEqual(expectedValue);
+      expect(getItem(state)).toEqual(expectedValue);
     });
   });
 
-  describe('using getSights', () => {
-    it('should return null if there is no list data', () => {
-      const { getSights } = selectors;
+  describe('using getList', () => {
+    const { getList } = selectors;
 
-      expect(getSights(appState)).toBeNull();
+    it('should return empty array if there is no list data', () => {
+      const expectedValue = [];
+
+      expect(getList(appState)).toEqual(expectedValue);
     });
 
     it('should return list data', () => {
-      const { getSights } = selectors;
       const expectedValue = [
         { id: 1 },
         { id: 2 },
       ];
       const state = generateAppState({ list: expectedValue });
 
-      expect(getSights(state)).toEqual(expectedValue);
-    });
-  });
-
-  describe('using getSightById', () => {
-    it('should return null if there is no item data', () => {
-      const { getSightById } = selectors;
-
-      expect(getSightById(appState)).toBeNull();
-      expect(getSightById(appState, 1)).toBeNull();
-    });
-
-    it('should return list data', () => {
-      const { getSightById } = selectors;
-      const id = 1;
-      const expectedValue = [
-        { id: 1 },
-        { id: 2 },
-      ];
-      const state = generateAppState({ list: expectedValue });
-
-      expect(getSightById(state, id)).toEqual(expectedValue[0]);
+      expect(getList(state)).toEqual(expectedValue);
     });
   });
 });
@@ -834,7 +642,31 @@ describe('reducer', () => {
   });
 
   it('should return current state if action type was not found', () => {
-    expect(reducer()(initialState, { type: 'INVALID_TYPE' })).toEqual(initialState);
+    expect(reducer()(undefined, { type: 'INVALID_TYPE' })).toEqual(defaultInitialState);
+  });
+
+  it('should handle CHANGE_DEFAULT_TRANSLATION_FAILURE', () => {
+    let action = actions.changeDefaultTranslationFailure();
+    const expectedValue = {
+      ...defaultInitialState,
+      error: {},
+    };
+
+    expect(reducer()(defaultInitialState, action)).toEqual(expectedValue);
+
+    action = actions.changeDefaultTranslationFailure(axiosResponseError);
+    expectedValue.error = axiosResponseError;
+
+    expect(reducer()(defaultInitialState, action)).toEqual(expectedValue);
+  });
+
+  it('should handle CHANGE_DEFAULT_TRANSLATION_SUCCESS', () => {
+    const action = actions.changeDefaultTranslationSuccess();
+    const expectedValue = {
+      ...defaultInitialState,
+    };
+
+    expect(reducer()(defaultInitialState, action)).toEqual(expectedValue);
   });
 
   it('should handle CLEAR_ERROR', () => {
@@ -848,15 +680,6 @@ describe('reducer', () => {
 
   it('should handle CLEAR_ITEM', () => {
     const action = actions.clearItem();
-    const expectedValue = {
-      ...defaultInitialState,
-    };
-
-    expect(reducer()(defaultInitialState, action)).toEqual(expectedValue);
-  });
-
-  it('should handle CLEAR_SEARCH_RESULTS', () => {
-    const action = actions.clearSearchResults();
     const expectedValue = {
       ...defaultInitialState,
     };
@@ -879,8 +702,17 @@ describe('reducer', () => {
     expect(reducer()(defaultInitialState, action)).toEqual(expectedValue);
   });
 
-  it('should handle CREATE_MAIN_IMAGE_FAILURE', () => {
-    let action = actions.createMainImageFailure();
+  it('should handle CREATE_ITEM_SUCCESS', () => {
+    const action = actions.createItemSuccess();
+    const expectedValue = {
+      ...defaultInitialState,
+    };
+
+    expect(reducer()(defaultInitialState, action)).toEqual(expectedValue);
+  });
+
+  it('should handle CREATE_TRANSLATION_FAILURE', () => {
+    let action = actions.createTranslationFailure();
     const expectedValue = {
       ...defaultInitialState,
       error: {},
@@ -888,8 +720,17 @@ describe('reducer', () => {
 
     expect(reducer()(defaultInitialState, action)).toEqual(expectedValue);
 
-    action = actions.createMainImageFailure(axiosResponseError);
+    action = actions.createTranslationFailure(axiosResponseError);
     expectedValue.error = axiosResponseError;
+
+    expect(reducer()(defaultInitialState, action)).toEqual(expectedValue);
+  });
+
+  it('should handle CREATE_TRANSLATION_SUCCESS', () => {
+    const action = actions.createTranslationSuccess();
+    const expectedValue = {
+      ...defaultInitialState,
+    };
 
     expect(reducer()(defaultInitialState, action)).toEqual(expectedValue);
   });
@@ -909,6 +750,39 @@ describe('reducer', () => {
     expect(reducer()(defaultInitialState, action)).toEqual(expectedValue);
   });
 
+  it('should handle DELETE_ITEM_SUCCESS', () => {
+    const action = actions.deleteItemSuccess();
+    const expectedValue = {
+      ...defaultInitialState,
+    };
+
+    expect(reducer()(defaultInitialState, action)).toEqual(expectedValue);
+  });
+
+  it('should handle DELETE_TRANSLATION_FAILURE', () => {
+    let action = actions.deleteTranslationFailure();
+    const expectedValue = {
+      ...defaultInitialState,
+      error: {},
+    };
+
+    expect(reducer()(defaultInitialState, action)).toEqual(expectedValue);
+
+    action = actions.deleteTranslationFailure(axiosResponseError);
+    expectedValue.error = axiosResponseError;
+
+    expect(reducer()(defaultInitialState, action)).toEqual(expectedValue);
+  });
+
+  it('should handle DELETE_TRANSLATION_SUCCESS', () => {
+    const action = actions.deleteTranslationSuccess();
+    const expectedValue = {
+      ...defaultInitialState,
+    };
+
+    expect(reducer()(defaultInitialState, action)).toEqual(expectedValue);
+  });
+
   it('should handle FETCH_ITEM_FAILURE', () => {
     let action = actions.fetchItemFailure();
     const expectedValue = {
@@ -920,6 +794,17 @@ describe('reducer', () => {
 
     action = actions.fetchItemFailure(axiosResponseError);
     expectedValue.error = axiosResponseError;
+
+    expect(reducer()(defaultInitialState, action)).toEqual(expectedValue);
+  });
+
+  it('should handle FETCH_ITEM_SUCCESS', () => {
+    const data = { id: 1 };
+    const action = actions.fetchItemSuccess(data);
+    const expectedValue = {
+      ...defaultInitialState,
+      item: data,
+    };
 
     expect(reducer()(defaultInitialState, action)).toEqual(expectedValue);
   });
@@ -939,17 +824,19 @@ describe('reducer', () => {
     expect(reducer()(defaultInitialState, action)).toEqual(expectedValue);
   });
 
-  it('should handle FETCH_SEARCH_RESULTS_FAILURE', () => {
-    let action = actions.fetchSearchResultsFailure();
+  it('should handle FETCH_LIST_SUCCESS', () => {
+    const data = {
+      config: {},
+      items: [
+        { id: 1 },
+        { id: 2 },
+      ],
+    };
+    const action = actions.fetchListSuccess(data);
     const expectedValue = {
       ...defaultInitialState,
-      error: {},
+      list: data.items,
     };
-
-    expect(reducer()(defaultInitialState, action)).toEqual(expectedValue);
-
-    action = actions.fetchSearchResultsFailure(axiosResponseError);
-    expectedValue.error = axiosResponseError;
 
     expect(reducer()(defaultInitialState, action)).toEqual(expectedValue);
   });
@@ -969,76 +856,11 @@ describe('reducer', () => {
     expect(reducer()(defaultInitialState, action)).toEqual(expectedValue);
   });
 
-  it('should handle CREATE_ITEM_SUCCESS', () => {
-    const data = { id: 1 };
-    const action = actions.createItemSuccess(data);
-    const expectedValue = {
-      ...defaultInitialState,
-    };
-
-    expect(reducer()(defaultInitialState, action)).toEqual(expectedValue);
-  });
-
-  it('should handle CREATE_MAIN_IMAGE_SUCCESS', () => {
-    const data = { id: 1 };
-    const action = actions.createMainImageSuccess(data);
-    const expectedValue = {
-      ...defaultInitialState,
-    };
-
-    expect(reducer()(defaultInitialState, action)).toEqual(expectedValue);
-  });
-
   it('should handle UPDATE_ITEM_SUCCESS', () => {
     const data = { id: 1 };
     const action = actions.updateItemSuccess(data);
     const expectedValue = {
       ...defaultInitialState,
-    };
-
-    expect(reducer()(defaultInitialState, action)).toEqual(expectedValue);
-  });
-
-  it('should handle FETCH_ITEM_SUCCESS', () => {
-    const data = { id: 1 };
-    const action = actions.fetchItemSuccess(data);
-    const expectedValue = {
-      ...defaultInitialState,
-      item: data,
-    };
-
-    expect(reducer()(defaultInitialState, action)).toEqual(expectedValue);
-  });
-
-  it('should handle FETCH_ITEM_SUCCESS', () => {
-    const data = {
-      config: {},
-      items: [
-        { id: 1 },
-        { id: 2 },
-      ],
-    };
-    const action = actions.fetchListSuccess(data);
-    const expectedValue = {
-      ...defaultInitialState,
-      list: data.items,
-    };
-
-    expect(reducer()(defaultInitialState, action)).toEqual(expectedValue);
-  });
-
-  it('should handle FETCH_SEARCH_RESULTS_SUCCESS', () => {
-    const data = {
-      config: {},
-      items: [
-        { id: 1 },
-        { id: 2 },
-      ],
-    };
-    const action = actions.fetchSearchResultsSuccess(data);
-    const expectedValue = {
-      ...defaultInitialState,
-      list: data.items,
     };
 
     expect(reducer()(defaultInitialState, action)).toEqual(expectedValue);

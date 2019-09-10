@@ -1,43 +1,37 @@
 import { createLogic } from 'redux-logic';
-import _find from 'lodash/find';
 
 /**
- * Defines set of methods for managing Sight entities.
- * @module Sights
+ * Defines set of methods for managing ushers.
+ * @module Ushers
  */
-
-/**
- * Defines interval of handling events
- * @type {number}
- */
-const debounceTime = 500;
 
 /**
  * Base API URL.
  * @type {string}
  */
-export const apiURL = '/sights';
+export const apiURL = '/categories';
+
 
 /**
  * Module name.
  * @type {string}
  */
-export const name = 'sights';
+export const name = 'categories';
 
 /**
  * Reducer prefix.
  * @type {string}
  */
-const prefix = `commons/${name}/`;
+const prefix = `${name}/`;
 
 /*
  * TYPES
  */
 
 /**
-* Type used for handling content's default translation change.
-* @type {string}
-*/
+ * Type used for handling content's default translation change.
+ * @type {string}
+ */
 const CHANGE_DEFAULT_TRANSLATION = `${prefix}CHANGE_DEFAULT_TRANSLATION`;
 
 /**
@@ -65,49 +59,19 @@ const CLEAR_ERROR = `${prefix}CLEAR_ERROR`;
 const CLEAR_ITEM = `${prefix}CLEAR_ITEM`;
 
 /**
- * Type used for clearing search results.
- * @type {string}
- */
-const CLEAR_SEARCH_RESULTS = `${prefix}CLEAR_SEARCH_RESULTS`;
-
-/**
- * Type used for handling main image creation.
- * @type {string}
- */
-const CREATE_MAIN_IMAGE = `${prefix}CREATE_MAIN_IMAGE`;
-
-/**
- * Type used for handling entity fetching cancellation.
- * @type {string}
- */
-const CREATE_MAIN_IMAGE_CANCEL = ''.concat(prefix, 'CREATE_MAIN_IMAGE_CANCEL');
-
-/**
- * Type used for handling main image creation failure.
- * @type {string}
- */
-const CREATE_MAIN_IMAGE_FAILURE = `${prefix}CREATE_MAIN_IMAGE_FAILURE`;
-
-/**
- * Type used for handling main image creation success.
- * @type {string}
- */
-const CREATE_MAIN_IMAGE_SUCCESS = `${prefix}CREATE_MAIN_IMAGE_SUCCESS`;
-
-/**
- * Type used for handling entity creation.
+ * Type used for handling create item request.
  * @type {string}
  */
 const CREATE_ITEM = `${prefix}CREATE_ITEM`;
 
 /**
- * Type used for handling entity creation failure.
+ * Type used for handling create item request.
  * @type {string}
  */
 const CREATE_ITEM_FAILURE = `${prefix}CREATE_ITEM_FAILURE`;
 
 /**
- * Type used for handling entity creation success.
+ * Type used for handling create item request.
  * @type {string}
  */
 const CREATE_ITEM_SUCCESS = `${prefix}CREATE_ITEM_SUCCESS`;
@@ -215,30 +179,6 @@ const FETCH_LIST_FAILURE = `${prefix}FETCH_LIST_FAILURE`;
 const FETCH_LIST_SUCCESS = `${prefix}FETCH_LIST_SUCCESS`;
 
 /**
- * Type used for handling entity search results fetching.
- * @type {string}
- */
-const FETCH_SEARCH_RESULTS = `${prefix}FETCH_SEARCH_RESULTS`;
-
-/**
- * Type used for handling entity search results fetching cancellation.
- * @type {string}
- */
-const FETCH_SEARCH_RESULTS_CANCEL = `${prefix}FETCH_SEARCH_RESULTS_CANCEL`;
-
-/**
- * Type used for handling entity search results fetching failure.
- * @type {string}
- */
-const FETCH_SEARCH_RESULTS_FAILURE = `${prefix}FETCH_SEARCH_RESULTS_FAILURE`;
-
-/**
- * Type used for handling entity search results fetching success.
- * @type {string}
- */
-const FETCH_SEARCH_RESULTS_SUCCESS = `${prefix}FETCH_SEARCH_RESULTS_SUCCESS`;
-
-/**
  * Type used for handling entity updates.
  * @type {string}
  */
@@ -262,11 +202,6 @@ export const types = {
   CHANGE_DEFAULT_TRANSLATION_SUCCESS,
   CLEAR_ERROR,
   CLEAR_ITEM,
-  CLEAR_SEARCH_RESULTS,
-  CREATE_MAIN_IMAGE,
-  CREATE_MAIN_IMAGE_CANCEL,
-  CREATE_MAIN_IMAGE_FAILURE,
-  CREATE_MAIN_IMAGE_SUCCESS,
   CREATE_ITEM,
   CREATE_ITEM_FAILURE,
   CREATE_ITEM_SUCCESS,
@@ -287,10 +222,6 @@ export const types = {
   FETCH_LIST_CANCEL,
   FETCH_LIST_FAILURE,
   FETCH_LIST_SUCCESS,
-  FETCH_SEARCH_RESULTS,
-  FETCH_SEARCH_RESULTS_CANCEL,
-  FETCH_SEARCH_RESULTS_FAILURE,
-  FETCH_SEARCH_RESULTS_SUCCESS,
   UPDATE_ITEM,
   UPDATE_ITEM_FAILURE,
   UPDATE_ITEM_SUCCESS,
@@ -378,19 +309,11 @@ const clearItem = () => ({
 });
 
 /**
- * Creates action for search results removal.
+ * Creates action for create item request.
  * @method
- * @return {{type: string}}
- */
-const clearSearchResults = () => ({
-  type: CLEAR_SEARCH_RESULTS,
-});
-
-/**
- * Creates action with item creation request details.
- * @method
+ * @callback failureCallback
+ * @callback successCallback
  * @param {Object} params
- * @param {Object} params.data - request data
  * @param {Object} [params.options] - request config
  * @param {failureCallback} [params.onFailure] - failure callback
  * @param {successCallback} [params.onSuccess] - success callback
@@ -402,11 +325,11 @@ const clearSearchResults = () => ({
  * }}
  */
 const createItem = ({
-  data, options, onFailure, onSuccess,
+  options, data, onFailure, onSuccess,
 } = {}) => ({
   type: CREATE_ITEM,
   payload: {
-    url: apiURL,
+    url: `${apiURL}`,
     method: 'post',
     ...options,
     data,
@@ -414,9 +337,8 @@ const createItem = ({
   onFailure,
   onSuccess,
 });
-
 /**
- * Creates action for item creation request failing.
+ * Creates action for create item request failing.
  * @method
  * @param {Object} params - axios response schema
  * @param params.data - response body
@@ -442,82 +364,6 @@ const createItemFailure = ({ data, status } = {}) => ({
  */
 const createItemSuccess = data => ({
   type: CREATE_ITEM_SUCCESS,
-  data,
-});
-
-
-/**
- * Creates action with main image creation request details.
- * @method
- * @param {number} id - item id
- * @param {Object} data - request data
- * @param {Object} [options] - request config
- * @param {failureCallback} [onFailure] - failure callback
- * @param {successCallback} [onSuccess] - success callback
- * @return {{
- *   type: string,
- *   payload: {url: string, method: string, data: *, options: *},
- *   onFailure: failureCallback,
- *   onSuccess: successCallback
- * }}
- */
-const createMainImage = ({
-  id, data, options = {}, onFailure, onSuccess,
-}) => ({
-  type: CREATE_MAIN_IMAGE,
-  payload: {
-    url: `${apiURL}/${id}/mainImage`,
-    method: 'put',
-    ...options,
-    headers: {
-      'content-type': 'image/jpeg',
-      ...options.headers,
-    },
-    data,
-  },
-  onFailure,
-  onSuccess,
-});
-
-/**
- * Creates action for creating main image request cancelling.
- * @method
- * @return {{type: string}}
- */
-
-const createMainImageCancel = function createMainImageCancel() {
-  return {
-    type: CREATE_MAIN_IMAGE_CANCEL,
-  };
-};
-
-/**
- * Creates action for main image creation request failing.
- * @method
- * @param {Object} params - axios response schema
- * @param params.data - response body
- * @param params.status - response status
- * @return {{
- *   type: string,
- *   error: {data, status: number}
- * }}
- */
-const createMainImageFailure = ({ data, status } = {}) => ({
-  type: CREATE_MAIN_IMAGE_FAILURE,
-  error: {
-    data,
-    status,
-  },
-});
-
-/**
- * Creates action for successful main image creation request.
- * @method
- * @param {Object} data - response body
- * @return {{type: string, data: *}}
- */
-const createMainImageSuccess = data => ({
-  type: CREATE_MAIN_IMAGE_SUCCESS,
   data,
 });
 
@@ -579,6 +425,7 @@ const createTranslationSuccess = data => ({
   type: CREATE_TRANSLATION_SUCCESS,
   data,
 });
+
 
 /**
  * Creates action with item deletion request details.
@@ -652,9 +499,13 @@ const deleteItemSuccess = () => ({
  * }}
  */
 const deleteTranslation = ({
-  id, pathParams = {}, options, onFailure, onSuccess,
+  id, pathParams, options, onFailure, onSuccess,
 } = {}) => {
-  const path = Object.entries(pathParams).reduce((acc, [key, value]) => `${acc}/${key}/${value}`, '');
+  let path = '';
+
+  if (pathParams) {
+    path = Object.entries(pathParams).reduce((acc, [key, value]) => `${acc}/${key}/${value}`, '');
+  }
 
   return ({
     type: DELETE_TRANSLATION,
@@ -832,73 +683,6 @@ const fetchListSuccess = data => ({
 });
 
 /**
- * Creates action with search request details.
- * @method
- * @param {Object} params - request data
- * @param {Object} [options] - request config
- * @param {failureCallback} [onFailure] - failure callback
- * @param {successCallback} [onSuccess] - success callback
- * @return {{
- *   type: string,
- *   payload: {url: string, method: string, params: *, options: *},
- *   onFailure: failureCallback,
- *   onSuccess: successCallback
- * }}
- */
-const fetchSearchResults = ({
-  params, options, onFailure, onSuccess,
-} = {}) => ({
-  type: FETCH_SEARCH_RESULTS,
-  payload: {
-    url: `${apiURL}/search`,
-    method: 'get',
-    ...options,
-    params,
-  },
-  onFailure,
-  onSuccess,
-});
-
-/**
- * Creates action for search request cancelling.
- * @method
- * @return {{type: string}}
- */
-const fetchSearchResultsCancel = () => ({
-  type: FETCH_SEARCH_RESULTS_CANCEL,
-});
-
-/**
- * Creates action for search request failing.
- * @method
- * @param {Object} params - axios response schema
- * @param params.data - response body
- * @param params.status - response status
- * @return {{
- *   type: string,
- *   error: {data, status: number}
- * }}
- */
-const fetchSearchResultsFailure = ({ data, status } = {}) => ({
-  type: FETCH_SEARCH_RESULTS_FAILURE,
-  error: {
-    data,
-    status,
-  },
-});
-
-/**
- * Creates action for successful search request.
- * @method
- * @param {Object} data - response body
- * @return {{type: string, data: *}}
- */
-const fetchSearchResultsSuccess = data => ({
-  type: FETCH_SEARCH_RESULTS_SUCCESS,
-  data,
-});
-
-/**
  * Creates action with item update request details.
  * @method
  * @param {Object} params
@@ -918,7 +702,11 @@ const fetchSearchResultsSuccess = data => ({
 const updateItem = ({
   id, data, pathParams, options, onFailure, onSuccess,
 } = {}) => {
-  const path = Object.entries(pathParams).reduce((acc, [key, value]) => `${acc}/${key}/${value}`, '');
+  let path = '';
+
+  if (pathParams) {
+    path = Object.entries(pathParams).reduce((acc, [key, value]) => `${acc}/${key}/${value}`, '');
+  }
 
   return ({
     type: UPDATE_ITEM,
@@ -969,11 +757,6 @@ export const actions = {
   changeDefaultTranslationSuccess,
   clearError,
   clearItem,
-  clearSearchResults,
-  createMainImage,
-  createMainImageCancel,
-  createMainImageFailure,
-  createMainImageSuccess,
   createItem,
   createItemFailure,
   createItemSuccess,
@@ -994,14 +777,11 @@ export const actions = {
   fetchListCancel,
   fetchListFailure,
   fetchListSuccess,
-  fetchSearchResults,
-  fetchSearchResultsCancel,
-  fetchSearchResultsFailure,
-  fetchSearchResultsSuccess,
   updateItem,
   updateItemFailure,
   updateItemSuccess,
 };
+
 
 /*
  * SELECTORS
@@ -1029,36 +809,23 @@ const getError = state => getState(state).error;
  * @param {Object} state - redux state
  * @return {*}
  */
-const getSight = state => getState(state).item;
+const getItem = state => getState(state).item;
 
 /**
- * Returns currently loaded Sights list.
+ * Returns currently loaded entity list.
  * @method
  * @param {Object} state - redux state
  * @return {*}
  */
-const getSights = state => getState(state).list;
-
-/**
- * Returns Sight with specified id from Sights list.
- * @method
- * @param {Object} state - redux state
- * @param {number} id - Sight id
- * @return {*}
- */
-const getSightById = (state, id) => {
-  const list = getSights(state);
-
-  return _find(list, { id }) || null;
-};
+const getList = state => getState(state).list;
 
 export const selectors = {
   getError,
-  getSight,
-  getSightById,
-  getSights,
   getState,
+  getItem,
+  getList,
 };
+
 
 /*
  * LOGIC
@@ -1107,23 +874,7 @@ const changeDefaultLanguageLogic = createLogic({
 });
 
 /**
- * Logic used for handling entity search results clearing.
- * @method
- */
-const clearSearchResultsLogic = createLogic({
-  type: [
-    CLEAR_SEARCH_RESULTS,
-  ],
-  latest: true,
-  debounce: debounceTime,
-  async process(options, dispatch, done) {
-    dispatch(fetchList());
-    done();
-  },
-});
-
-/**
- * Logic used for handling entity creation.
+ * Logic used for handling create item request.
  * @method
  */
 const createItemLogic = createLogic({
@@ -1155,52 +906,6 @@ const createItemLogic = createLogic({
       }
     } catch ({ response }) {
       dispatch(createItemFailure(response));
-
-      if (onFailure) {
-        onFailure();
-      }
-    }
-
-    done();
-  },
-});
-
-/**
- * Logic used for handling main image creation.
- * @method
- */
-const createMainImageLogic = createLogic({
-  type: [
-    CREATE_MAIN_IMAGE,
-  ],
-  cancelType: [
-    CREATE_MAIN_IMAGE_CANCEL,
-  ],
-  latest: true,
-  async process(
-    { action: { payload, onFailure, onSuccess }, httpClient, cancelled$ },
-    dispatch,
-    done,
-  ) {
-    try {
-      const response = await httpClient.cancellable(payload, cancelled$);
-      const { data, status } = response;
-
-      if (status === 200 || status === 204) {
-        dispatch(createMainImageSuccess(data));
-
-        if (onSuccess) {
-          onSuccess();
-        }
-      } else {
-        dispatch(createMainImageFailure(response));
-
-        if (onFailure) {
-          onFailure();
-        }
-      }
-    } catch ({ response }) {
-      dispatch(createMainImageFailure(response));
 
       if (onFailure) {
         onFailure();
@@ -1301,7 +1006,7 @@ const deleteItemLogic = createLogic({
  * Logic used for handling translation deletion.
  * @method
  */
-const deleteLanguageLogic = createLogic({
+const deleteTranslationLogic = createLogic({
   type: [
     DELETE_TRANSLATION,
   ],
@@ -1433,52 +1138,6 @@ const fetchListLogic = createLogic({
 });
 
 /**
- * Logic used for handling entity search results fetching.
- * @method
- */
-const fetchSearchResultsLogic = createLogic({
-  type: [
-    FETCH_SEARCH_RESULTS,
-  ],
-  cancelType: [
-    FETCH_SEARCH_RESULTS_CANCEL,
-  ],
-  latest: true,
-  async process(
-    { action: { payload, onFailure, onSuccess }, httpClient, cancelled$ },
-    dispatch,
-    done,
-  ) {
-    try {
-      const response = await httpClient.cancellable(payload, cancelled$);
-      const { data, status } = response;
-
-      if (status === 200 || status === 204) {
-        dispatch(fetchSearchResultsSuccess(data));
-
-        if (onSuccess) {
-          onSuccess();
-        }
-      } else {
-        dispatch(fetchSearchResultsFailure(response));
-
-        if (onFailure) {
-          onFailure();
-        }
-      }
-    } catch ({ response }) {
-      dispatch(fetchSearchResultsFailure(response));
-
-      if (onFailure) {
-        onFailure();
-      }
-    }
-
-    done();
-  },
-});
-
-/**
  * Logic used for handling entity updates.
  * @method
  */
@@ -1521,17 +1180,15 @@ const updateItemLogic = createLogic({
   },
 });
 
+
 export const logic = {
   changeDefaultLanguageLogic,
-  clearSearchResultsLogic,
   createItemLogic,
-  createMainImageLogic,
   createTranslationLogic,
   deleteItemLogic,
-  deleteLanguageLogic,
+  deleteTranslationLogic,
   fetchItemLogic,
   fetchListLogic,
-  fetchSearchResultsLogic,
   updateItemLogic,
 };
 
@@ -1549,7 +1206,7 @@ export const logic = {
  */
 export const defaultInitialState = {
   error: null,
-  item: {},
+  item: null,
   list: [],
 };
 
@@ -1561,11 +1218,16 @@ export const defaultInitialState = {
  */
 const reducer = (initialState = defaultInitialState) => (state = initialState, action) => {
   switch (action.type) {
-    case CLEAR_SEARCH_RESULTS:
+    case CHANGE_DEFAULT_TRANSLATION_SUCCESS:
+    case CLEAR_ERROR:
+    case CREATE_ITEM_SUCCESS:
+    case CREATE_TRANSLATION_SUCCESS:
+    case DELETE_ITEM_SUCCESS:
+    case DELETE_TRANSLATION_SUCCESS:
+    case UPDATE_ITEM_SUCCESS:
       return {
         ...state,
         error: initialState.error,
-        list: initialState.list,
       };
     case CLEAR_ITEM:
       return {
@@ -1575,27 +1237,15 @@ const reducer = (initialState = defaultInitialState) => (state = initialState, a
       };
     case CHANGE_DEFAULT_TRANSLATION_FAILURE:
     case CREATE_ITEM_FAILURE:
-    case CREATE_MAIN_IMAGE_FAILURE:
     case CREATE_TRANSLATION_FAILURE:
     case DELETE_ITEM_FAILURE:
     case DELETE_TRANSLATION_FAILURE:
     case FETCH_ITEM_FAILURE:
     case FETCH_LIST_FAILURE:
-    case FETCH_SEARCH_RESULTS_FAILURE:
     case UPDATE_ITEM_FAILURE:
       return {
         ...state,
         error: action.error,
-      };
-    case CHANGE_DEFAULT_TRANSLATION_SUCCESS:
-    case CLEAR_ERROR:
-    case CREATE_ITEM_SUCCESS:
-    case CREATE_MAIN_IMAGE_SUCCESS:
-    case DELETE_TRANSLATION_SUCCESS:
-    case UPDATE_ITEM_SUCCESS:
-      return {
-        ...state,
-        error: initialState.error,
       };
     case FETCH_ITEM_SUCCESS:
       return {
@@ -1604,12 +1254,6 @@ const reducer = (initialState = defaultInitialState) => (state = initialState, a
         item: action.data,
       };
     case FETCH_LIST_SUCCESS:
-      return {
-        ...state,
-        error: initialState.error,
-        list: action.data.items,
-      };
-    case FETCH_SEARCH_RESULTS_SUCCESS:
       return {
         ...state,
         error: initialState.error,
