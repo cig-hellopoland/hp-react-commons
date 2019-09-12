@@ -2118,7 +2118,7 @@ const deleteItemLogic = createLogic({
  */
 const deleteItemCategoryLogic = createLogic({
   type: [
-    DELETE_ITEM,
+    DELETE_ITEM_CATEGORY,
   ],
   latest: true,
   async process(
@@ -2521,7 +2521,7 @@ const updateItemLogic = createLogic({
  */
 const updateItemCategoryLogic = createLogic({
   type: [
-    UPDATE_ITEM,
+    UPDATE_ITEM_CATEGORY,
   ],
   latest: true,
   async process(
