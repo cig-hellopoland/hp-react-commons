@@ -194,7 +194,25 @@ const DELETE_ITEM_FAILURE = `${prefix}DELETE_ITEM_FAILURE`;
  * Type used for handling entity deletion success.
  * @type {string}
  */
-const DELETE_ITEM_SUCCESS = `${prefix}DELETE_ITEM_SUCCESS`;
+const DELETE_ITEM_SUCCESS = `${prefix}DELETE_ITEM_CATEGORY_SUCCESS`;
+
+/**
+ * Type used for handling entity category deletion.
+ * @type {string}
+ */
+const DELETE_ITEM_CATEGORY = `${prefix}DELETE_ITEM_CATEGORY`;
+
+/**
+ * Type used for handling entity category deletion failure.
+ * @type {string}
+ */
+const DELETE_ITEM_CATEGORY_FAILURE = `${prefix}DELETE_ITEM_CATEGORY_FAILURE`;
+
+/**
+ * Type used for handling entity category deletion success.
+ * @type {string}
+ */
+const DELETE_ITEM_CATEGORY_SUCCESS = `${prefix}DELETE_ITEM_CATEGORY_SUCCESS`;
 
 /**
  * Type used for handling PDF document deletion.
@@ -365,6 +383,24 @@ const UPDATE_ITEM_FAILURE = `${prefix}UPDATE_ITEM_FAILURE`;
 const UPDATE_ITEM_SUCCESS = `${prefix}UPDATE_ITEM_SUCCESS`;
 
 /**
+ * Type used for handling entity categories updates.
+ * @type {string}
+ */
+const UPDATE_ITEM_CATEGORY = `${prefix}UPDATE_ITEM_CATEGORY`;
+
+/**
+ * Type used for handling entity categories updates failure.
+ * @type {string}
+ */
+const UPDATE_ITEM_CATEGORY_FAILURE = `${prefix}UPDATE_ITEM_CATEGORY_FAILURE`;
+
+/**
+ * Type used for handling entity categories updates success.
+ * @type {string}
+ */
+const UPDATE_ITEM_CATEGORY_SUCCESS = `${prefix}UPDATE_ITEM_CATEGORY_SUCCESS`;
+
+/**
  * Type used for handling of sell stop.
  * @type {string}
  */
@@ -410,6 +446,9 @@ export const types = {
   DELETE_ITEM,
   DELETE_ITEM_FAILURE,
   DELETE_ITEM_SUCCESS,
+  DELETE_ITEM_CATEGORY,
+  DELETE_ITEM_CATEGORY_FAILURE,
+  DELETE_ITEM_CATEGORY_SUCCESS,
   DELETE_PDF,
   DELETE_PDF_FAILURE,
   DELETE_PDF_SUCCESS,
@@ -438,6 +477,9 @@ export const types = {
   UPDATE_ITEM,
   UPDATE_ITEM_FAILURE,
   UPDATE_ITEM_SUCCESS,
+  UPDATE_ITEM_CATEGORY,
+  UPDATE_ITEM_CATEGORY_FAILURE,
+  UPDATE_ITEM_CATEGORY_SUCCESS,
   STOP_SELL,
   STOP_SELL_FAILURE,
   STOP_SELL_SUCCESS,
@@ -924,6 +966,63 @@ const deleteItemFailure = ({ data, status } = {}) => ({
  */
 const deleteItemSuccess = () => ({
   type: DELETE_ITEM_SUCCESS,
+});
+
+/**
+ * Creates action with item deletion request details.
+ * @method
+ * @param {Object} params
+ * @param {number} params.id - item id
+ * @param {number} params.categoryId - item category id
+ * @param {Object} [params.options] - request config
+ * @param {failureCallback} [params.onFailure] - failure callback
+ * @param {successCallback} [params.onSuccess] - success callback
+ * @return {{
+ *   type: string,
+ *   payload: {url: string, method: string, options: *},
+ *   onFailure: failureCallback,
+ *   onSuccess: successCallback
+ * }}
+ */
+const deleteItemCategory = ({
+  id, categoryId, options, onFailure, onSuccess,
+} = {}) => ({
+  type: DELETE_ITEM_CATEGORY,
+  payload: {
+    url: `${apiURL}/${id}/categories/${categoryId}`,
+    method: 'delete',
+    ...options,
+  },
+  onFailure,
+  onSuccess,
+});
+
+/**
+ * Creates action for item deletion request failing.
+ * @method
+ * @param {Object} params - axios response schema
+ * @param params.data - response body
+ * @param params.status - response status
+ * @return {{
+ *   type: string,
+ *   error: {data, status: number}
+ * }}
+ */
+const deleteItemCategoryFailure = ({ data, status } = {}) => ({
+  type: DELETE_ITEM_CATEGORY_FAILURE,
+  error: {
+    data,
+    status,
+  },
+});
+
+/**
+ * Creates action for successful item deletion request.
+ * @method
+ * @return {{type: string}}
+ */
+const deleteItemCategorySuccess = () => ({
+  type: DELETE_ITEM_CATEGORY_SUCCESS,
 });
 
 /**
@@ -1436,6 +1535,64 @@ const updateItemSuccess = data => ({
 });
 
 /**
+ * Creates action with item update request details.
+ * @method
+ * @param {Object} id - item id
+ * @param {Object} categoryId - categoryId
+ * @param {Object} [options] - request config
+ * @param {failureCallback} [onFailure] - failure callback
+ * @param {successCallback} [onSuccess] - success callback
+ * @return {{
+ *   type: string,
+ *   payload: {url: string, method: string, data: *, options: *},
+ *   onFailure: failureCallback,
+ *   onSuccess: successCallback
+ * }}
+ */
+const updateItemCategory = ({
+  id, categoryId, options, onFailure, onSuccess,
+} = {}) => ({
+  type: UPDATE_ITEM_CATEGORY,
+  payload: {
+    url: `${apiURL}/${id}/categories/${categoryId}`,
+    method: 'patch',
+    ...options,
+  },
+  onFailure,
+  onSuccess,
+});
+
+/**
+ * Creates action for item update request failing.
+ * @method
+ * @param {Object} params - axios response schema
+ * @param params.data - response body
+ * @param params.status - response status
+ * @return {{
+ *   type: string,
+ *   error: {data, status: number}
+ * }}
+ */
+const updateItemCategoryFailure = ({ data, status } = {}) => ({
+  type: UPDATE_ITEM_CATEGORY_FAILURE,
+  error: {
+    data,
+    status,
+  },
+});
+
+/**
+ * Creates action for successful item creation request.
+ * @method
+ * @param {Object} data - response body
+ * @return {{type: string, data: *}}
+ */
+const updateItemCategorySuccess = data => ({
+  type: UPDATE_ITEM_CATEGORY_SUCCESS,
+  data,
+});
+
+/**
  * Creates action with stop sell.
  * @method
  * @param {Object} params
@@ -1524,6 +1681,9 @@ export const actions = {
   deleteItem,
   deleteItemFailure,
   deleteItemSuccess,
+  deleteItemCategory,
+  deleteItemCategoryFailure,
+  deleteItemCategorySuccess,
   deletePDF,
   deletePDFFailure,
   deletePDFSuccess,
@@ -1552,6 +1712,9 @@ export const actions = {
   updateItem,
   updateItemFailure,
   updateItemSuccess,
+  updateItemCategory,
+  updateItemCategoryFailure,
+  updateItemCategorySuccess,
   stopSell,
   stopSellFailure,
   stopSellSuccess,
@@ -1950,6 +2113,49 @@ const deleteItemLogic = createLogic({
 });
 
 /**
+ * Logic used for handling entity deletion.
+ * @method
+ */
+const deleteItemCategoryLogic = createLogic({
+  type: [
+    DELETE_ITEM_CATEGORY,
+  ],
+  latest: true,
+  async process(
+    { action: { payload, onFailure, onSuccess }, httpClient, cancelled$ },
+    dispatch,
+    done,
+  ) {
+    try {
+      const response = await httpClient.cancellable(payload, cancelled$);
+      const { status } = response;
+
+      if (status === 200 || status === 204) {
+        dispatch(deleteItemCategorySuccess());
+
+        if (onSuccess) {
+          onSuccess();
+        }
+      } else {
+        dispatch(deleteItemCategoryFailure(response));
+
+        if (onFailure) {
+          onFailure();
+        }
+      }
+    } catch ({ response }) {
+      dispatch(deleteItemCategoryFailure(response));
+
+      if (onFailure) {
+        onFailure();
+      }
+    }
+
+    done();
+  },
+});
+
+/**
  * Logic used for handling translation deletion.
  * @method
  */
@@ -2309,6 +2515,49 @@ const updateItemLogic = createLogic({
   },
 });
 
+/**
+ * Logic used for handling entity updates.
+ * @method
+ */
+const updateItemCategoryLogic = createLogic({
+  type: [
+    UPDATE_ITEM_CATEGORY,
+  ],
+  latest: true,
+  async process(
+    { action: { payload, onFailure, onSuccess }, httpClient, cancelled$ },
+    dispatch,
+    done,
+  ) {
+    try {
+      const response = await httpClient.cancellable(payload, cancelled$);
+      const { data, status } = response;
+
+      if (status === 200 || status === 201) {
+        dispatch(updateItemCategorySuccess(data));
+
+        if (onSuccess) {
+          onSuccess();
+        }
+      } else {
+        dispatch(updateItemCategoryFailure(response));
+
+        if (onFailure) {
+          onFailure();
+        }
+      }
+    } catch ({ response }) {
+      dispatch(updateItemCategoryFailure(response));
+
+      if (onFailure) {
+        onFailure();
+      }
+    }
+
+    done();
+  },
+});
+
 const stopSellLogic = createLogic({
   type: [
     STOP_SELL,
@@ -2357,6 +2606,7 @@ export const logic = {
   createMainImageLogic,
   createPDFLogic,
   deleteItemLogic,
+  deleteItemCategoryLogic,
   deleteLanguageLogic,
   deletePDFLogic,
   deletePromotionLogic,
@@ -2365,6 +2615,7 @@ export const logic = {
   fetchListLogic,
   fetchSearchResultsLogic,
   updateItemLogic,
+  updateItemCategoryLogic,
   stopSellLogic,
 };
 
@@ -2421,12 +2672,14 @@ const reducer = (initialState = defaultInitialState) => (state = initialState, a
     case CREATE_PDF_FAILURE:
     case CREATE_TRANSLATION_FAILURE:
     case DELETE_ITEM_FAILURE:
+    case DELETE_ITEM_CATEGORY_FAILURE:
     case DELETE_TRANSLATION_FAILURE:
     case FETCH_ITEM_FAILURE:
     case FETCH_AVAILABLE_TICKETS_FAILURE:
     case FETCH_LIST_FAILURE:
     case FETCH_SEARCH_RESULTS_FAILURE:
     case UPDATE_ITEM_FAILURE:
+    case UPDATE_ITEM_CATEGORY_FAILURE:
     case STOP_SELL_FAILURE:
       return {
         ...state,
@@ -2436,7 +2689,10 @@ const reducer = (initialState = defaultInitialState) => (state = initialState, a
     case CHANGE_PROMOTION_SUCCESS:
     case CLEAR_ERROR:
     case CREATE_ITEM_SUCCESS:
+    case DELETE_ITEM_SUCCESS:
+    case DELETE_ITEM_CATEGORY_SUCCESS:
     case UPDATE_ITEM_SUCCESS:
+    case UPDATE_ITEM_CATEGORY_SUCCESS:
       return {
         ...state,
         error: initialState.error,

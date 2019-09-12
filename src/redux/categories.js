@@ -895,7 +895,7 @@ const createItemLogic = createLogic({
         dispatch(createItemSuccess(data));
 
         if (onSuccess) {
-          onSuccess();
+          onSuccess(data.id);
         }
       } else {
         dispatch(createItemFailure(response));

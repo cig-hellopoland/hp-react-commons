@@ -554,6 +554,64 @@ describe('actions', () => {
     });
   });
 
+  describe('using deleteItemCategory', () => {
+    it('should create an action with request payload', () => {
+      const { deleteItemCategory } = actions;
+      const { DELETE_ITEM_CATEGORY } = types;
+      const id = 1;
+      const categoryId = 1;
+      const options = { b: 2 };
+      const expectedValue = {
+        type: DELETE_ITEM_CATEGORY,
+        payload: {
+          url: `${apiURL}/${id}/categories/${categoryId}`,
+          method: 'delete',
+        },
+      };
+
+      expect(deleteItemCategory({ id, categoryId })).toEqual(expectedValue);
+
+      expectedValue.payload = {
+        ...expectedValue.payload,
+        ...options,
+      };
+
+      expect(deleteItemCategory({ id, categoryId, options })).toEqual(expectedValue);
+
+      expectedValue.onFailure = onFailure;
+      expectedValue.onSuccess = onSuccess;
+
+      expect(deleteItemCategory({
+        id, categoryId, options, onFailure, onSuccess,
+      })).toEqual(expectedValue);
+    });
+
+    it('should create an action for failed request', () => {
+      const { deleteItemCategoryFailure } = actions;
+      const { DELETE_ITEM_CATEGORY_FAILURE } = types;
+      const expectedValue = {
+        type: DELETE_ITEM_CATEGORY_FAILURE,
+        error: {},
+      };
+
+      expect(deleteItemCategoryFailure()).toEqual(expectedValue);
+
+      expectedValue.error = axiosResponseError;
+
+      expect(deleteItemCategoryFailure(axiosResponseError)).toEqual(expectedValue);
+    });
+
+    it('should create an action for successful request', () => {
+      const { deleteItemCategorySuccess } = actions;
+      const { DELETE_ITEM_CATEGORY_SUCCESS } = types;
+      const expectedValue = {
+        type: DELETE_ITEM_CATEGORY_SUCCESS,
+      };
+
+      expect(deleteItemCategorySuccess()).toEqual(expectedValue);
+    });
+  });
+
   describe('using deletePDF', () => {
     it('should create an action with request payload', () => {
       const { deletePDF } = actions;
@@ -1069,6 +1127,68 @@ describe('actions', () => {
     });
   });
 
+  describe('using updateItemCategory', () => {
+    it('should create an action with request payload', () => {
+      const { updateItemCategory } = actions;
+      const { UPDATE_ITEM_CATEGORY } = types;
+      const id = 1;
+      const categoryId = 2;
+      const options = { b: 2 };
+      const expectedValue = {
+        type: UPDATE_ITEM_CATEGORY,
+        payload: {
+          url: `${apiURL}/${id}/categories/${categoryId}`,
+          method: 'patch',
+        },
+      };
+
+      expect(updateItemCategory({ id, categoryId })).toEqual(expectedValue);
+
+      expectedValue.payload = {
+        ...expectedValue.payload,
+        ...options,
+      };
+
+      expect(updateItemCategory({
+        id, categoryId, options,
+      })).toEqual(expectedValue);
+
+      expectedValue.onFailure = onFailure;
+      expectedValue.onSuccess = onSuccess;
+
+      expect(updateItemCategory({
+        id, categoryId, options, onFailure, onSuccess,
+      })).toEqual(expectedValue);
+    });
+
+    it('should create an action for failed request', () => {
+      const { updateItemCategoryFailure } = actions;
+      const { UPDATE_ITEM_CATEGORY_FAILURE } = types;
+      const expectedValue = {
+        type: UPDATE_ITEM_CATEGORY_FAILURE,
+        error: {},
+      };
+
+      expect(updateItemCategoryFailure()).toEqual(expectedValue);
+
+      expectedValue.error = axiosResponseError;
+
+      expect(updateItemCategoryFailure(axiosResponseError)).toEqual(expectedValue);
+    });
+
+    it('should create an action for successful request', () => {
+      const { updateItemCategorySuccess } = actions;
+      const { UPDATE_ITEM_CATEGORY_SUCCESS } = types;
+      const data = { a: 1 };
+      const expectedValue = {
+        type: UPDATE_ITEM_CATEGORY_SUCCESS,
+        data,
+      };
+
+      expect(updateItemCategorySuccess(data)).toEqual(expectedValue);
+    });
+  });
+
   describe('using stopSell', () => {
     it('should create an action with request payload', () => {
       const { stopSell } = actions;
@@ -1333,6 +1453,21 @@ describe('reducer', () => {
     expect(reducer()(defaultInitialState, action)).toEqual(expectedValue);
   });
 
+  it('should handle DELETE_ITEM_CATEGORY_FAILURE', () => {
+    let action = actions.deleteItemCategoryFailure();
+    const expectedValue = {
+      ...defaultInitialState,
+      error: {},
+    };
+
+    expect(reducer()(defaultInitialState, action)).toEqual(expectedValue);
+
+    action = actions.deleteItemCategoryFailure(axiosResponseError);
+    expectedValue.error = axiosResponseError;
+
+    expect(reducer()(defaultInitialState, action)).toEqual(expectedValue);
+  });
+
   it('should handle FETCH_AVAILABLE_TICKETS_FAILURE', () => {
     let action = actions.fetchAvailableTicketsFailure();
     const expectedValue = {
@@ -1408,6 +1543,22 @@ describe('reducer', () => {
     expect(reducer()(defaultInitialState, action)).toEqual(expectedValue);
   });
 
+
+  it('should handle UPDATE_ITEM_CATEGORY_FAILURE', () => {
+    let action = actions.updateItemCategoryFailure();
+    const expectedValue = {
+      ...defaultInitialState,
+      error: {},
+    };
+
+    expect(reducer()(defaultInitialState, action)).toEqual(expectedValue);
+
+    action = actions.updateItemCategoryFailure(axiosResponseError);
+    expectedValue.error = axiosResponseError;
+
+    expect(reducer()(defaultInitialState, action)).toEqual(expectedValue);
+  });
+
   it('should handle CREATE_ITEM_SUCCESS', () => {
     const data = { id: 1 };
     const action = actions.createItemSuccess(data);
@@ -1447,6 +1598,17 @@ describe('reducer', () => {
 
     expect(reducer()(defaultInitialState, action)).toEqual(expectedValue);
   });
+
+  it('should handle UPDATE_ITEM_CATEGORY_SUCCESS', () => {
+    const data = { id: 1 };
+    const action = actions.updateItemCategorySuccess(data);
+    const expectedValue = {
+      ...defaultInitialState,
+    };
+
+    expect(reducer()(defaultInitialState, action)).toEqual(expectedValue);
+  });
+
 
   it('should handle FETCH_AVAILABLE_TICKETS_SUCCESS', () => {
     const data = {

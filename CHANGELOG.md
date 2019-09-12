@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.15.0
+* Added SightEvents categories actions.
+
 ## 1.14.0
 * Added error clearing capabilities to Sights and SightEvents.
 * Added categories reducer.
