@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.16.0
+* Added Tags reducer.
+* Added SightEvents tags actions.
+* Fixed incorrect action calls in categories logic.
+
 ## 1.15.0
 * Added SightEvents categories actions.
 

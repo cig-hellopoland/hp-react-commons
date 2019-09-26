@@ -9,14 +9,14 @@ import { createLogic } from 'redux-logic';
  * Base API URL.
  * @type {string}
  */
-export const apiURL = '/categories';
+export const apiURL = '/tags';
 
 
 /**
  * Module name.
  * @type {string}
  */
-export const name = 'categories';
+export const name = 'tags';
 
 /**
  * Reducer prefix.
