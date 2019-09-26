@@ -2948,7 +2948,7 @@ const reducer = (initialState = defaultInitialState) => (state = initialState, a
     case DELETE_ITEM_TAG_SUCCESS:
     case UPDATE_ITEM_SUCCESS:
     case UPDATE_ITEM_CATEGORY_SUCCESS:
-    case DELETE_ITEM_TAG_SUCCESS:
+    case UPDATE_ITEM_TAG_SUCCESS:
       return {
         ...state,
         error: initialState.error,
