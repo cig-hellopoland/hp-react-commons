@@ -216,22 +216,22 @@ const DELETE_ITEM_CATEGORY_SUCCESS = `${prefix}DELETE_ITEM_CATEGORY_SUCCESS`;
 
 
 /**
- * Type used for handling entity category deletion.
+ * Type used for handling entity tag deletion.
  * @type {string}
  */
 const DELETE_ITEM_TAG = `${prefix}DELETE_ITEM_TAG`;
 
 /**
- * Type used for handling entity category deletion failure.
+ * Type used for handling entity taqg deletion failure.
  * @type {string}
  */
-const DELETE_ITEM_TAG_FAILURE = `${prefix}DELETE_ITEM_TAG`;
+const DELETE_ITEM_TAG_FAILURE = `${prefix}DELETE_ITEM_TAG_FAILURE`;
 
 /**
- * Type used for handling entity category deletion success.
+ * Type used for handling entity tag deletion success.
  * @type {string}
  */
-const DELETE_ITEM_TAG_SUCCESS = `${prefix}DELETE_ITEM_TAG`;
+const DELETE_ITEM_TAG_SUCCESS = `${prefix}DELETE_ITEM_TAG_SUCCESS`;
 
 /**
  * Type used for handling PDF document deletion.
