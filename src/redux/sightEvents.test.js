@@ -612,6 +612,65 @@ describe('actions', () => {
     });
   });
 
+
+  describe('using deleteItemTag', () => {
+    it('should create an action with request payload', () => {
+      const { deleteItemTag } = actions;
+      const { DELETE_ITEM_TAG } = types;
+      const id = 1;
+      const tagId = 1;
+      const options = { b: 2 };
+      const expectedValue = {
+        type: DELETE_ITEM_TAG,
+        payload: {
+          url: `${apiURL}/${id}/tags/${tagId}`,
+          method: 'delete',
+        },
+      };
+
+      expect(deleteItemTag({ id, tagId })).toEqual(expectedValue);
+
+      expectedValue.payload = {
+        ...expectedValue.payload,
+        ...options,
+      };
+
+      expect(deleteItemTag({ id, tagId, options })).toEqual(expectedValue);
+
+      expectedValue.onFailure = onFailure;
+      expectedValue.onSuccess = onSuccess;
+
+      expect(deleteItemTag({
+        id, tagId, options, onFailure, onSuccess,
+      })).toEqual(expectedValue);
+    });
+
+    it('should create an action for failed request', () => {
+      const { deleteItemTagFailure } = actions;
+      const { DELETE_ITEM_TAG_FAILURE } = types;
+      const expectedValue = {
+        type: DELETE_ITEM_TAG_FAILURE,
+        error: {},
+      };
+
+      expect(deleteItemTagFailure()).toEqual(expectedValue);
+
+      expectedValue.error = axiosResponseError;
+
+      expect(deleteItemTagFailure(axiosResponseError)).toEqual(expectedValue);
+    });
+
+    it('should create an action for successful request', () => {
+      const { deleteItemTagSuccess } = actions;
+      const { DELETE_ITEM_TAG_SUCCESS } = types;
+      const expectedValue = {
+        type: DELETE_ITEM_TAG_SUCCESS,
+      };
+
+      expect(deleteItemTagSuccess()).toEqual(expectedValue);
+    });
+  });
+
   describe('using deletePDF', () => {
     it('should create an action with request payload', () => {
       const { deletePDF } = actions;
@@ -1189,6 +1248,68 @@ describe('actions', () => {
     });
   });
 
+  describe('using updateItemTag', () => {
+    it('should create an action with request payload', () => {
+      const { updateItemTag } = actions;
+      const { UPDATE_ITEM_TAG } = types;
+      const id = 1;
+      const tagId = 2;
+      const options = { b: 2 };
+      const expectedValue = {
+        type: UPDATE_ITEM_TAG,
+        payload: {
+          url: `${apiURL}/${id}/tags/${tagId}`,
+          method: 'patch',
+        },
+      };
+
+      expect(updateItemTag({ id, tagId })).toEqual(expectedValue);
+
+      expectedValue.payload = {
+        ...expectedValue.payload,
+        ...options,
+      };
+
+      expect(updateItemTag({
+        id, tagId, options,
+      })).toEqual(expectedValue);
+
+      expectedValue.onFailure = onFailure;
+      expectedValue.onSuccess = onSuccess;
+
+      expect(updateItemTag({
+        id, tagId, options, onFailure, onSuccess,
+      })).toEqual(expectedValue);
+    });
+
+    it('should create an action for failed request', () => {
+      const { updateItemTagFailure } = actions;
+      const { UPDATE_ITEM_TAG_FAILURE } = types;
+      const expectedValue = {
+        type: UPDATE_ITEM_TAG_FAILURE,
+        error: {},
+      };
+
+      expect(updateItemTagFailure()).toEqual(expectedValue);
+
+      expectedValue.error = axiosResponseError;
+
+      expect(updateItemTagFailure(axiosResponseError)).toEqual(expectedValue);
+    });
+
+    it('should create an action for successful request', () => {
+      const { updateItemTagSuccess } = actions;
+      const { UPDATE_ITEM_TAG_SUCCESS } = types;
+      const data = { a: 1 };
+      const expectedValue = {
+        type: UPDATE_ITEM_TAG_SUCCESS,
+        data,
+      };
+
+      expect(updateItemTagSuccess(data)).toEqual(expectedValue);
+    });
+  });
+
   describe('using stopSell', () => {
     it('should create an action with request payload', () => {
       const { stopSell } = actions;
@@ -1468,6 +1589,21 @@ describe('reducer', () => {
     expect(reducer()(defaultInitialState, action)).toEqual(expectedValue);
   });
 
+  it('should handle DELETE_ITEM_TAG_FAILURE', () => {
+    let action = actions.deleteItemTagFailure();
+    const expectedValue = {
+      ...defaultInitialState,
+      error: {},
+    };
+
+    expect(reducer()(defaultInitialState, action)).toEqual(expectedValue);
+
+    action = actions.deleteItemTagFailure(axiosResponseError);
+    expectedValue.error = axiosResponseError;
+
+    expect(reducer()(defaultInitialState, action)).toEqual(expectedValue);
+  });
+
   it('should handle FETCH_AVAILABLE_TICKETS_FAILURE', () => {
     let action = actions.fetchAvailableTicketsFailure();
     const expectedValue = {
@@ -1543,7 +1679,6 @@ describe('reducer', () => {
     expect(reducer()(defaultInitialState, action)).toEqual(expectedValue);
   });
 
-
   it('should handle UPDATE_ITEM_CATEGORY_FAILURE', () => {
     let action = actions.updateItemCategoryFailure();
     const expectedValue = {
@@ -1554,6 +1689,21 @@ describe('reducer', () => {
     expect(reducer()(defaultInitialState, action)).toEqual(expectedValue);
 
     action = actions.updateItemCategoryFailure(axiosResponseError);
+    expectedValue.error = axiosResponseError;
+
+    expect(reducer()(defaultInitialState, action)).toEqual(expectedValue);
+  });
+
+  it('should handle UPDATE_ITEM_TAG_FAILURE', () => {
+    let action = actions.updateItemTagFailure();
+    const expectedValue = {
+      ...defaultInitialState,
+      error: {},
+    };
+
+    expect(reducer()(defaultInitialState, action)).toEqual(expectedValue);
+
+    action = actions.updateItemTagFailure(axiosResponseError);
     expectedValue.error = axiosResponseError;
 
     expect(reducer()(defaultInitialState, action)).toEqual(expectedValue);
@@ -1602,6 +1752,16 @@ describe('reducer', () => {
   it('should handle UPDATE_ITEM_CATEGORY_SUCCESS', () => {
     const data = { id: 1 };
     const action = actions.updateItemCategorySuccess(data);
+    const expectedValue = {
+      ...defaultInitialState,
+    };
+
+    expect(reducer()(defaultInitialState, action)).toEqual(expectedValue);
+  });
+
+  it('should handle UPDATE_ITEM_TAG_SUCCESS', () => {
+    const data = { id: 1 };
+    const action = actions.updateItemTagSuccess(data);
     const expectedValue = {
       ...defaultInitialState,
     };
