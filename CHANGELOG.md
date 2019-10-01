@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.16.1
+* Fixed Sight reducer.
+
 ## 1.16.0
 * Added Tags reducer.
 * Added SightEvents tags actions.
