@@ -1591,6 +1591,7 @@ const reducer = (initialState = defaultInitialState) => (state = initialState, a
     case CLEAR_ERROR:
     case CREATE_ITEM_SUCCESS:
     case CREATE_MAIN_IMAGE_SUCCESS:
+    case DELETE_ITEM_SUCCESS:
     case DELETE_TRANSLATION_SUCCESS:
     case UPDATE_ITEM_SUCCESS:
       return {
