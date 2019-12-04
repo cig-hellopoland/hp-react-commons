@@ -753,8 +753,8 @@ const clearSearchResults = () => ({
  * }}
  */
 const createImage = ({
-                       id, data, options = {}, onFailure, onSuccess,
-                     }) => ({
+  id, data, options = {}, onFailure, onSuccess,
+}) => ({
   type: CREATE_IMAGE,
   payload: {
     url: `${apiURL}/${id}/images`,
@@ -1093,8 +1093,8 @@ const createPDFSuccess = data => ({
  * }}
  */
 const deleteImage = ({
-                       id, itemId, options, onFailure, onSuccess,
-                     } = {}) => ({
+  id, itemId, options, onFailure, onSuccess,
+} = {}) => ({
   type: DELETE_IMAGE,
   payload: {
     url: `${apiURL}/${itemId}/images/${id}`,
