@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.17.2
+* Fixed incorrect method for gallery image upload.
+
 ## 1.17.1
 * Changed `p24Statetmen` to `orderId` in `sendTicketsEmail`. 
 

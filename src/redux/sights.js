@@ -515,7 +515,7 @@ const createImage = ({
   type: CREATE_IMAGE,
   payload: {
     url: `${apiURL}/${id}/images`,
-    method: 'put',
+    method: 'post',
     ...options,
     headers: {
       'content-type': 'image/jpeg',

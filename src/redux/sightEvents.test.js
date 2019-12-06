@@ -291,7 +291,7 @@ describe('actions', () => {
         type: CREATE_IMAGE,
         payload: {
           url: `${apiURL}/${id}/images`,
-          method: 'put',
+          method: 'post',
           headers: {
             'content-type': 'image/jpeg',
           },
