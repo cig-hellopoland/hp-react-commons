@@ -86,11 +86,11 @@ const clearError = () => ({ type: CLEAR_ERROR });
  * }}
  */
 const sendTicketsEmail = ({
-  options, onFailure, onSuccess, p24Statement,
+  options, onFailure, onSuccess, orderId,
 } = {}) => ({
   type: SEND_TICKETS_EMAIL,
   payload: {
-    url: `${apiURL}/${p24Statement}/sendTicketCopy`,
+    url: `${apiURL}/${orderId}/sendTicketCopy`,
     method: 'get',
     ...options,
   },

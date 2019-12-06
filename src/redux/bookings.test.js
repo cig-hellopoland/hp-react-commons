@@ -64,32 +64,32 @@ describe('actions', () => {
     it('should create an action to make request', () => {
       const { sendTicketsEmail } = actions;
       const { SEND_TICKETS_EMAIL } = types;
-      const p24Statement = 'p24-J11-A13-A41';
+      const orderId = '12345';
       const options = { a: 1 };
 
       const expectedValue = {
         type: SEND_TICKETS_EMAIL,
         payload: {
-          url: `${apiURL}/${p24Statement}/sendTicketCopy`,
+          url: `${apiURL}/${orderId}/sendTicketCopy`,
           method: 'get',
           ...options,
         },
       };
 
-      expect(sendTicketsEmail({ p24Statement, options })).toEqual(expectedValue);
+      expect(sendTicketsEmail({ orderId, options })).toEqual(expectedValue);
 
       expectedValue.payload = {
         ...expectedValue.payload,
         ...options,
       };
 
-      expect(sendTicketsEmail({ p24Statement, options })).toEqual(expectedValue);
+      expect(sendTicketsEmail({ orderId, options })).toEqual(expectedValue);
 
       expectedValue.onFailure = onFailure;
       expectedValue.onSuccess = onSuccess;
 
       expect(sendTicketsEmail({
-        p24Statement, options, onFailure, onSuccess,
+        orderId, options, onFailure, onSuccess,
       })).toEqual(expectedValue);
     });
 

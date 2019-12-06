@@ -1,7 +1,10 @@
 # Changelog
 
+## 1.17.1
+* Changed `p24Statetmen` to `orderId` in `sendTicketsEmail`. 
+
 ## 1.17.0
-* Added gallery image upload for sights and sight events
+* Added gallery image upload for sights and sight events.
 
 ## 1.16.1
 * Fixed Sight reducer.
