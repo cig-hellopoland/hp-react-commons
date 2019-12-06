@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.17.0
+* Added gallery image upload for sights and sight events
+
 ## 1.16.1
 * Fixed Sight reducer.
 
