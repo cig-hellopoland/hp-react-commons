@@ -196,6 +196,30 @@ const UPDATE_ITEM_FAILURE = `${prefix}UPDATE_ITEM_FAILURE`;
  */
 const UPDATE_ITEM_SUCCESS = `${prefix}UPDATE_ITEM_SUCCESS`;
 
+/**
+ * Type used for handling entity updates success.
+ * @type {string}
+ */
+const UPLOAD_ITEM_ICON_SUCCESS = `${prefix}UPLOAD_ITEM_ICON_SUCCESS`;
+
+/**
+ * Type used for handling entity icon uploads.
+ * @type {string}
+ */
+const UPLOAD_ITEM_ICON = `${prefix}UPLOAD_ITEM_ICON`;
+
+/**
+ * Type used for handling entity icon uploads.
+ * @type {string}
+ */
+const UPLOAD_ITEM_ICON_CANCEL = `${prefix}UPLOAD_ITEM_CANCEL`;
+
+/**
+ * Type used for handling entity icon uploads failure.
+ * @type {string}
+ */
+const UPLOAD_ITEM_ICON_FAILURE = `${prefix}UPLOAD_ITEM_ICON_FAILURE`;
+
 export const types = {
   CHANGE_DEFAULT_TRANSLATION,
   CHANGE_DEFAULT_TRANSLATION_FAILURE,
@@ -225,6 +249,10 @@ export const types = {
   UPDATE_ITEM,
   UPDATE_ITEM_FAILURE,
   UPDATE_ITEM_SUCCESS,
+  UPLOAD_ITEM_ICON,
+  UPLOAD_ITEM_ICON_CANCEL,
+  UPLOAD_ITEM_ICON_FAILURE,
+  UPLOAD_ITEM_ICON_SUCCESS,
 };
 
 
@@ -751,6 +779,78 @@ const updateItemSuccess = data => ({
   data,
 });
 
+/**
+ * Creates action with image creation request details.
+ * @method
+ * @param {number} id - item id
+ * @param {Object} data - request data
+ * @param {Object} [options] - request config
+ * @param {failureCallback} [onFailure] - failure callback
+ * @param {successCallback} [onSuccess] - success callback
+ * @return {{
+ *   type: string,
+ *   payload: {url: string, method: string, data: *, options: *},
+ *   onFailure: failureCallback,
+ *   onSuccess: successCallback
+ * }}
+ */
+const uploadIcon = ({
+  id, data, options = {}, onFailure, onSuccess,
+}) => ({
+  type: UPLOAD_ITEM_ICON,
+  payload: {
+    url: `${apiURL}/${id}/icon`,
+    method: 'put',
+    ...options,
+    headers: {
+      ...options.headers,
+    },
+    data,
+  },
+  onFailure,
+  onSuccess,
+});
+
+/**
+ * Creates action for creating image request cancelling.
+ * @method
+ * @return {{type: string}}
+ */
+
+const uploadIconCancel = () => ({
+  type: UPLOAD_ITEM_ICON_CANCEL,
+});
+
+/**
+ * Creates action for image creation request failing.
+ * @method
+ * @param {Object} params - axios response schema
+ * @param params.data - response body
+ * @param params.status - response status
+ * @return {{
+ *   type: string,
+ *   error: {data, status: number}
+ * }}
+ */
+const uploadIconFailure = ({ data, status } = {}) => ({
+  type: UPLOAD_ITEM_ICON_FAILURE,
+  error: {
+    data,
+    status,
+  },
+});
+
+/**
+ * Creates action for successful image creation request.
+ * @method
+ * @param {Object} data - response body
+ * @return {{type: string, data: *}}
+ */
+const uploadIconSuccess = data => ({
+  type: UPLOAD_ITEM_ICON_SUCCESS,
+  data,
+});
+
 export const actions = {
   changeDefaultTranslation,
   changeDefaultTranslationFailure,
@@ -780,6 +880,10 @@ export const actions = {
   updateItem,
   updateItemFailure,
   updateItemSuccess,
+  uploadIcon,
+  uploadIconCancel,
+  uploadIconFailure,
+  uploadIconSuccess,
 };
 
 
@@ -1180,6 +1284,52 @@ const updateItemLogic = createLogic({
   },
 });
 
+/**
+ * Logic used for handling main image creation.
+ * @method
+ */
+const uploadIconLogic = createLogic({
+  type: [
+    UPLOAD_ITEM_ICON,
+  ],
+  cancelType: [
+    UPLOAD_ITEM_ICON_CANCEL,
+  ],
+  latest: true,
+  async process(
+    { action: { payload, onFailure, onSuccess }, httpClient, cancelled$ },
+    dispatch,
+    done,
+  ) {
+    try {
+      const response = await httpClient.cancellable(payload, cancelled$);
+      const { data, status } = response;
+
+      if (status === 200 || status === 204) {
+        dispatch(uploadIconSuccess(data));
+
+        if (onSuccess) {
+          onSuccess();
+        }
+      } else {
+        dispatch(uploadIconFailure(response));
+
+        if (onFailure) {
+          onFailure();
+        }
+      }
+    } catch ({ response }) {
+      dispatch(uploadIconFailure(response));
+
+      if (onFailure) {
+        onFailure();
+      }
+    }
+
+    done();
+  },
+});
+
 
 export const logic = {
   changeDefaultLanguageLogic,
@@ -1190,6 +1340,7 @@ export const logic = {
   fetchItemLogic,
   fetchListLogic,
   updateItemLogic,
+  uploadIconLogic,
 };
 
 
@@ -1225,6 +1376,7 @@ const reducer = (initialState = defaultInitialState) => (state = initialState, a
     case DELETE_ITEM_SUCCESS:
     case DELETE_TRANSLATION_SUCCESS:
     case UPDATE_ITEM_SUCCESS:
+    case UPLOAD_ITEM_ICON_SUCCESS:
       return {
         ...state,
         error: initialState.error,
@@ -1243,6 +1395,7 @@ const reducer = (initialState = defaultInitialState) => (state = initialState, a
     case FETCH_ITEM_FAILURE:
     case FETCH_LIST_FAILURE:
     case UPDATE_ITEM_FAILURE:
+    case UPLOAD_ITEM_ICON_FAILURE:
       return {
         ...state,
         error: action.error,
