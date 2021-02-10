@@ -186,7 +186,7 @@ const deleteFile = ({
 } = {}) => ({
   type: DELETE_FILE,
   payload: {
-    url: `${apiURL}/files/${id}`,
+    url: `${apiURL}/${id}`,
     method: 'delete',
     ...options,
   },
