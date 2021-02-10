@@ -52,11 +52,32 @@ const CREATE_FILE_FAILURE = `${prefix}CREATE_FILE_FAILURE`;
  */
 const CREATE_FILE_SUCCESS = `${prefix}CREATE_FILE_SUCCESS`;
 
+/**
+ * Type used for handling file deletion.
+ * @type {string}
+ */
+const DELETE_FILE = `${prefix}DELETE_FILE`;
+
+/**
+ * Type used for handling file deletion failure.
+ * @type {string}
+ */
+const DELETE_FILE_FAILURE = `${prefix}DELETE_FILE_FAILURE`;
+
+/**
+ * Type used for handling file deletion success.
+ * @type {string}
+ */
+const DELETE_FILE_SUCCESS = `${prefix}DELETE_FILE_SUCCESS`;
+
 export const types = {
   CLEAR_ERROR,
   CREATE_FILE,
   CREATE_FILE_FAILURE,
   CREATE_FILE_SUCCESS,
+  DELETE_FILE,
+  DELETE_FILE_SUCCESS,
+  DELETE_FILE_FAILURE,
 };
 
 /*
@@ -73,10 +94,11 @@ const clearError = () => ({ type: CLEAR_ERROR });
 /**
  * Creates action with file upload request details.
  * @method
- * @param {Object} data - request data
- * @param {Object} [options] - request config
- * @param {failureCallback} [onFailure] - failure callback
- * @param {successCallback} [onSuccess] - success callback
+ * @param {Object} params
+ * @param {Object} params.data - request data
+ * @param {Object} [params.options] - request config
+ * @param {failureCallback} [params.onFailure] - failure callback
+ * @param {successCallback} [paraams.onSuccess] - success callback
  * @return {{
  *   type: string,
  *   payload: {url: string, method: string, data: *, options: *},
@@ -116,15 +138,71 @@ const createFileFailure = ({ data, status } = {}) => ({
   },
 });
 
-  /**
-   * Creates action for successful file upload request.
-   * @method
-   * @param {Object} data - response body
-   * @return {{type: string, data: *}}
-   */
+/**
+ * Creates action for successful file upload request.
+ * @method
+ * @param {Object} data - response body
+ * @return {{type: string, data: *}}
+ */
 const createFileSuccess = data => ({
   type: CREATE_FILE_SUCCESS,
   data,
+});
+
+/**
+ * Creates action with filr deletion request details.
+ * @method
+ * @param {Object} params
+ * @param {number} params.id - item id
+ * @param {Object} [params.options] - request config
+ * @param {failureCallback} [params.onFailure] - failure callback
+ * @param {successCallback} [params.onSuccess] - success callback
+ * @return {{
+  *   type: string,
+  *   payload: {url: string, method: string, options: *},
+  *   onFailure: failureCallback,
+  *   onSuccess: successCallback
+  * }}
+  */
+const deleteFile = ({
+  id, options, onFailure, onSuccess,
+} = {}) => ({
+  type: DELETE_FILE,
+  payload: {
+    url: `${apiURL}/files/${id}`,
+    method: 'delete',
+    ...options,
+  },
+  onFailure,
+  onSuccess,
+});
+
+/**
+ * Creates action for file deletion request failing.
+ * @method
+ * @param {Object} params - axios response schema
+ * @param params.data - response body
+ * @param params.status - response status
+ * @return {{
+  *   type: string,
+  *   error: {data, status: number}
+  * }}
+  */
+const deleteFileFailure = ({ data, status } = {}) => ({
+  type: DELETE_FILE_FAILURE,
+  error: {
+    data,
+    status,
+  },
+});
+
+/**
+  * Creates action for successful file deletion request.
+  * @method
+  * @return {{type: string}}
+  */
+const deleteFileSuccess = () => ({
+  type: DELETE_FILE_SUCCESS,
 });
 
 export const actions = {
@@ -132,6 +210,9 @@ export const actions = {
   createFile,
   createFileFailure,
   createFileSuccess,
+  deleteFile,
+  deleteFileFailure,
+  deleteFileSuccess,
 };
 
 /*
@@ -206,8 +287,52 @@ const createFileLogic = createLogic({
   },
 });
 
+/**
+ * Logic used for handling entity deletion.
+ * @method
+ */
+const deleteFileLogic = createLogic({
+  type: [
+    DELETE_FILE,
+  ],
+  latest: true,
+  async process(
+    { action: { payload, onFailure, onSuccess }, httpClient, cancelled$ },
+    dispatch,
+    done,
+  ) {
+    try {
+      const response = await httpClient.cancellable(payload, cancelled$);
+      const { status } = response;
+
+      if (status === 200 || status === 204) {
+        dispatch(deleteFileSuccess());
+
+        if (onSuccess) {
+          onSuccess();
+        }
+      } else {
+        dispatch(deleteFileFailure(response));
+
+        if (onFailure) {
+          onFailure();
+        }
+      }
+    } catch ({ response }) {
+      dispatch(deleteFileFailure(response));
+
+      if (onFailure) {
+        onFailure();
+      }
+    }
+
+    done();
+  },
+});
+
 export const logic = {
   createFileLogic,
+  deleteFileLogic,
 };
 
 /*
@@ -237,11 +362,13 @@ const reducer = (initialState = defaultInitialState) => (state = initialState, a
   switch (action.type) {
     case CLEAR_ERROR:
     case CREATE_FILE_SUCCESS:
+    case DELETE_FILE_SUCCESS:
       return {
         ...state,
         error: initialState.error,
       };
     case CREATE_FILE_FAILURE:
+    case DELETE_FILE_FAILURE:
       return {
         ...state,
         error: action.error,
