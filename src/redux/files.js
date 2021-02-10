@@ -41,6 +41,12 @@ const CLEAR_ERROR = `${prefix}CLEAR_ERROR`;
 const CREATE_FILE = `${prefix}CREATE_FILE`;
 
 /**
+ * Type used for handling entity fetching cancellation.
+ * @type {string}
+ */
+const CREATE_FILE_CANCEL = `${prefix}CREATE_FILE_CANCEL`;
+
+/**
  * Type used for handling file upload request failure.
  * @type {string}
  */
@@ -73,6 +79,7 @@ const DELETE_FILE_SUCCESS = `${prefix}DELETE_FILE_SUCCESS`;
 export const types = {
   CLEAR_ERROR,
   CREATE_FILE,
+  CREATE_FILE_CANCEL,
   CREATE_FILE_FAILURE,
   CREATE_FILE_SUCCESS,
   DELETE_FILE,
@@ -118,6 +125,16 @@ const createFile = ({
   },
   onFailure,
   onSuccess,
+});
+
+/**
+ * Creates action for creating file request cancelling.
+ * @method
+ * @return {{type: string}}
+ */
+
+const createFileCancel = () => ({
+  type: CREATE_FILE_CANCEL,
 });
 
 /**
@@ -208,6 +225,7 @@ const deleteFileSuccess = () => ({
 export const actions = {
   clearError,
   createFile,
+  createFileCancel,
   createFileFailure,
   createFileSuccess,
   deleteFile,
@@ -251,6 +269,9 @@ export const selectors = {
 const createFileLogic = createLogic({
   type: [
     CREATE_FILE,
+  ],
+  cancelType: [
+    CREATE_FILE_CANCEL,
   ],
   latest: true,
   async process(

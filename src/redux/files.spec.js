@@ -100,6 +100,16 @@ describe('actions', () => {
       })).toEqual(expectedValue);
     });
 
+    it('should create an action for cancelled create file request', () => {
+      const { createFileCancel } = actions;
+      const { CREATE_FILE_CANCEL } = types;
+      const expectedValue = {
+        type: CREATE_FILE_CANCEL,
+      };
+
+      expect(createFileCancel()).toEqual(expectedValue);
+    });
+
     it('should create an action for failed request', () => {
       const { createFileFailure } = actions;
       const { CREATE_FILE_FAILURE } = types;
