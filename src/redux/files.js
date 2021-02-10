@@ -9,7 +9,7 @@ import { createLogic } from 'redux-logic';
  * Base API URL.
  * @type {string}
  */
-export const apiURL = '/v1/partner/files';
+export const apiURL = '/files';
 
 
 /**
