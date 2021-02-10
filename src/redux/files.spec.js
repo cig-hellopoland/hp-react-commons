@@ -78,7 +78,7 @@ describe('actions', () => {
       const expectedValue = {
         type: CREATE_FILE,
         payload: {
-          url: `${apiURL}/files`,
+          url: `${apiURL}`,
           method: 'post',
           data,
           ...options,
