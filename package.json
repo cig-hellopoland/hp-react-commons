@@ -1,6 +1,6 @@
 {
   "name": "@hello-poland/commons",
-  "version": "1.19.2-beta.3",
+  "version": "1.19.2-beta.4",
   "main": "redux/index.js",
   "repository": {
     "type": "git",
@@ -45,7 +45,6 @@
     "rimraf": "^2.6.3"
   },
   "peerDependencies": {
-    "date-fns": "^1.29.0",
     "lodash": "^4.17.11",
     "prop-types": "^15.7.2",
     "react": "^16.8.3",
