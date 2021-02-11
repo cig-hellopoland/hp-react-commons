@@ -287,7 +287,7 @@ const createFileLogic = createLogic({
         dispatch(createFileSuccess(data));
 
         if (onSuccess) {
-          onSuccess();
+          onSuccess(data);
         }
       } else {
         dispatch(createFileFailure(response));
