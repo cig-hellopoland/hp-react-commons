@@ -95,30 +95,6 @@ const CLEAR_ITEM = `${prefix}CLEAR_ITEM`;
 const CLEAR_SEARCH_RESULTS = `${prefix}CLEAR_SEARCH_RESULTS`;
 
 /**
- * Type used for handling image creation.
- * @type {string}
- */
-const CREATE_IMAGE = `${prefix}CREATE_IMAGE`;
-
-/**
- * Type used for handling entity fetching cancellation.
- * @type {string}
- */
-const CREATE_IMAGE_CANCEL = `${prefix}CREATE_IMAGE_CANCEL`;
-
-/**
- * Type used for handling image creation failure.
- * @type {string}
- */
-const CREATE_IMAGE_FAILURE = `${prefix}CREATE_IMAGE_FAILURE`;
-
-/**
- * Type used for handling image creation success.
- * @type {string}
- */
-const CREATE_IMAGE_SUCCESS = `${prefix}CREATE_IMAGE_SUCCESS`;
-
-/**
  * Type used for handling entity creation.
  * @type {string}
  */
@@ -153,72 +129,6 @@ const CREATE_TRANSLATION_FAILURE = `${prefix}CREATE_TRANSLATION_FAILURE`;
  * @type {string}
  */
 const CREATE_TRANSLATION_SUCCESS = `${prefix}CREATE_TRANSLATION_SUCCESS`;
-
-/**
- * Type used for handling main image creation.
- * @type {string}
- */
-const CREATE_MAIN_IMAGE = `${prefix}CREATE_MAIN_IMAGE`;
-
-/**
- * Type used for handling main image fetching cancellation.
- * @type {string}
- */
-const CREATE_MAIN_IMAGE_CANCEL = `${prefix}CREATE_MAIN_IMAGE_CANCEL`;
-
-/**
- * Type used for handling main image creation failure.
- * @type {string}
- */
-const CREATE_MAIN_IMAGE_FAILURE = `${prefix}CREATE_MAIN_IMAGE_FAILURE`;
-
-/**
- * Type used for handling main image creation success.
- * @type {string}
- */
-const CREATE_MAIN_IMAGE_SUCCESS = `${prefix}CREATE_MAIN_IMAGE_SUCCESS`;
-
-/**
- * Type used for handling PDF document creation.
- * @type {string}
- */
-const CREATE_PDF = `${prefix}CREATE_PDF`;
-
-/**
- * Type used for handling pdf creation fetching cancellation.
- * @type {string}
- */
-const CREATE_PDF_CANCEL = `${prefix}CREATE_PDF_CANCEL`;
-
-/**
- * Type used for handling PDF document creation failure.
- * @type {string}
- */
-const CREATE_PDF_FAILURE = `${prefix}CREATE_PDF_FAILURE`;
-
-/**
- * Type used for handling PDF document creation success.
- * @type {string}
- */
-const CREATE_PDF_SUCCESS = `${prefix}CREATE_PDF_SUCCESS`;
-
-/**
- * Type used for handling image deletion.
- * @type {string}
- */
-const DELETE_IMAGE = `${prefix}DELETE_IMAGE`;
-
-/**
- * Type used for handling image deletion failure.
- * @type {string}
- */
-const DELETE_IMAGE_FAILURE = `${prefix}DELETE_IMAGE_FAILURE`;
-
-/**
- * Type used for handling image deletion success.
- * @type {string}
- */
-const DELETE_IMAGE_SUCCESS = `${prefix}DELETE_IMAGE_SUCCESS`;
 
 /**
  * Type used for handling entity deletion.
@@ -274,24 +184,6 @@ const DELETE_ITEM_TAG_FAILURE = `${prefix}DELETE_ITEM_TAG_FAILURE`;
  * @type {string}
  */
 const DELETE_ITEM_TAG_SUCCESS = `${prefix}DELETE_ITEM_TAG_SUCCESS`;
-
-/**
- * Type used for handling PDF document deletion.
- * @type {string}
- */
-const DELETE_PDF = `${prefix}DELETE_PDF`;
-
-/**
- * Type used for handling PDF document deletion failure.
- * @type {string}
- */
-const DELETE_PDF_FAILURE = `${prefix}DELETE_PDF_FAILURE`;
-
-/**
- * Type used for handling PDF document deletion success.
- * @type {string}
- */
-const DELETE_PDF_SUCCESS = `${prefix}DELETE_PDF_SUCCESS`;
 
 /**
 * Type used for handling content's promotion value deletion.
@@ -508,27 +400,12 @@ export const types = {
   CLEAR_ERROR,
   CLEAR_ITEM,
   CLEAR_SEARCH_RESULTS,
-  CREATE_IMAGE,
-  CREATE_IMAGE_CANCEL,
-  CREATE_IMAGE_FAILURE,
-  CREATE_IMAGE_SUCCESS,
   CREATE_ITEM,
   CREATE_ITEM_FAILURE,
   CREATE_ITEM_SUCCESS,
   CREATE_TRANSLATION,
   CREATE_TRANSLATION_FAILURE,
   CREATE_TRANSLATION_SUCCESS,
-  CREATE_MAIN_IMAGE,
-  CREATE_MAIN_IMAGE_CANCEL,
-  CREATE_MAIN_IMAGE_FAILURE,
-  CREATE_MAIN_IMAGE_SUCCESS,
-  CREATE_PDF,
-  CREATE_PDF_CANCEL,
-  CREATE_PDF_FAILURE,
-  CREATE_PDF_SUCCESS,
-  DELETE_IMAGE,
-  DELETE_IMAGE_FAILURE,
-  DELETE_IMAGE_SUCCESS,
   DELETE_ITEM,
   DELETE_ITEM_FAILURE,
   DELETE_ITEM_SUCCESS,
@@ -538,9 +415,6 @@ export const types = {
   DELETE_ITEM_TAG,
   DELETE_ITEM_TAG_FAILURE,
   DELETE_ITEM_TAG_SUCCESS,
-  DELETE_PDF,
-  DELETE_PDF_FAILURE,
-  DELETE_PDF_SUCCESS,
   DELETE_PROMOTION,
   DELETE_PROMOTION_FAILURE,
   DELETE_PROMOTION_SUCCESS,
@@ -738,79 +612,6 @@ const clearSearchResults = () => ({
 });
 
 /**
- * Creates action with image creation request details.
- * @method
- * @param {number} id - item id
- * @param {Object} data - request data
- * @param {Object} [options] - request config
- * @param {failureCallback} [onFailure] - failure callback
- * @param {successCallback} [onSuccess] - success callback
- * @return {{
- *   type: string,
- *   payload: {url: string, method: string, data: *, options: *},
- *   onFailure: failureCallback,
- *   onSuccess: successCallback
- * }}
- */
-const createImage = ({
-  id, data, options = {}, onFailure, onSuccess,
-}) => ({
-  type: CREATE_IMAGE,
-  payload: {
-    url: `${apiURL}/${id}/images`,
-    method: 'post',
-    ...options,
-    headers: {
-      'content-type': 'image/jpeg',
-      ...options.headers,
-    },
-    data,
-  },
-  onFailure,
-  onSuccess,
-});
-
-/**
- * Creates action for creating image request cancelling.
- * @method
- * @return {{type: string}}
- */
-
-const createImageCancel = () => ({
-  type: CREATE_IMAGE_CANCEL,
-});
-
-/**
- * Creates action for image creation request failing.
- * @method
- * @param {Object} params - axios response schema
- * @param params.data - response body
- * @param params.status - response status
- * @return {{
- *   type: string,
- *   error: {data, status: number}
- * }}
- */
-const createImageFailure = ({ data, status } = {}) => ({
-  type: CREATE_IMAGE_FAILURE,
-  error: {
-    data,
-    status,
-  },
-});
-
-/**
- * Creates action for successful image creation request.
- * @method
- * @param {Object} data - response body
- * @return {{type: string, data: *}}
- */
-const createImageSuccess = data => ({
-  type: CREATE_IMAGE_SUCCESS,
-  data,
-});
-
-/**
  * Creates action with item creation request details.
  * @method
  * @param {Object} params
@@ -926,211 +727,6 @@ const createTranslationFailure = ({ data, status } = {}) => ({
 const createTranslationSuccess = data => ({
   type: CREATE_TRANSLATION_SUCCESS,
   data,
-});
-
-/**
- * Creates action with main image creation request details.
- * @method
- * @param {number} id - item id
- * @param {Object} data - request data
- * @param {Object} [options] - request config
- * @param {failureCallback} [onFailure] - failure callback
- * @param {successCallback} [onSuccess] - success callback
- * @return {{
- *   type: string,
- *   payload: {url: string, method: string, data: *, options: *},
- *   onFailure: failureCallback,
- *   onSuccess: successCallback
- * }}
- */
-const createMainImage = ({
-  id, data, options = {}, onFailure, onSuccess,
-}) => ({
-  type: CREATE_MAIN_IMAGE,
-  payload: {
-    url: `${apiURL}/${id}/mainImage`,
-    method: 'put',
-    ...options,
-    headers: {
-      'content-type': 'image/jpeg',
-      ...options.headers,
-    },
-    data,
-  },
-  onFailure,
-  onSuccess,
-});
-
-/**
- * Creates action for creating main image request cancelling.
- * @method
- * @return {{type: string}}
- */
-const createMainImageCancel = function createMainImageCancel() {
-  return {
-    type: CREATE_MAIN_IMAGE_CANCEL,
-  };
-};
-
-/**
- * Creates action for main image creation request failing.
- * @method
- * @param {Object} params - axios response schema
- * @param params.data - response body
- * @param params.status - response status
- * @return {{
- *   type: string,
- *   error: {data, status: number}
- * }}
- */
-const createMainImageFailure = ({ data, status } = {}) => ({
-  type: CREATE_MAIN_IMAGE_FAILURE,
-  error: {
-    data,
-    status,
-  },
-});
-
-/**
- * Creates action for successful main image creation request.
- * @method
- * @param {Object} data - response body
- * @return {{type: string, data: *}}
- */
-const createMainImageSuccess = data => ({
-  type: CREATE_MAIN_IMAGE_SUCCESS,
-  data,
-});
-
-/**
- * Creates action with PDF document creation request details.
- * @method
- * @param {number} id - item id
- * @param {Object} data - request data
- * @param {Object} [options] - request config
- * @param {failureCallback} [onFailure] - failure callback
- * @param {successCallback} [onSuccess] - success callback
- * @return {{
- *   type: string,
- *   payload: {url: string, method: string, data: *, options: *},
- *   onFailure: failureCallback,
- *   onSuccess: successCallback
- * }}
- */
-const createPDF = ({
-  id, data, options = {}, onFailure, onSuccess,
-}) => ({
-  type: CREATE_PDF,
-  payload: {
-    url: `${apiURL}/${id}/pdf`,
-    method: 'post',
-    ...options,
-    headers: {
-      'content-type': 'application/pdf',
-      ...options.headers,
-    },
-    data,
-  },
-  onFailure,
-  onSuccess,
-});
-
-/**
- * Creates action for creating PDF creation request cancelling.
- * @method
- * @return {{type: string}}
- */
-
-const createPDFCancel = function createPDFCancel() {
-  return {
-    type: CREATE_PDF_CANCEL,
-  };
-};
-
-/**
- * Creates action for PDF document creation request failing.
- * @method
- * @param {Object} params - axios response schema
- * @param params.data - response body
- * @param params.status - response status
- * @return {{
- *   type: string,
- *   error: {data, status: number}
- * }}
- */
-const createPDFFailure = ({ data, status } = {}) => ({
-  type: CREATE_PDF_FAILURE,
-  error: {
-    data,
-    status,
-  },
-});
-
-/**
- * Creates action for successful PDF document creation request.
- * @method
- * @param {Object} data - response body
- * @return {{type: string, data: *}}
- */
-const createPDFSuccess = data => ({
-  type: CREATE_PDF_SUCCESS,
-  data,
-});
-
-/**
- * Creates action with image deletion request details.
- * @method
- * @param {Object} params
- * @param {number} params.id - item id
- * @param {Object} [params.options] - request config
- * @param {failureCallback} [params.onFailure] - failure callback
- * @param {successCallback} [params.onSuccess] - success callback
- * @return {{
- *   type: string,
- *   payload: {url: string, method: string, options: *},
- *   onFailure: failureCallback,
- *   onSuccess: successCallback
- * }}
- */
-const deleteImage = ({
-  id, itemId, options, onFailure, onSuccess,
-} = {}) => ({
-  type: DELETE_IMAGE,
-  payload: {
-    url: `${apiURL}/${itemId}/images/${id}`,
-    method: 'delete',
-    ...options,
-  },
-  onFailure,
-  onSuccess,
-});
-
-/**
- * Creates action for image deletion request failing.
- * @method
- * @param {Object} params - axios response schema
- * @param params.data - response body
- * @param params.status - response status
- * @return {{
- *   type: string,
- *   error: {data, status: number}
- * }}
- */
-const deleteImageFailure = ({ data, status } = {}) => ({
-  type: DELETE_IMAGE_FAILURE,
-  error: {
-    data,
-    status,
-  },
-});
-
-/**
- * Creates action for successful image deletion request.
- * @method
- * @return {{type: string}}
- */
-const deleteImageSuccess = () => ({
-  type: DELETE_IMAGE_SUCCESS,
 });
 
 /**
@@ -1301,62 +897,6 @@ const deleteItemTagFailure = ({ data, status } = {}) => ({
  */
 const deleteItemTagSuccess = () => ({
   type: DELETE_ITEM_TAG_SUCCESS,
-});
-
-/**
- * Creates action with pdf deletion request details.
- * @method
- * @param {Object} params
- * @param {number} params.id - item id
- * @param {Object} [params.options] - request config
- * @param {failureCallback} [params.onFailure] - failure callback
- * @param {successCallback} [params.onSuccess] - success callback
- * @return {{
- *   type: string,
- *   payload: {url: string, method: string, options: *},
- *   onFailure: failureCallback,
- *   onSuccess: successCallback
- * }}
- */
-const deletePDF = ({
-  id, options, onFailure, onSuccess,
-} = {}) => ({
-  type: DELETE_PDF,
-  payload: {
-    url: `${apiURL}/${id}/pdf`,
-    method: 'delete',
-    ...options,
-  },
-  onFailure,
-  onSuccess,
-});
-
-/**
- * Creates action for pdf deletion request failing.
- * @method
- * @param {Object} params - axios response schema
- * @param params.data - response body
- * @param params.status - response status
- * @return {{
- *   type: string,
- *   error: {data, status: number}
- * }}
- */
-const deletePDFFailure = ({ data, status } = {}) => ({
-  type: DELETE_PDF_FAILURE,
-  error: {
-    data,
-    status,
-  },
-});
-
-/**
- * Creates action for successful pdf deletion request.
- * @method
- * @return {{type: string}}
- */
-const deletePDFSuccess = () => ({
-  type: DELETE_PDF_SUCCESS,
 });
 
 /**
@@ -2000,27 +1540,12 @@ export const actions = {
   clearError,
   clearItem,
   clearSearchResults,
-  createImage,
-  createImageCancel,
-  createImageFailure,
-  createImageSuccess,
   createItem,
   createItemFailure,
   createItemSuccess,
   createTranslation,
   createTranslationFailure,
   createTranslationSuccess,
-  createMainImage,
-  createMainImageCancel,
-  createMainImageFailure,
-  createMainImageSuccess,
-  createPDF,
-  createPDFCancel,
-  createPDFFailure,
-  createPDFSuccess,
-  deleteImage,
-  deleteImageFailure,
-  deleteImageSuccess,
   deleteItem,
   deleteItemFailure,
   deleteItemSuccess,
@@ -2030,9 +1555,6 @@ export const actions = {
   deleteItemTag,
   deleteItemTagFailure,
   deleteItemTagSuccess,
-  deletePDF,
-  deletePDFFailure,
-  deletePDFSuccess,
   deletePromotion,
   deletePromotionFailure,
   deletePromotionSuccess,
@@ -2241,52 +1763,6 @@ const clearSearchResultsLogic = createLogic({
 });
 
 /**
- * Logic used for handling main image creation.
- * @method
- */
-const createImageLogic = createLogic({
-  type: [
-    CREATE_IMAGE,
-  ],
-  cancelType: [
-    CREATE_IMAGE_CANCEL,
-  ],
-  latest: true,
-  async process(
-    { action: { payload, onFailure, onSuccess }, httpClient, cancelled$ },
-    dispatch,
-    done,
-  ) {
-    try {
-      const response = await httpClient.cancellable(payload, cancelled$);
-      const { data, status } = response;
-
-      if (status === 200 || status === 204) {
-        dispatch(createImageSuccess(data));
-
-        if (onSuccess) {
-          onSuccess();
-        }
-      } else {
-        dispatch(createImageFailure(response));
-
-        if (onFailure) {
-          onFailure();
-        }
-      }
-    } catch ({ response }) {
-      dispatch(createImageFailure(response));
-
-      if (onFailure) {
-        onFailure();
-      }
-    }
-
-    done();
-  },
-});
-
-/**
  * Logic used for handling entity creation.
  * @method
  */
@@ -2372,140 +1848,6 @@ const createTranslationLogic = createLogic({
   },
 });
 
-/**
- * Logic used for handling main image creation.
- * @method
- */
-const createMainImageLogic = createLogic({
-  type: [
-    CREATE_MAIN_IMAGE,
-  ],
-  cancelType: [
-    CREATE_MAIN_IMAGE_CANCEL,
-  ],
-  latest: true,
-  async process(
-    { action: { payload, onFailure, onSuccess }, httpClient, cancelled$ },
-    dispatch,
-    done,
-  ) {
-    try {
-      const response = await httpClient.cancellable(payload, cancelled$);
-      const { data, status } = response;
-
-      if (status === 200 || status === 204) {
-        dispatch(createMainImageSuccess(data));
-
-        if (onSuccess) {
-          onSuccess();
-        }
-      } else {
-        dispatch(createMainImageFailure(response));
-
-        if (onFailure) {
-          onFailure();
-        }
-      }
-    } catch ({ response }) {
-      dispatch(createMainImageFailure(response));
-
-      if (onFailure) {
-        onFailure();
-      }
-    }
-
-    done();
-  },
-});
-
-/**
- * Logic used for handling PDF document creation.
- * @method
- */
-const createPDFLogic = createLogic({
-  type: [
-    CREATE_PDF,
-  ],
-  cancelType: [
-    CREATE_PDF_CANCEL,
-  ],
-  latest: true,
-  async process(
-    { action: { payload, onFailure, onSuccess }, httpClient, cancelled$ },
-    dispatch,
-    done,
-  ) {
-    try {
-      const response = await httpClient.cancellable(payload, cancelled$);
-      const { data, status } = response;
-
-      if (status === 200 || status === 204) {
-        dispatch(createPDFSuccess(data));
-
-        if (onSuccess) {
-          onSuccess();
-        }
-      } else {
-        dispatch(createPDFFailure(response));
-
-        if (onFailure) {
-          onFailure();
-        }
-      }
-    } catch ({ response }) {
-      dispatch(createPDFFailure(response));
-
-      if (onFailure) {
-        onFailure();
-      }
-    }
-
-    done();
-  },
-});
-
-/**
- * Logic used for handling entity deletion.
- * @method
- */
-const deleteImageLogic = createLogic({
-  type: [
-    DELETE_IMAGE,
-  ],
-  latest: true,
-  async process(
-    { action: { payload, onFailure, onSuccess }, httpClient, cancelled$ },
-    dispatch,
-    done,
-  ) {
-    try {
-      const response = await httpClient.cancellable(payload, cancelled$);
-      const { status } = response;
-
-      if (status === 200 || status === 204) {
-        dispatch(deleteImageSuccess());
-
-        if (onSuccess) {
-          onSuccess();
-        }
-      } else {
-        dispatch(deleteImageFailure(response));
-
-        if (onFailure) {
-          onFailure();
-        }
-      }
-    } catch ({ response }) {
-      dispatch(deleteImageFailure(response));
-
-      if (onFailure) {
-        onFailure();
-      }
-    }
-
-    done();
-  },
-});
 
 /**
  * Logic used for handling entity deletion.
@@ -2669,49 +2011,6 @@ const deleteLanguageLogic = createLogic({
       }
     } catch ({ response }) {
       dispatch(deleteTranslationFailure(response));
-
-      if (onFailure) {
-        onFailure();
-      }
-    }
-
-    done();
-  },
-});
-
-/**
- * Logic used for handling PDF document deletion.
- * @method
- */
-const deletePDFLogic = createLogic({
-  type: [
-    DELETE_PDF,
-  ],
-  latest: true,
-  async process(
-    { action: { payload, onFailure, onSuccess }, httpClient, cancelled$ },
-    dispatch,
-    done,
-  ) {
-    try {
-      const response = await httpClient.cancellable(payload, cancelled$);
-      const { status } = response;
-
-      if (status === 200 || status === 204) {
-        dispatch(deletePDFSuccess());
-
-        if (onSuccess) {
-          onSuccess();
-        }
-      } else {
-        dispatch(deletePDFFailure(response));
-
-        if (onFailure) {
-          onFailure();
-        }
-      }
-    } catch ({ response }) {
-      dispatch(deletePDFFailure(response));
 
       if (onFailure) {
         onFailure();
@@ -3125,17 +2424,12 @@ export const logic = {
   changeDefaultLanguageLogic,
   changePromotionLogic,
   clearSearchResultsLogic,
-  createImageLogic,
   createItemLogic,
   createTranslationLogic,
-  createMainImageLogic,
-  createPDFLogic,
-  deleteImageLogic,
   deleteItemLogic,
   deleteItemCategoryLogic,
   deleteItemTagLogic,
   deleteLanguageLogic,
-  deletePDFLogic,
   deletePromotionLogic,
   fetchAvailableTicketsLogic,
   fetchItemLogic,
@@ -3195,12 +2489,8 @@ const reducer = (initialState = defaultInitialState) => (state = initialState, a
       };
     case CHANGE_DEFAULT_TRANSLATION_FAILURE:
     case CHANGE_PROMOTION_FAILURE:
-    case CREATE_IMAGE_FAILURE:
     case CREATE_ITEM_FAILURE:
-    case CREATE_MAIN_IMAGE_FAILURE:
-    case CREATE_PDF_FAILURE:
     case CREATE_TRANSLATION_FAILURE:
-    case DELETE_IMAGE_FAILURE:
     case DELETE_ITEM_FAILURE:
     case DELETE_ITEM_CATEGORY_FAILURE:
     case DELETE_ITEM_TAG_FAILURE:
@@ -3220,9 +2510,7 @@ const reducer = (initialState = defaultInitialState) => (state = initialState, a
     case CHANGE_DEFAULT_TRANSLATION_SUCCESS:
     case CHANGE_PROMOTION_SUCCESS:
     case CLEAR_ERROR:
-    case CREATE_IMAGE_SUCCESS:
     case CREATE_ITEM_SUCCESS:
-    case DELETE_IMAGE_SUCCESS:
     case DELETE_ITEM_SUCCESS:
     case DELETE_ITEM_CATEGORY_SUCCESS:
     case DELETE_ITEM_TAG_SUCCESS:
