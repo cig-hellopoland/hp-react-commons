@@ -1784,7 +1784,7 @@ const createItemLogic = createLogic({
         dispatch(createItemSuccess(data));
 
         if (onSuccess) {
-          onSuccess();
+          onSuccess(200);
         }
       } else {
         dispatch(createItemFailure(response));
@@ -1827,7 +1827,7 @@ const createTranslationLogic = createLogic({
         dispatch(createItemSuccess(data));
 
         if (onSuccess) {
-          onSuccess();
+          onSuccess(200);
         }
       } else {
         dispatch(createItemFailure(response));
